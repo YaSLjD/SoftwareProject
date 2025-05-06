@@ -1360,7 +1360,7 @@ private static void viewChefSchedules() {
             }
         }
         
-        // Display report
+        // Display report//
         System.out.println("Total Customers: " + customers.size());
         
         System.out.println("\nDietary Preferences:");
