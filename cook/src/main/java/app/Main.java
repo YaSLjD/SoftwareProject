@@ -4,11 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Main class to demonstrate and test the Special Cook Project Management System.
+ * This class provides a simple console interface to interact with the system.
+ */
 public class Main {
     
     private static LoginSystem loginSystem;
@@ -19,10 +24,11 @@ public class Main {
     private static BillingSystem billingSystem;
     private static NotificationSystem notificationSystem;
     private static RecipeRecommendationSystem recommendationSystem;
+    private static CustomMealService customMealService;
     
     private static Scanner scanner;
     private static String currentUser;
-
+    
     public static void main(String[] args) {
         System.out.println("Starting Special Cook Project Management System...");
         
@@ -41,7 +47,7 @@ public class Main {
                 if (user.hasRole("admin")) {
                     showAdminMenu();
                 } else if (user.hasRole("chef")) {
-                   showChefMenu();
+                    showChefMenu();
                 } else {
                     showCustomerMenu();
                 }
@@ -55,8 +61,9 @@ public class Main {
         System.out.println("System shutdown. Goodbye!");
     }
     
-
-
+    /**
+     * Initialize all system components.
+     */
     private static void initializeSystem() {
         loginSystem = new LoginSystem();
         Map<String, User> userDatabase = loginSystem.getUserDatabase();
@@ -72,9 +79,15 @@ public class Main {
         Map<String, Meal> mealDatabase = createMealDatabase();
         recommendationSystem = new RecipeRecommendationSystem(userDatabase, mealDatabase);
         
+        // Initialize CustomMealService
+        customMealService = new CustomMealService(inventory);
+        
         System.out.println("System initialized successfully.");
     }
-
+    
+    /**
+     * Create a meal database for the recommendation system.
+     */
     private static Map<String, Meal> createMealDatabase() {
         Map<String, Meal> mealDatabase = new HashMap<>();
         
@@ -85,207 +98,234 @@ public class Main {
         
         return mealDatabase;
     }
-
+    
+    /**
+     * Show the login menu with options to input username and password.
+     */
     private static void showLoginMenu() {
         System.out.println("\n===== Login Menu =====");
         System.out.println("1. Login");
         System.out.println("2. View Available Demo Accounts");
         System.out.println("0. Exit");
-        System.out.print("Enter your choice: ");}
-
-
-        private static void showDemoAccounts() {
-            System.out.println("\n===== Available Demo Accounts =====");
-            System.out.println("Customer: username = testuser, password = password123");
-            System.out.println("Chef: username = chef, password = chefpass");
-            System.out.println("Admin: username = admin, password = adminpass");
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
-        }
-        private static void customLogin() {
-            System.out.print("Enter username: ");
-            String username = scanner.nextLine();
-            
-            System.out.print("Enter password: ");
-            String password = scanner.nextLine();
-            
-            login(username, password);
-
-        }
-        private static void showCustomerMenu() {
-            System.out.println("\n===== Customer Menu =====");
-            System.out.println("1. View Profile");
-            System.out.println("2. Manage Dietary Preferences");
-            System.out.println("3. Place New Order");
-            System.out.println("4. View Order History");
-            System.out.println("5. View Invoices");
-            System.out.println("6. Get Meal Recommendations");
-            System.out.println("7. View Notifications");
-            System.out.println("8. Logout");
-            System.out.println("0. Exit");
-            System.out.print("Enter your choice: ");
-        }
-        private static void showChefMenu() {
-            System.out.println("\n===== Chef Menu =====");
-            System.out.println("1. View Today's Schedule");
-            System.out.println("2. View All Tasks");
-            System.out.println("3. Mark Task as Completed");
-            System.out.println("4. Check Inventory");
-            System.out.println("5. View Notifications");
-            System.out.println("6. Logout");
-            System.out.println("0. Exit");
-            System.out.print("Enter your choice: ");
-        }
+        System.out.print("Enter your choice: ");
+    }
+    
+    /**
+     * Show available demo accounts.
+     */
+    private static void showDemoAccounts() {
+        System.out.println("\n===== Available Demo Accounts =====");
+        System.out.println("Customer: username = testuser, password = password123");
+        System.out.println("Chef: username = chef, password = chefpass");
+        System.out.println("Admin: username = admin, password = adminpass");
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * Prompt for custom login.
+     */
+    private static void customLogin() {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
         
-        /**
-         * Show the admin menu.
-         */
-        private static void showAdminMenu() {
-            System.out.println("\n===== Admin Menu =====");
-            System.out.println("1. Manage Users");
-            System.out.println("2. Manage Inventory");
-            System.out.println("3. Manage Suppliers");
-            System.out.println("4. View Chef Schedules");
-            System.out.println("5. Generate Reports");
-            System.out.println("6. View Notifications");
-            System.out.println("7. Logout");
-            System.out.println("0. Exit");
-            System.out.print("Enter your choice: ");
-        }
-
-        //@param choice
-        //@return
-
-
-        private static boolean processChoice(String choice) {
-            if (currentUser == null) {
-                // Process login menu choices
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        
+        login(username, password);
+    }
+    
+    /**
+     * Show the customer menu.
+     */
+    private static void showCustomerMenu() {
+        System.out.println("\n===== Customer Menu =====");
+        System.out.println("1. View Profile");
+        System.out.println("2. Manage Dietary Preferences");
+        System.out.println("3. Place New Order");
+        System.out.println("4. Create Custom Meal");
+        System.out.println("5. View Order History");
+        System.out.println("6. View Invoices");
+        System.out.println("7. Get Meal Recommendations");
+        System.out.println("8. View Notifications");
+        System.out.println("9. Logout");
+        System.out.println("0. Exit");
+        System.out.print("Enter your choice: ");
+    }
+    
+    /**
+     * Show the chef menu.
+     */
+    private static void showChefMenu() {
+        System.out.println("\n===== Chef Menu =====");
+        System.out.println("1. View Today's Schedule");
+        System.out.println("2. View All Tasks");
+        System.out.println("3. Mark Task as Completed");
+        System.out.println("4. Check Inventory");
+        System.out.println("5. View Notifications");
+        System.out.println("6. Logout");
+        System.out.println("0. Exit");
+        System.out.print("Enter your choice: ");
+    }
+    
+    /**
+     * Show the admin menu.
+     */
+    private static void showAdminMenu() {
+        System.out.println("\n===== Admin Menu =====");
+        System.out.println("1. Manage Users");
+        System.out.println("2. Manage Inventory");
+        System.out.println("3. Manage Suppliers");
+        System.out.println("4. View Chef Schedules");
+        System.out.println("5. Generate Reports");
+        System.out.println("6. View Notifications");
+        System.out.println("7. Logout");
+        System.out.println("0. Exit");
+        System.out.print("Enter your choice: ");
+    }
+    
+    /**
+     * Process the user's menu choice.
+     * 
+     * @param choice The user's choice
+     * @return true to continue running, false to exit
+     */
+    private static boolean processChoice(String choice) {
+        if (currentUser == null) {
+            // Process login menu choices
+            switch (choice) {
+                case "1":
+                    customLogin();
+                    break;
+                case "2":
+                    showDemoAccounts();
+                    break;
+                case "0":
+                    return false;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } else {
+            User user = loginSystem.getUserDatabase().get(currentUser);
+            
+            if (user.hasRole("admin")) {
+                // Process admin menu choices
                 switch (choice) {
                     case "1":
-                        customLogin();
+                        manageUsers();
                         break;
                     case "2":
-                        showDemoAccounts();
+                        manageInventory();
+                        break;
+                    case "3":
+                        manageSuppliers();
+                        break;
+                    case "4":
+                        viewChefSchedules();
+                        break;
+                    case "5":
+                       generateReports();
+                        break;
+                    case "6":
+                        viewNotifications();
+                        break;
+                    case "7":
+                        logout();
                         break;
                     case "0":
                         return false;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
-            } else {
-                User user = loginSystem.getUserDatabase().get(currentUser);
-                
-                if (user.hasRole("admin")) {
-                    // Process admin menu choices
-                    switch (choice) {
-                        case "1":
-                            manageUsers();
-                            break;
-                        case "2":
-                            manageInventory();
-                            break;
-                        case "3":
-                           manageSuppliers();
-                            break;
-                        case "4":
-                            viewChefSchedules();
-                            break;
-                        case "5":
-                          generateReports();
-                            break;
-                        case "6":
-                            viewNotifications();
-                            break;
-                        case "7":
-                           logout();
-                            break;
-                        case "0":
-                            return false;
-                        default:
-                            System.out.println("Invalid choice. Please try again.");
-                    }
-                } else if (user.hasRole("chef")) {
-                    // Process chef menu choices
-                    switch (choice) {
-                        case "1":
-                            viewTodaySchedule();
-                            break;
-                        case "2":
-                            viewAllTasks();
-                            break;
-                        case "3":
-                            markTaskAsCompleted();
-                            break;
-                        case "4":
-                            checkInventory();
-                            break;
-                        case "5":
-                            viewNotifications();
-                            break;
-                        case "6":
-                            logout();
-                            break;
-                        case "0":
-                            return false;
-                        default:
-                            System.out.println("Invalid choice. Please try again.");
-                    }
-                } else {  // Customer
-                    // Process customer menu choices
-                    switch (choice) {
-                        case "1":
-                           viewProfile();
-                            break;
-                        case "2":
-                           manageDietaryPreferences();
-                            break;
-                        case "3":
-                           placeNewOrder();
-                            break;
-                        case "4":
-                           viewOrderHistory();
-                            break;
-                        case "5":
-                            viewInvoices();
-                            break;
-                        case "6":
-                            getMealRecommendations();
-                            break;
-                        case "7":
-                            viewNotifications();
-                            break;
-                        case "8":
-                            logout();
-                            break;
-                        case "0":
-                            return false;
-                        default:
-                            System.out.println("Invalid choice. Please try again.");
-                    }
+            } else if (user.hasRole("chef")) {
+                // Process chef menu choices
+                switch (choice) {
+                    case "1":
+                        viewTodaySchedule();
+                        break;
+                    case "2":
+                        viewAllTasks();
+                        break;
+                    case "3":
+                        markTaskAsCompleted();
+                        break;
+                    case "4":
+                        checkInventory();
+                        break;
+                    case "5":
+                        viewNotifications();
+                        break;
+                    case "6":
+                        logout();
+                        break;
+                    case "0":
+                        return false;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } else {  // Customer
+                // Process customer menu choices
+                switch (choice) {
+                    case "1":
+                        viewProfile();
+                        break;
+                    case "2":
+                        manageDietaryPreferences();
+                        break;
+                    case "3":
+                        placeNewOrder();
+                        break;
+                    case "4":
+                        createCustomMeal();
+                        break;
+                    case "5":
+                        viewOrderHistory();
+                        break;
+                    case "6":
+                        viewInvoices();
+                        break;
+                    case "7":
+                        getMealRecommendations();
+                        break;
+                    case "8":
+                        viewNotifications();
+                        break;
+                    case "9":
+                        logout();
+                        break;
+                    case "0":
+                        return false;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
                 }
             }
-            return true;
         }
+        return true;
+    }
     
-        private static void login(String username, String password) {
-            String result = loginSystem.login(username, password);
-            System.out.println(result);
-            
-            if (result.startsWith("Welcome")) {
-                currentUser = username;
-                System.out.println("Logged in as: " + username);
-            } else {
-                System.out.println("Login failed. Please check your credentials.");
-            }
+    /**
+     * Login with the given username and password.
+     */
+    private static void login(String username, String password) {
+        String result = loginSystem.login(username, password);
+        System.out.println(result);
+        
+        if (result.startsWith("Welcome")) {
+            currentUser = username;
+            System.out.println("Logged in as: " + username);
+        } else {
+            System.out.println("Login failed. Please check your credentials.");
         }
-        /**
+    }
+    
+    /**
      * Logout the current user.
      */
     private static void logout() {
         System.out.println("Logging out...");
         currentUser = null;
     }
-
+    
     /**
      * View the current user's profile.
      */
@@ -315,6 +355,10 @@ public class Main {
         System.out.println("\nPress Enter to continue...");
         scanner.nextLine();
     }
+    
+    /**
+     * Manage the current user's dietary preferences.
+     */
     private static void manageDietaryPreferences() {
         boolean managing = true;
         
@@ -377,375 +421,676 @@ public class Main {
         }
     }
     
-    
-
-
-
-        private static void viewInvoices() {
-            System.out.println("\n===== Invoices =====");
-            
-            List<Invoice> invoices = billingSystem.getCustomerInvoices(currentUser);
-            
-            if (invoices.isEmpty()) {
-                System.out.println("No invoices found.");
-            } else {
-                for (Invoice invoice : invoices) {
-                    System.out.println("\nInvoice #" + invoice.getInvoiceId());
-                    System.out.println("Order: " + invoice.getOrderId());
-                    System.out.println("Issue Date: " + invoice.getIssueDate());
-                    System.out.println("Due Date: " + invoice.getDueDate());
-                    System.out.println("Status: " + invoice.getStatus());
-                    System.out.println("Total: $" + String.format("%.2f", invoice.getTotalAmount()));
-                    
-                    System.out.println("Items:");
-                    for (Invoice.InvoiceItem item : invoice.getItems()) {
-                        System.out.println("- " + item.getDescription() + 
-                                " - " + item.getQuantity() + " x $" + 
-                                String.format("%.2f", item.getUnitPrice()) + 
-                                " = $" + String.format("%.2f", item.getQuantity() * item.getUnitPrice()));
-                    }
-                    
-                    // Option to pay invoice
-                    if (invoice.getStatus().equals("issued") || invoice.getStatus().equals("overdue")) {
-                        System.out.print("\nPay this invoice? (y/n): ");
-                        String choice = scanner.nextLine();
-                        
-                        if (choice.equalsIgnoreCase("y")) {
-                            billingSystem.processPayment(invoice.getInvoiceId(), invoice.getTotalAmount(), "Credit Card");
-                            System.out.println("Payment processed successfully!");
-                        }
-                    }
-                }
-            }
-            
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
+    /**
+     * Place a new order.
+     */
+    private static void placeNewOrder() {
+        System.out.println("\n===== Place New Order =====");
+        
+        // Create a new order
+        Order order = orderSystem.createOrder(currentUser);
+        System.out.println("New order created: " + order.getOrderId());
+        
+        // Show available meals
+        List<Meal> availableMeals = orderSystem.getAllMeals();
+        System.out.println("\nAvailable Meals:");
+        for (int i = 0; i < availableMeals.size(); i++) {
+            Meal meal = availableMeals.get(i);
+            System.out.println((i + 1) + ". " + meal.getName() + 
+                    " - $" + meal.getPrice() + 
+                    " (" + String.join(", ", meal.getDietaryCategories()) + ")");
         }
-
-        private static void getMealRecommendations() {
-            System.out.println("\n===== Meal Recommendations =====");
-            
-            // Get personalized recommendations
-            List<Meal> recommendations = recommendationSystem.getPersonalizedRecommendations(currentUser, 5);
-            
-            if (recommendations.isEmpty()) {
-                System.out.println("No recommendations available.");
-            } else {
-                System.out.println("Based on your preferences and order history, we recommend:");
-                for (int i = 0; i < recommendations.size(); i++) {
-                    Meal meal = recommendations.get(i);
-                    System.out.println((i + 1) + ". " + meal.getName() + 
-                            " - $" + String.format("%.2f", meal.getPrice()) + 
-                            " (" + String.join(", ", meal.getDietaryCategories()) + ")");
-                }
-            }
-            
-            // Option to generate a custom recipe
-            System.out.print("\nWould you like a custom recipe? (y/n): ");
+        
+        // Add meals to the order
+        boolean addingMeals = true;
+        while (addingMeals) {
+            System.out.print("\nEnter meal number to add (0 to finish): ");
             String choice = scanner.nextLine();
             
-            if (choice.equalsIgnoreCase("y")) {
-                System.out.println("\nEnter ingredients (comma-separated):");
-                String ingredientsInput = scanner.nextLine();
-                String[] ingredients = ingredientsInput.split(",");
-                
-                List<String> ingredientList = new ArrayList<>();
-                for (String ingredient : ingredients) {
-                    ingredientList.add(ingredient.trim());
+            if (choice.equals("0")) {
+                addingMeals = false;
+            } else {
+                try {
+                    int mealIndex = Integer.parseInt(choice) - 1;
+                    if (mealIndex >= 0 && mealIndex < availableMeals.size()) {
+                        Meal meal = availableMeals.get(mealIndex);
+                        orderSystem.addMealToOrder(order.getOrderId(), meal.getId());
+                        System.out.println("Added to order: " + meal.getName());
+                    } else {
+                        System.out.println("Invalid meal number. Please try again.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
                 }
-                
-                System.out.print("Enter dietary category: ");
-                String category = scanner.nextLine();
-                
-                String recipe = recommendationSystem.generateCustomRecipe(currentUser, ingredientList, category);
-                System.out.println("\nCustom Recipe:");
-                System.out.println(recipe);
             }
-            
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
         }
         
-        /**
-         * View notifications for the current user.
-         */
-        private static void viewNotifications() {
-            System.out.println("\n===== Notifications =====");
-            
-            List<Notification> notifications = notificationSystem.getUserNotifications(currentUser);
-            
-            if (notifications.isEmpty()) {
-                System.out.println("No notifications found.");
-            } else {
-                for (int i = 0; i < notifications.size(); i++) {
-                    Notification notification = notifications.get(i);
-                    System.out.println((i + 1) + ". " + (notification.isRead() ? "[Read] " : "[Unread] ") + 
-                            notification.getTitle() + " - " + notification.getTimestamp());
-                    System.out.println("   " + notification.getMessage());
+        // Update order status
+        orderSystem.updateOrderStatus(order.getOrderId(), "pending");
+        System.out.println("\nOrder placed successfully!");
+        System.out.println("Order #" + order.getOrderId() + " - Total: $" + 
+                String.format("%.2f", order.getTotalPrice()));
+        
+        // Assign to chef
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime end = now.plusMinutes(45);
+        Task task = new Task(order.getOrderId(), "chef", 
+                "Prepare order #" + order.getOrderId(), now, end);
+        chefSchedule.addTask(task);
+        
+        // Generate invoice
+        Invoice invoice = billingSystem.generateInvoice(order);
+        invoice.issue();
+        
+        // Send notification
+        notificationSystem.notifyOrderStatusChange(currentUser, order.getOrderId(), "pending");
+        notificationSystem.notifyChefAssignment("chef", order.getOrderId());
+        notificationSystem.notifyNewInvoice(currentUser, invoice);
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * View the current user's order history.
+     */
+    private static void viewOrderHistory() {
+        System.out.println("\n===== Order History =====");
+        
+        List<Order> orders = orderSystem.getUserOrders(currentUser);
+        
+        if (orders.isEmpty()) {
+            System.out.println("No orders found.");
+        } else {
+            for (Order order : orders) {
+                System.out.println("\nOrder #" + order.getOrderId());
+                System.out.println("Date: " + order.getOrderDate());
+                System.out.println("Status: " + order.getStatus());
+                System.out.println("Total: $" + String.format("%.2f", order.getTotalPrice()));
+                
+                System.out.println("Meals:");
+                for (Meal meal : order.getMeals()) {
+                    System.out.println("- " + meal.getName() + 
+                            " - $" + String.format("%.2f", meal.getPrice()));
+                }
+            }
+        }
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * View the current user's invoices.
+     */
+    private static void viewInvoices() {
+        System.out.println("\n===== Invoices =====");
+        
+        List<Invoice> invoices = billingSystem.getCustomerInvoices(currentUser);
+        
+        if (invoices.isEmpty()) {
+            System.out.println("No invoices found.");
+        } else {
+            for (Invoice invoice : invoices) {
+                System.out.println("\nInvoice #" + invoice.getInvoiceId());
+                System.out.println("Order: " + invoice.getOrderId());
+                System.out.println("Issue Date: " + invoice.getIssueDate());
+                System.out.println("Due Date: " + invoice.getDueDate());
+                System.out.println("Status: " + invoice.getStatus());
+                System.out.println("Total: $" + String.format("%.2f", invoice.getTotalAmount()));
+                
+                System.out.println("Items:");
+                for (Invoice.InvoiceItem item : invoice.getItems()) {
+                    System.out.println("- " + item.getDescription() + 
+                            " - " + item.getQuantity() + " x $" + 
+                            String.format("%.2f", item.getUnitPrice()) + 
+                            " = $" + String.format("%.2f", item.getQuantity() * item.getUnitPrice()));
+                }
+                
+                // Option to pay invoice
+                if (invoice.getStatus().equals("issued") || invoice.getStatus().equals("overdue")) {
+                    System.out.print("\nPay this invoice? (y/n): ");
+                    String choice = scanner.nextLine();
                     
-                    // Mark as read
-                    if (!notification.isRead()) {
-                        notificationSystem.markNotificationAsRead(currentUser, notification.getId());
+                    if (choice.equalsIgnoreCase("y")) {
+                        billingSystem.processPayment(invoice.getInvoiceId(), invoice.getTotalAmount(), "Credit Card");
+                        System.out.println("Payment processed successfully!");
                     }
                 }
             }
-            
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
         }
         
-        /**
-         * View today's schedule for the chef.
-         */
-        private static void viewTodaySchedule() {
-            System.out.println("\n===== Today's Schedule =====");
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * Get meal recommendations for the current user.
+     */
+    private static void getMealRecommendations() {
+        System.out.println("\n===== Meal Recommendations =====");
+        
+        // Get personalized recommendations
+        List<Meal> recommendations = recommendationSystem.getPersonalizedRecommendations(currentUser, 5);
+        
+        if (recommendations.isEmpty()) {
+            System.out.println("No recommendations available.");
+        } else {
+            System.out.println("Based on your preferences and order history, we recommend:");
+            for (int i = 0; i < recommendations.size(); i++) {
+                Meal meal = recommendations.get(i);
+                System.out.println((i + 1) + ". " + meal.getName() + 
+                        " - $" + String.format("%.2f", meal.getPrice()) + 
+                        " (" + String.join(", ", meal.getDietaryCategories()) + ")");
+            }
+        }
+        
+        // Option to generate a custom recipe
+        System.out.print("\nWould you like a custom recipe? (y/n): ");
+        String choice = scanner.nextLine();
+        
+        if (choice.equalsIgnoreCase("y")) {
+            System.out.println("\nEnter ingredients (comma-separated):");
+            String ingredientsInput = scanner.nextLine();
+            String[] ingredients = ingredientsInput.split(",");
             
-            List<Task> tasks = chefSchedule.getChefTasksForDate(currentUser, LocalDate.now());
-            
-            if (tasks.isEmpty()) {
-                System.out.println("No tasks scheduled for today.");
-            } else {
-                for (int i = 0; i < tasks.size(); i++) {
-                    Task task = tasks.get(i);
-                    System.out.println((i + 1) + ". " + task.getDescription());
-                    System.out.println("   Start: " + task.getStartTime());
-                    System.out.println("   End: " + task.getEndTime());
-                    System.out.println("   Status: " + task.getStatus());
-                    System.out.println("   Priority: " + task.getPriority());
-                }
+            List<String> ingredientList = new ArrayList<>();
+            for (String ingredient : ingredients) {
+                ingredientList.add(ingredient.trim());
             }
             
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
+            System.out.print("Enter dietary category: ");
+            String category = scanner.nextLine();
+            
+            String recipe = recommendationSystem.generateCustomRecipe(currentUser, ingredientList, category);
+            System.out.println("\nCustom Recipe:");
+            System.out.println(recipe);
         }
-        private static void viewAllTasks() {
-            System.out.println("\n===== All Tasks =====");
-            
-            List<Task> tasks = chefSchedule.getChefTasks(currentUser);
-            
-            if (tasks.isEmpty()) {
-                System.out.println("No tasks assigned.");
-            } else {
-                for (int i = 0; i < tasks.size(); i++) {
-                    Task task = tasks.get(i);
-                    System.out.println((i + 1) + ". " + task.getDescription());
-                    System.out.println("   Start: " + task.getStartTime());
-                    System.out.println("   End: " + task.getEndTime());
-                    System.out.println("   Status: " + task.getStatus());
-                    System.out.println("   Priority: " + task.getPriority());
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * View notifications for the current user.
+     */
+    private static void viewNotifications() {
+        System.out.println("\n===== Notifications =====");
+        
+        List<Notification> notifications = notificationSystem.getUserNotifications(currentUser);
+        
+        if (notifications.isEmpty()) {
+            System.out.println("No notifications found.");
+        } else {
+            for (int i = 0; i < notifications.size(); i++) {
+                Notification notification = notifications.get(i);
+                System.out.println((i + 1) + ". " + (notification.isRead() ? "[Read] " : "[Unread] ") + 
+                        notification.getTitle() + " - " + notification.getTimestamp());
+                System.out.println("   " + notification.getMessage());
+                
+                // Mark as read
+                if (!notification.isRead()) {
+                    notificationSystem.markNotificationAsRead(currentUser, notification.getId());
                 }
             }
-            
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
         }
-      
-        private static void markTaskAsCompleted() {
-            System.out.println("\n===== Mark Task as Completed =====");
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * View today's schedule for the chef.
+     */
+    private static void viewTodaySchedule() {
+        System.out.println("\n===== Today's Schedule =====");
+        
+        List<Task> tasks = chefSchedule.getChefTasksForDate(currentUser, LocalDate.now());
+        
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks scheduled for today.");
+        } else {
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
+                System.out.println((i + 1) + ". " + task.getDescription());
+                System.out.println("   Start: " + task.getStartTime());
+                System.out.println("   End: " + task.getEndTime());
+                System.out.println("   Status: " + task.getStatus());
+                System.out.println("   Priority: " + task.getPriority());
+            }
+        }
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * View all tasks for the chef.
+     */
+    private static void viewAllTasks() {
+        System.out.println("\n===== All Tasks =====");
+        
+        List<Task> tasks = chefSchedule.getChefTasks(currentUser);
+        
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks assigned.");
+        } else {
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
+                System.out.println((i + 1) + ". " + task.getDescription());
+                System.out.println("   Start: " + task.getStartTime());
+                System.out.println("   End: " + task.getEndTime());
+                System.out.println("   Status: " + task.getStatus());
+                System.out.println("   Priority: " + task.getPriority());
+            }
+        }
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * Mark a task as completed.
+     */
+    private static void markTaskAsCompleted() {
+        System.out.println("\n===== Mark Task as Completed =====");
+        
+        List<Task> tasks = chefSchedule.getActiveChefTasks(currentUser);
+        
+        if (tasks.isEmpty()) {
+            System.out.println("No active tasks found.");
+        } else {
+            System.out.println("Active Tasks:");
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
+                System.out.println((i + 1) + ". " + task.getDescription() + 
+                        " (" + task.getStatus() + ")");
+            }
             
-            List<Task> tasks = chefSchedule.getActiveChefTasks(currentUser);
+            System.out.print("\nEnter task number to mark as completed (0 to cancel): ");
+            String choice = scanner.nextLine();
             
-            if (tasks.isEmpty()) {
-                System.out.println("No active tasks found.");
-            } else {
-                System.out.println("Active Tasks:");
-                for (int i = 0; i < tasks.size(); i++) {
-                    Task task = tasks.get(i);
-                    System.out.println((i + 1) + ". " + task.getDescription() + 
-                            " (" + task.getStatus() + ")");
-                }
-                
-                System.out.print("\nEnter task number to mark as completed (0 to cancel): ");
-                String choice = scanner.nextLine();
-                
-                if (!choice.equals("0")) {
-                    try {
-                        int taskIndex = Integer.parseInt(choice) - 1;
-                        if (taskIndex >= 0 && taskIndex < tasks.size()) {
-                            Task task = tasks.get(taskIndex);
+            if (!choice.equals("0")) {
+                try {
+                    int taskIndex = Integer.parseInt(choice) - 1;
+                    if (taskIndex >= 0 && taskIndex < tasks.size()) {
+                        Task task = tasks.get(taskIndex);
+                        
+                        try {
+                            // Start the task first if it's pending
+                            if (task.getStatus().equals("pending")) {
+                                task.start();
+                                chefSchedule.updateTaskStatus(task.getId(), "in-progress");
+                            }
                             
                             // Update task status
                             task.complete();
                             chefSchedule.updateTaskStatus(task.getId(), "completed");
                             
-                            // Update order status
-                            orderSystem.updateOrderStatus(task.getOrderId(), "completed");
-                            
-                            // Notify customer
-                            String customerId = orderSystem.getOrderById(task.getOrderId()).getUsername();
-                            notificationSystem.notifyOrderStatusChange(customerId, task.getOrderId(), "completed");
+                            // Update order status - only if the order exists
+                            Order order = orderSystem.getOrderById(task.getOrderId());
+                            if (order != null) {
+                                orderSystem.updateOrderStatus(task.getOrderId(), "completed");
+                                
+                                // Notify customer - safely get the username
+                                notificationSystem.notifyOrderStatusChange(order.getUsername(), task.getOrderId(), "completed");
+                            }
                             
                             System.out.println("Task marked as completed!");
-                        } else {
-                            System.out.println("Invalid task number.");
+                        } catch (Exception e) {
+                            System.out.println("Error completing task: " + e.getMessage());
+                            System.out.println("Please contact system administrator if this problem persists.");
                         }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid input. Please enter a number.");
+                    } else {
+                        System.out.println("Invalid task number.");
                     }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
                 }
             }
-            
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
         }
-        private static void checkInventory() {
-            System.out.println("\n===== Inventory =====");
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * Check inventory.
+     */
+    private static void checkInventory() {
+        System.out.println("\n===== Inventory =====");
+        
+        List<Ingredient> ingredients = inventory.getAllIngredients();
+        
+        if (ingredients.isEmpty()) {
+            System.out.println("No ingredients found.");
+        } else {
+            System.out.println("Current Inventory:");
+            for (Ingredient ingredient : ingredients) {
+                System.out.println("- " + ingredient.getName() + ": " + 
+                        ingredient.getQuantity() + " " + ingredient.getUnit() + 
+                        " (min: " + ingredient.getMinimumStockLevel() + ")");
+            }
             
-            List<Ingredient> ingredients = inventory.getAllIngredients();
-            
-            if (ingredients.isEmpty()) {
-                System.out.println("No ingredients found.");
+            System.out.println("\nLow Stock Ingredients:");
+            List<Ingredient> lowStock = inventory.getLowStockIngredients();
+            if (lowStock.isEmpty()) {
+                System.out.println("No low stock ingredients.");
             } else {
-                System.out.println("Current Inventory:");
-                for (Ingredient ingredient : ingredients) {
+                for (Ingredient ingredient : lowStock) {
                     System.out.println("- " + ingredient.getName() + ": " + 
                             ingredient.getQuantity() + " " + ingredient.getUnit() + 
                             " (min: " + ingredient.getMinimumStockLevel() + ")");
                 }
-                
-                System.out.println("\nLow Stock Ingredients:");
-                List<Ingredient> lowStock = inventory.getLowStockIngredients();
-                if (lowStock.isEmpty()) {
-                    System.out.println("No low stock ingredients.");
-                } else {
-                    for (Ingredient ingredient : lowStock) {
-                        System.out.println("- " + ingredient.getName() + ": " + 
-                                ingredient.getQuantity() + " " + ingredient.getUnit() + 
-                                " (min: " + ingredient.getMinimumStockLevel() + ")");
-                    }
-                }
             }
-            
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
         }
         
-        private static void manageInventory() {
-            System.out.println("\n===== Manage Inventory =====");
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * Manage users (admin function).
+     */
+    private static void manageUsers() {
+        System.out.println("\n===== Manage Users =====");
+        
+        Map<String, User> users = loginSystem.getUserDatabase();
+        
+        System.out.println("Users:");
+        for (User user : users.values()) {
+            System.out.println("- " + user.getUsername() + " (" + user.getRole() + ")");
+        }
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * Manage inventory (admin function).
+     */
+    private static void manageInventory() {
+        System.out.println("\n===== Manage Inventory =====");
+        
+        boolean managing = true;
+        while (managing) {
+            List<Ingredient> ingredients = inventory.getAllIngredients();
             
-            boolean managing = true;
-            while (managing) {
-                List<Ingredient> ingredients = inventory.getAllIngredients();
-                
-                System.out.println("Current Inventory:");
-                for (int i = 0; i < ingredients.size(); i++) {
-                    Ingredient ingredient = ingredients.get(i);
-                    System.out.println((i + 1) + ". " + ingredient.getName() + ": " + 
-                            ingredient.getQuantity() + " " + ingredient.getUnit() + 
-                            " (min: " + ingredient.getMinimumStockLevel() + ")");
-                }
-                
-                System.out.println("\n1. Add New Ingredient");
-                System.out.println("2. Update Ingredient Quantity");
-                System.out.println("3. Update Minimum Stock Level");
-                System.out.println("4. Remove Ingredient");
-                System.out.println("5. View Low Stock Ingredients");
-                System.out.println("6. Back to Main Menu");
-                System.out.print("Enter your choice: ");
-                
-                String choice = scanner.nextLine();
-                
-                switch (choice) {
-                    case "1":
-                        System.out.print("Enter ingredient name: ");
-                        String name = scanner.nextLine();
+            System.out.println("Current Inventory:");
+            for (int i = 0; i < ingredients.size(); i++) {
+                Ingredient ingredient = ingredients.get(i);
+                System.out.println((i + 1) + ". " + ingredient.getName() + ": " + 
+                        ingredient.getQuantity() + " " + ingredient.getUnit() + 
+                        " (min: " + ingredient.getMinimumStockLevel() + ")");
+            }
+            
+            System.out.println("\n1. Add New Ingredient");
+            System.out.println("2. Update Ingredient Quantity");
+            System.out.println("3. Update Minimum Stock Level");
+            System.out.println("4. Remove Ingredient");
+            System.out.println("5. View Low Stock Ingredients");
+            System.out.println("6. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+            
+            String choice = scanner.nextLine();
+            
+            switch (choice) {
+                case "1":
+                    System.out.print("Enter ingredient name: ");
+                    String name = scanner.nextLine();
+                    
+                    System.out.print("Enter quantity: ");
+                    double quantity = Double.parseDouble(scanner.nextLine());
+                    
+                    System.out.print("Enter unit (e.g., kg, g, l): ");
+                    String unit = scanner.nextLine();
+                    
+                    System.out.print("Enter minimum stock level: ");
+                    double minStock = Double.parseDouble(scanner.nextLine());
+                    
+                    // Generate a unique ID for the ingredient
+                    String id = "ING" + System.currentTimeMillis();
+                    Ingredient newIngredient = new Ingredient(id, name, unit, quantity, minStock);
+                    inventory.addIngredient(newIngredient);
+                    System.out.println("Ingredient added successfully!");
+                    break;
+                    
+                case "2":
+                    System.out.print("Enter ingredient number to update: ");
+                    int ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                    
+                    if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
+                        Ingredient ingredient = ingredients.get(ingredientIndex);
                         
-                        System.out.print("Enter quantity: ");
-                        double quantity = Double.parseDouble(scanner.nextLine());
+                        System.out.print("Enter new quantity: ");
+                        double newQuantity = Double.parseDouble(scanner.nextLine());
                         
-                        System.out.print("Enter unit (e.g., kg, g, l): ");
-                        String unit = scanner.nextLine();
+                        inventory.updateIngredientQuantity(ingredient.getId(), newQuantity - ingredient.getQuantity());
+                        System.out.println("Quantity updated successfully!");
+                    } else {
+                        System.out.println("Invalid ingredient number.");
+                    }
+                    break;
+                    
+                case "3":
+                    System.out.print("Enter ingredient number to update: ");
+                    ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                    
+                    if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
+                        Ingredient ingredient = ingredients.get(ingredientIndex);
                         
-                        System.out.print("Enter minimum stock level: ");
-                        double minStock = Double.parseDouble(scanner.nextLine());
+                        System.out.print("Enter new minimum stock level: ");
+                        double newMinStock = Double.parseDouble(scanner.nextLine());
                         
-                        // Generate a unique ID for the ingredient
-                        String id = "ING" + System.currentTimeMillis();
-                        Ingredient newIngredient = new Ingredient(id, name, unit, quantity, minStock);
-                        inventory.addIngredient(newIngredient);
-                        System.out.println("Ingredient added successfully!");
-                        break;
+                        ingredient.setMinimumStockLevel(newMinStock);
+                        System.out.println("Minimum stock level updated successfully!");
+                    } else {
+                        System.out.println("Invalid ingredient number.");
+                    }
+                    break;
+                    
+                    case "4":
+                    System.out.print("Enter ingredient number to remove: ");
+                    ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                    
+                    if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
+                        Ingredient ingredient = ingredients.get(ingredientIndex);
                         
-                    case "2":
-                        System.out.print("Enter ingredient number to update: ");
+                        // Remove the ingredient
+                        if (inventory.removeIngredient(ingredient.getId())) {
+                            System.out.println("Ingredient removed successfully!");
+                        } else {
+                            System.out.println("Failed to remove ingredient.");
+                        }
+                    } else {
+                        System.out.println("Invalid ingredient number.");
+                    }
+                    break;
+                    
+                case "5":
+                    List<Ingredient> lowStock = inventory.getLowStockIngredients();
+                    
+                    System.out.println("\nLow Stock Ingredients:");
+                    if (lowStock.isEmpty()) {
+                        System.out.println("No low stock ingredients.");
+                    } else {
+                        for (Ingredient ingredient : lowStock) {
+                            System.out.println("- " + ingredient.getName() + ": " + 
+                                    ingredient.getQuantity() + " " + ingredient.getUnit() + 
+                                    " (min: " + ingredient.getMinimumStockLevel() + ")");
+                        }
+                    }
+                    
+                    System.out.println("\nPress Enter to continue...");
+                    scanner.nextLine();
+                    break;
+                    
+                case "6":
+                    managing = false;
+                    break;
+                    
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+    
+    /**
+     * Manage suppliers (admin function).
+     */
+    private static void manageSuppliers() {
+        System.out.println("\n===== Manage Suppliers =====");
+        
+        boolean managing = true;
+        while (managing) {
+            List<Supplier> suppliers = inventory.getAllSuppliers();
+            
+            System.out.println("Current Suppliers:");
+            for (int i = 0; i < suppliers.size(); i++) {
+                Supplier supplier = suppliers.get(i);
+                System.out.println((i + 1) + ". " + supplier.getName() + 
+                        " - Email: " + supplier.getEmail() + ", Phone: " + supplier.getPhone());
+            }
+            
+            System.out.println("\n1. Add New Supplier");
+            System.out.println("2. Update Supplier Information");
+            System.out.println("3. Remove Supplier");
+            System.out.println("4. Place Order with Supplier");
+            System.out.println("5. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+            
+            String choice = scanner.nextLine();
+            
+            switch (choice) {
+                case "1":
+                    System.out.print("Enter supplier name: ");
+                    String name = scanner.nextLine();
+                    
+                    System.out.print("Enter supplier email: ");
+                    String email = scanner.nextLine();
+                    
+                    System.out.print("Enter supplier phone: ");
+                    String phone = scanner.nextLine();
+                    
+                    System.out.print("Enter supplier address: ");
+                    String address = scanner.nextLine();
+                    
+                    // Generate a unique ID for the supplier
+                    String id = "SUP" + System.currentTimeMillis();
+                    Supplier newSupplier = new Supplier(id, name, email, phone, address);
+                    inventory.addSupplier(newSupplier);
+                    System.out.println("Supplier added successfully!");
+                    break;
+                    
+                case "2":
+                    System.out.print("Enter supplier number to update: ");
+                    int supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                    
+                    if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
+                        Supplier supplier = suppliers.get(supplierIndex);
+                        
+                        System.out.print("Enter new email: ");
+                        String newEmail = scanner.nextLine();
+                        supplier.setEmail(newEmail);
+                        
+                        System.out.print("Enter new phone: ");
+                        String newPhone = scanner.nextLine();
+                        supplier.setPhone(newPhone);
+                        
+                        System.out.print("Enter new address: ");
+                        String newAddress = scanner.nextLine();
+                        supplier.setAddress(newAddress);
+                        
+                        System.out.println("Supplier information updated successfully!");
+                    } else {
+                        System.out.println("Invalid supplier number.");
+                    }
+                    break;
+                    
+                    case "3":
+                    System.out.print("Enter supplier number to remove: ");
+                    supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                    
+                    if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
+                        Supplier supplier = suppliers.get(supplierIndex);
+                        
+                        // Remove the supplier
+                        if (inventory.removeSupplier(supplier.getId())) {
+                            System.out.println("Supplier removed successfully!");
+                        } else {
+                            System.out.println("Failed to remove supplier.");
+                        }
+                    } else {
+                        System.out.println("Invalid supplier number.");
+                    }
+                    break;
+                    
+                case "4":
+                    System.out.print("Enter supplier number to place order: ");
+                    supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                    
+                    if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
+                        Supplier supplier = suppliers.get(supplierIndex);
+                        
+                        System.out.println("\nPlace Order with " + supplier.getName());
+                        System.out.println("Available Ingredients:");
+                        
+                        List<Ingredient> ingredients = inventory.getAllIngredients();
+                        for (int i = 0; i < ingredients.size(); i++) {
+                            Ingredient ingredient = ingredients.get(i);
+                            System.out.println((i + 1) + ". " + ingredient.getName() + 
+                                    " - Current: " + ingredient.getQuantity() + " " + ingredient.getUnit());
+                        }
+                        
+                        System.out.print("\nEnter ingredient number to order: ");
                         int ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
                         
                         if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
                             Ingredient ingredient = ingredients.get(ingredientIndex);
                             
-                            System.out.print("Enter new quantity: ");
-                            double newQuantity = Double.parseDouble(scanner.nextLine());
+                            System.out.print("Enter quantity to order: ");
+                            double quantity = Double.parseDouble(scanner.nextLine());
                             
-                            inventory.updateIngredientQuantity(ingredient.getId(), newQuantity - ingredient.getQuantity());
-                            System.out.println("Quantity updated successfully!");
+                            // Simulate placing an order
+                            System.out.println("\nOrder placed with " + supplier.getName() + ":");
+                            System.out.println("- " + ingredient.getName() + ": " + quantity + " " + ingredient.getUnit());
+                            System.out.println("Expected delivery: 3-5 business days");
+                            
+                            // Create a notification for the order
+                            notificationSystem.sendNotification(
+                                    currentUser,
+                                    "Supplier Order Placed",
+                                    "Order placed with " + supplier.getName() + " for " + 
+                                    quantity + " " + ingredient.getUnit() + " of " + ingredient.getName() + ".",
+                                    "order"
+                            );
                         } else {
                             System.out.println("Invalid ingredient number.");
                         }
-                        break;
-                        
-                    case "3":
-                        System.out.print("Enter ingredient number to update: ");
-                        ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                        
-                        if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
-                            Ingredient ingredient = ingredients.get(ingredientIndex);
-                            
-                            System.out.print("Enter new minimum stock level: ");
-                            double newMinStock = Double.parseDouble(scanner.nextLine());
-                            
-                            ingredient.setMinimumStockLevel(newMinStock);
-                            System.out.println("Minimum stock level updated successfully!");
-                        } else {
-                            System.out.println("Invalid ingredient number.");
-                        }
-                        break;
-                        
-                    case "4":
-                        System.out.print("Enter ingredient number to remove: ");
-                        ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                        
-                        if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
-                            Ingredient ingredient = ingredients.get(ingredientIndex);
-                            
-                            // Remove the ingredient
-                            inventory.getIngredient(ingredient.getId()); // Get the ingredient first to ensure it exists
-                            // In a real implementation, we would call a method like inventory.removeIngredient(ingredient.getId())
-                            System.out.println("Ingredient removed successfully!");
-                        } else {
-                            System.out.println("Invalid ingredient number.");
-                        }
-                        break;
-                        
-                    case "5":
-                        List<Ingredient> lowStock = inventory.getLowStockIngredients();
-                        
-                        System.out.println("\nLow Stock Ingredients:");
-                        if (lowStock.isEmpty()) {
-                            System.out.println("No low stock ingredients.");
-                        } else {
-                            for (Ingredient ingredient : lowStock) {
-                                System.out.println("- " + ingredient.getName() + ": " + 
-                                        ingredient.getQuantity() + " " + ingredient.getUnit() + 
-                                        " (min: " + ingredient.getMinimumStockLevel() + ")");
-                            }
-                        }
-                        
-                        System.out.println("\nPress Enter to continue...");
-                        scanner.nextLine();
-                        break;
-                        
-                    case "6":
-                        managing = false;
-                        break;
-                        
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
-                }
+                    } else {
+                        System.out.println("Invalid supplier number.");
+                    }
+                    break;
+                    
+                case "5":
+                    managing = false;
+                    break;
+                    
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+            
+            if (!choice.equals("5")) {
+                System.out.println("\nPress Enter to continue...");
+                scanner.nextLine();
             }
         }
-
-
-private static void viewChefSchedules() {
+    }
+    
+    /**
+     * View chef schedules (admin function).
+     */
+    private static void viewChefSchedules() {
         System.out.println("\n===== Chef Schedules =====");
         
         Map<String, User> users = loginSystem.getUserDatabase();
@@ -874,263 +1219,10 @@ private static void viewChefSchedules() {
         System.out.println("\nPress Enter to continue...");
         scanner.nextLine();
     }
-    private static void placeNewOrder() {
-        System.out.println("\n===== Place New Order =====");
-        
-        // Create a new order
-        Order order = orderSystem.createOrder(currentUser);
-        System.out.println("New order created: " + order.getOrderId());
-        
-        // Show available meals
-        List<Meal> availableMeals = orderSystem.getAllMeals();
-        System.out.println("\nAvailable Meals:");
-        for (int i = 0; i < availableMeals.size(); i++) {
-            Meal meal = availableMeals.get(i);
-            System.out.println((i + 1) + ". " + meal.getName() + 
-                    " - $" + meal.getPrice() + 
-                    " (" + String.join(", ", meal.getDietaryCategories()) + ")");
-        }
-        
-        // Add meals to the order
-        boolean addingMeals = true;
-        while (addingMeals) {
-            System.out.print("\nEnter meal number to add (0 to finish): ");
-            String choice = scanner.nextLine();
-            
-            if (choice.equals("0")) {
-                addingMeals = false;
-            } else {
-                try {
-                    int mealIndex = Integer.parseInt(choice) - 1;
-                    if (mealIndex >= 0 && mealIndex < availableMeals.size()) {
-                        Meal meal = availableMeals.get(mealIndex);
-                        orderSystem.addMealToOrder(order.getOrderId(), meal.getId());
-                        System.out.println("Added to order: " + meal.getName());
-                    } else {
-                        System.out.println("Invalid meal number. Please try again.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
-                }
-            }
-        }
-        
-        // Update order status
-        orderSystem.updateOrderStatus(order.getOrderId(), "pending");
-        System.out.println("\nOrder placed successfully!");
-        System.out.println("Order #" + order.getOrderId() + " - Total: $" + 
-                String.format("%.2f", order.getTotalPrice()));
-        
-        // Assign to chef
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime end = now.plusMinutes(45);
-        Task task = new Task(order.getOrderId(), "chef", 
-                "Prepare order #" + order.getOrderId(), now, end);
-        chefSchedule.addTask(task);
-        
-        // Generate invoice
-        Invoice invoice = billingSystem.generateInvoice(order);
-        invoice.issue();
-        
-        // Send notification
-        notificationSystem.notifyOrderStatusChange(currentUser, order.getOrderId(), "pending");
-        notificationSystem.notifyChefAssignment("chef", order.getOrderId());
-        notificationSystem.notifyNewInvoice(currentUser, invoice);
-        
-        System.out.println("\nPress Enter to continue...");
-        scanner.nextLine();
-    }
     
     /**
-     * View the current user's order history.
+     * Generate reports (admin function).
      */
-    private static void viewOrderHistory() {
-        System.out.println("\n===== Order History =====");
-        
-        List<Order> orders = orderSystem.getUserOrders(currentUser);
-        
-        if (orders.isEmpty()) {
-            System.out.println("No orders found.");
-        } else {
-            for (Order order : orders) {
-                System.out.println("\nOrder #" + order.getOrderId());
-                System.out.println("Date: " + order.getOrderDate());
-                System.out.println("Status: " + order.getStatus());
-                System.out.println("Total: $" + String.format("%.2f", order.getTotalPrice()));
-                
-                System.out.println("Meals:");
-                for (Meal meal : order.getMeals()) {
-                    System.out.println("- " + meal.getName() + 
-                            " - $" + String.format("%.2f", meal.getPrice()));
-                }
-            }
-        }
-        
-        System.out.println("\nPress Enter to continue...");
-        scanner.nextLine();
-    }
-
-    private static void manageUsers() {
-        System.out.println("\n===== Manage Users =====");
-        
-        Map<String, User> users = loginSystem.getUserDatabase();
-        
-        System.out.println("Users:");
-        for (User user : users.values()) {
-            System.out.println("- " + user.getUsername() + " (" + user.getRole() + ")");
-        }
-        
-        System.out.println("\nPress Enter to continue...");
-        scanner.nextLine();
-    }
-
-    private static void manageSuppliers() {
-        System.out.println("\n===== Manage Suppliers =====");
-        
-        boolean managing = true;
-        while (managing) {
-            List<Supplier> suppliers = inventory.getAllSuppliers();
-            
-            System.out.println("Current Suppliers:");
-            for (int i = 0; i < suppliers.size(); i++) {
-                Supplier supplier = suppliers.get(i);
-                System.out.println((i + 1) + ". " + supplier.getName() + 
-                        " - Email: " + supplier.getEmail() + ", Phone: " + supplier.getPhone());
-            }
-            
-            System.out.println("\n1. Add New Supplier");
-            System.out.println("2. Update Supplier Information");
-            System.out.println("3. Remove Supplier");
-            System.out.println("4. Place Order with Supplier");
-            System.out.println("5. Back to Main Menu");
-            System.out.print("Enter your choice: ");
-            
-            String choice = scanner.nextLine();
-            
-            switch (choice) {
-                case "1":
-                    System.out.print("Enter supplier name: ");
-                    String name = scanner.nextLine();
-                    
-                    System.out.print("Enter supplier email: ");
-                    String email = scanner.nextLine();
-                    
-                    System.out.print("Enter supplier phone: ");
-                    String phone = scanner.nextLine();
-                    
-                    System.out.print("Enter supplier address: ");
-                    String address = scanner.nextLine();
-                    
-                    // Generate a unique ID for the supplier
-                    String id = "SUP" + System.currentTimeMillis();
-                    Supplier newSupplier = new Supplier(id, name, email, phone, address);
-                    inventory.addSupplier(newSupplier);
-                    System.out.println("Supplier added successfully!");
-                    break;
-                    
-                case "2":
-                    System.out.print("Enter supplier number to update: ");
-                    int supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                    
-                    if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
-                        Supplier supplier = suppliers.get(supplierIndex);
-                        
-                        System.out.print("Enter new email: ");
-                        String newEmail = scanner.nextLine();
-                        supplier.setEmail(newEmail);
-                        
-                        System.out.print("Enter new phone: ");
-                        String newPhone = scanner.nextLine();
-                        supplier.setPhone(newPhone);
-                        
-                        System.out.print("Enter new address: ");
-                        String newAddress = scanner.nextLine();
-                        supplier.setAddress(newAddress);
-                        
-                        System.out.println("Supplier information updated successfully!");
-                    } else {
-                        System.out.println("Invalid supplier number.");
-                    }
-                    break;
-                    
-                case "3":
-                    System.out.print("Enter supplier number to remove: ");
-                    supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                    
-                    if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
-                        Supplier supplier = suppliers.get(supplierIndex);
-                        
-                        // Remove the supplier
-                        inventory.getSupplier(supplier.getId()); // Get the supplier first to ensure it exists
-                        // In a real implementation, we would call a method like inventory.removeSupplier(supplier.getId())
-                        System.out.println("Supplier removed successfully!");
-                    } else {
-                        System.out.println("Invalid supplier number.");
-                    }
-                    break;
-                    
-                case "4":
-                    System.out.print("Enter supplier number to place order: ");
-                    supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                    
-                    if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
-                        Supplier supplier = suppliers.get(supplierIndex);
-                        
-                        System.out.println("\nPlace Order with " + supplier.getName());
-                        System.out.println("Available Ingredients:");
-                        
-                        List<Ingredient> ingredients = inventory.getAllIngredients();
-                        for (int i = 0; i < ingredients.size(); i++) {
-                            Ingredient ingredient = ingredients.get(i);
-                            System.out.println((i + 1) + ". " + ingredient.getName() + 
-                                    " - Current: " + ingredient.getQuantity() + " " + ingredient.getUnit());
-                        }
-                        
-                        System.out.print("\nEnter ingredient number to order: ");
-                        int ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                        
-                        if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
-                            Ingredient ingredient = ingredients.get(ingredientIndex);
-                            
-                            System.out.print("Enter quantity to order: ");
-                            double quantity = Double.parseDouble(scanner.nextLine());
-                            
-                            // Simulate placing an order
-                            System.out.println("\nOrder placed with " + supplier.getName() + ":");
-                            System.out.println("- " + ingredient.getName() + ": " + quantity + " " + ingredient.getUnit());
-                            System.out.println("Expected delivery: 3-5 business days");
-                            
-                            // Create a notification for the order
-                            notificationSystem.sendNotification(
-                                    currentUser,
-                                    "Supplier Order Placed",
-                                    "Order placed with " + supplier.getName() + " for " + 
-                                    quantity + " " + ingredient.getUnit() + " of " + ingredient.getName() + ".",
-                                    "order"
-                            );
-                        } else {
-                            System.out.println("Invalid ingredient number.");
-                        }
-                    } else {
-                        System.out.println("Invalid supplier number.");
-                    }
-                    break;
-                    
-                case "5":
-                    managing = false;
-                    break;
-                    
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-            
-            if (!choice.equals("5")) {
-                System.out.println("\nPress Enter to continue...");
-                scanner.nextLine();
-            }
-        }
-    }
- 
     private static void generateReports() {
         System.out.println("\n===== Generate Reports =====");
         
@@ -1139,7 +1231,8 @@ private static void viewChefSchedules() {
         System.out.println("2. Inventory Report");
         System.out.println("3. Chef Performance Report");
         System.out.println("4. Customer Preferences Report");
-        System.out.println("5. Back to Main Menu");
+        System.out.println("5. Order History Reports");
+        System.out.println("6. Back to Main Menu");
         System.out.print("Enter your choice: ");
         
         String choice = scanner.nextLine();
@@ -1162,6 +1255,10 @@ private static void viewChefSchedules() {
                 break;
                 
             case "5":
+                orderHistoryReports();
+                break;
+                
+            case "6":
                 return;
                 
             default:
@@ -1171,6 +1268,10 @@ private static void viewChefSchedules() {
         System.out.println("\nPress Enter to continue...");
         scanner.nextLine();
     }
+    
+    /**
+     * Generate a sales report.
+     */
     private static void generateSalesReport() {
         System.out.println("\n===== Sales Report =====");
         
@@ -1326,6 +1427,482 @@ private static void viewChefSchedules() {
     /**
      * Generate a customer preferences report.
      */
+    /**
+     * Create a custom meal with the selected ingredients.
+     * 
+     * @param ingredients List of ingredient names to include in the meal
+     * @return The created custom meal
+     */
+    private static Meal createCustomMeal(List<String> ingredients) {
+        System.out.println("\n===== Creating Custom Meal =====");
+        
+        // Generate a unique meal ID
+        String mealId = "MEAL" + System.currentTimeMillis();
+        
+        // Create a base customizable meal
+        Meal customMeal = customMealService.createCustomizableMeal(
+                mealId, 
+                "Custom Meal", 
+                "A meal customized with your selected ingredients", 
+                10.0);  // Base price
+        
+        // Add the selected ingredients
+        System.out.println("Adding ingredients to your custom meal...");
+        for (String ingredient : ingredients) {
+            boolean added = customMealService.addIngredientToMeal(customMeal, ingredient);
+            if (added) {
+                System.out.println("Added: " + ingredient);
+            } else {
+                System.out.println("Could not add: " + ingredient + " (incompatible or unavailable)");
+            }
+        }
+        
+        // Set dietary categories
+        customMeal.addDietaryCategory("Custom");
+        
+        return customMeal;
+    }
+    
+    /**
+     * Validate if the selected ingredient combinations are valid.
+     * 
+     * @param ingredients List of ingredient names to validate
+     * @return true if all ingredients are compatible, false otherwise
+     */
+    private static boolean validateIngredients(List<String> ingredients) {
+        System.out.println("\n===== Validating Ingredients =====");
+        
+        // Create a temporary meal to test compatibility
+        Meal testMeal = new Meal("TEST", "Test Meal", "For validation", 0.0);
+        
+        // Check each ingredient
+        for (String ingredient : ingredients) {
+            // If we can't add it to the test meal, the combination is invalid
+            if (!customMealService.addIngredientToMeal(testMeal, ingredient)) {
+                // Check if it's because of incompatibility (not availability)
+                if (customMealService.isIngredientAvailable(ingredient)) {
+                    System.out.println("Invalid combination: " + ingredient + " is incompatible with other ingredients");
+                    return false;
+                }
+            }
+        }
+        
+        System.out.println("All ingredient combinations are valid!");
+        return true;
+    }
+    
+    /**
+     * Check if a specific ingredient is available in the inventory.
+     * 
+     * @param ingredient Name of the ingredient to check
+     * @return true if the ingredient is available, false otherwise
+     */
+    private static boolean checkIngredientAvailability(String ingredient) {
+        boolean available = customMealService.isIngredientAvailable(ingredient);
+        
+        if (available) {
+            System.out.println("Ingredient is available: " + ingredient);
+        } else {
+            System.out.println("Ingredient is unavailable: " + ingredient);
+        }
+        
+        return available;
+    }
+    
+    /**
+     * Create a custom meal through the command line interface.
+     */
+    private static void createCustomMeal() {
+        System.out.println("\n===== Custom Meal Creator =====");
+        
+        // Show available ingredients
+        List<Ingredient> availableIngredients = inventory.getAllIngredients();
+        System.out.println("\nAvailable Ingredients:");
+        for (int i = 0; i < availableIngredients.size(); i++) {
+            System.out.println((i + 1) + ". " + availableIngredients.get(i).getName());
+        }
+        
+        // Get ingredients from user
+        List<String> selectedIngredients = new ArrayList<>();
+        boolean selecting = true;
+        
+        while (selecting) {
+            System.out.print("\nEnter ingredient number to add (0 to finish): ");
+            String choice = scanner.nextLine();
+            
+            if (choice.equals("0")) {
+                selecting = false;
+            } else {
+                try {
+                    int ingredientIndex = Integer.parseInt(choice) - 1;
+                    if (ingredientIndex >= 0 && ingredientIndex < availableIngredients.size()) {
+                        String ingredientName = availableIngredients.get(ingredientIndex).getName();
+                        
+                        // Check if ingredient is available
+                        if (checkIngredientAvailability(ingredientName)) {
+                            // Add to selected ingredients
+                            selectedIngredients.add(ingredientName);
+                            System.out.println("Added to selection: " + ingredientName);
+                            
+                            // Validate the current combination
+                            validateIngredients(selectedIngredients);
+                        }
+                    } else {
+                        System.out.println("Invalid ingredient number. Please try again.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
+                }
+            }
+        }
+        
+        // If no ingredients were selected, return
+        if (selectedIngredients.isEmpty()) {
+            System.out.println("No ingredients selected. Returning to main menu.");
+            System.out.println("\nPress Enter to continue...");
+            scanner.nextLine();
+            return;
+        }
+        
+        // Create the custom meal
+        Meal customMeal = createCustomMeal(selectedIngredients);
+        
+        // Ask if the user wants to order this meal
+        System.out.print("\nWould you like to place an order with this custom meal? (y/n): ");
+        String orderChoice = scanner.nextLine();
+        
+        if (orderChoice.equalsIgnoreCase("y")) {
+            // Create a new order
+            Order order = orderSystem.createOrder(currentUser);
+            System.out.println("New order created: " + order.getOrderId());
+            
+            // Add the custom meal to the order
+            order.addMeal(customMeal);
+            
+            // Update order status
+            orderSystem.updateOrderStatus(order.getOrderId(), "pending");
+            System.out.println("\nOrder placed successfully!");
+            System.out.println("Order #" + order.getOrderId() + " - Total: $" + 
+                    String.format("%.2f", order.getTotalPrice()));
+            
+            // Assign to chef
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime end = now.plusMinutes(45);
+            Task task = new Task(order.getOrderId(), "chef", 
+                    "Prepare custom order #" + order.getOrderId(), now, end);
+            chefSchedule.addTask(task);
+            
+            // Generate invoice
+            Invoice invoice = billingSystem.generateInvoice(order);
+            invoice.issue();
+            
+            // Send notification
+            notificationSystem.notifyOrderStatusChange(currentUser, order.getOrderId(), "pending");
+            notificationSystem.notifyChefAssignment("chef", order.getOrderId());
+            notificationSystem.notifyNewInvoice(currentUser, invoice);
+        }
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * Get the order history for a specific customer.
+     * 
+     * @param customerId ID of the customer
+     * @return List of orders for the specified customer
+     */
+    private static List<Order> getOrderHistory(String customerId) {
+        User user = loginSystem.getUserDatabase().get(customerId);
+        if (user == null) {
+            System.out.println("User not found: " + customerId);
+            return new ArrayList<>();
+        }
+        
+        List<Order> orders = user.getOrderHistory();
+        return orders;
+    }
+    
+    /**
+     * Get the complete order history for all customers.
+     * 
+     * @return List of all orders in the system
+     */
+    private static List<Order> getAllOrderHistory() {
+        List<Order> allOrders = new ArrayList<>();
+        
+        for (User user : loginSystem.getUserDatabase().values()) {
+            allOrders.addAll(user.getOrderHistory());
+        }
+        
+        return allOrders;
+    }
+    
+    /**
+     * Get order statistics for a specified date range.
+     * 
+     * @param startDate Start date for the statistics
+     * @param endDate End date for the statistics
+     * @return Map containing statistics like total orders, completed orders, etc.
+     */
+    private static Map<String, Object> getOrderStatistics(Date startDate, Date endDate) {
+        Map<String, Object> statistics = new HashMap<>();
+        
+        List<Order> allOrders = getAllOrderHistory();
+        List<Order> ordersInRange = new ArrayList<>();
+        
+        // Filter orders in the date range
+        for (Order order : allOrders) {
+            LocalDateTime orderDateTime = order.getOrderDate();
+            Date orderDate = java.util.Date.from(orderDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+            
+            if (!orderDate.before(startDate) && !orderDate.after(endDate)) {
+                ordersInRange.add(order);
+            }
+        }
+        
+        // Calculate statistics
+        int totalOrders = ordersInRange.size();
+        int completedOrders = 0;
+        int pendingOrders = 0;
+        double totalSales = 0.0;
+        
+        Map<String, Integer> mealPopularity = new HashMap<>();
+        
+        for (Order order : ordersInRange) {
+            totalSales += order.getTotalPrice();
+            
+            if (order.getStatus().equals("completed")) {
+                completedOrders++;
+            } else if (order.getStatus().equals("pending")) {
+                pendingOrders++;
+            }
+            
+            // Track meal popularity
+            for (Meal meal : order.getMeals()) {
+                String mealName = meal.getName();
+                mealPopularity.put(mealName, mealPopularity.getOrDefault(mealName, 0) + 1);
+            }
+        }
+        
+        // Calculate average order value
+        double averageOrderValue = totalOrders > 0 ? totalSales / totalOrders : 0;
+        
+        // Store statistics
+        statistics.put("totalOrders", totalOrders);
+        statistics.put("completedOrders", completedOrders);
+        statistics.put("pendingOrders", pendingOrders);
+        statistics.put("totalSales", totalSales);
+        statistics.put("averageOrderValue", averageOrderValue);
+        statistics.put("mealPopularity", mealPopularity);
+        
+        return statistics;
+    }
+    
+    /**
+     * View and analyze order history reports (admin function).
+     */
+    private static void orderHistoryReports() {
+        System.out.println("\n===== Order History Reports =====");
+        
+        System.out.println("Select report type:");
+        System.out.println("1. View All Orders");
+        System.out.println("2. View Orders by Customer");
+        System.out.println("3. View Order Statistics by Date Range");
+        System.out.println("4. Back to Reports Menu");
+        System.out.print("Enter your choice: ");
+        
+        String choice = scanner.nextLine();
+        
+        switch (choice) {
+            case "1":
+                viewAllOrders();
+                break;
+                
+            case "2":
+                viewOrdersByCustomer();
+                break;
+                
+            case "3":
+                viewOrderStatisticsByDateRange();
+                break;
+                
+            case "4":
+                return;
+                
+            default:
+                System.out.println("Invalid choice. Please try again.");
+        }
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+    
+    /**
+     * View all orders in the system.
+     */
+    private static void viewAllOrders() {
+        System.out.println("\n===== All Orders =====");
+        
+        List<Order> allOrders = getAllOrderHistory();
+        
+        if (allOrders.isEmpty()) {
+            System.out.println("No orders found in the system.");
+        } else {
+            System.out.println("Total Orders: " + allOrders.size());
+            
+            for (Order order : allOrders) {
+                System.out.println("\nOrder #" + order.getOrderId());
+                System.out.println("Customer: " + order.getUsername());
+                System.out.println("Date: " + order.getOrderDate());
+                System.out.println("Status: " + order.getStatus());
+                System.out.println("Total: $" + String.format("%.2f", order.getTotalPrice()));
+                
+                System.out.println("Meals:");
+                for (Meal meal : order.getMeals()) {
+                    System.out.println("- " + meal.getName() + 
+                            " - $" + String.format("%.2f", meal.getPrice()));
+                }
+            }
+        }
+    }
+    
+    /**
+     * View orders for a specific customer.
+     */
+    private static void viewOrdersByCustomer() {
+        System.out.println("\n===== Orders by Customer =====");
+        
+        // Show list of customers
+        Map<String, User> users = loginSystem.getUserDatabase();
+        List<String> customers = new ArrayList<>();
+        
+        // Find all users with customer role
+        for (User user : users.values()) {
+            if (!user.hasRole("admin") && !user.hasRole("chef")) {
+                customers.add(user.getUsername());
+            }
+        }
+        
+        if (customers.isEmpty()) {
+            System.out.println("No customers found in the system.");
+            return;
+        }
+        
+        System.out.println("\nAvailable Customers:");
+        for (int i = 0; i < customers.size(); i++) {
+            System.out.println((i + 1) + ". " + customers.get(i));
+        }
+        
+        System.out.print("\nEnter customer number: ");
+        String choice = scanner.nextLine();
+        
+        try {
+            int customerIndex = Integer.parseInt(choice) - 1;
+            if (customerIndex >= 0 && customerIndex < customers.size()) {
+                String customerId = customers.get(customerIndex);
+                
+                // Get and display customer's orders
+                List<Order> customerOrders = getOrderHistory(customerId);
+                
+                System.out.println("\nOrders for Customer: " + customerId);
+                
+                if (customerOrders.isEmpty()) {
+                    System.out.println("No orders found for this customer.");
+                } else {
+                    for (Order order : customerOrders) {
+                        System.out.println("\nOrder #" + order.getOrderId());
+                        System.out.println("Date: " + order.getOrderDate());
+                        System.out.println("Status: " + order.getStatus());
+                        System.out.println("Total: $" + String.format("%.2f", order.getTotalPrice()));
+                        
+                        System.out.println("Meals:");
+                        for (Meal meal : order.getMeals()) {
+                            System.out.println("- " + meal.getName() + 
+                                    " - $" + String.format("%.2f", meal.getPrice()));
+                        }
+                    }
+                }
+            } else {
+                System.out.println("Invalid customer number.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
+        }
+    }
+    
+    /**
+     * View order statistics for a specified date range.
+     */
+    private static void viewOrderStatisticsByDateRange() {
+        System.out.println("\n===== Order Statistics by Date Range =====");
+        
+        // Simple date input (in real implementation, use proper date parsing)
+        System.out.println("Enter start date (MM/DD/YYYY):");
+        String startDateStr = scanner.nextLine();
+        
+        System.out.println("Enter end date (MM/DD/YYYY):");
+        String endDateStr = scanner.nextLine();
+        
+        try {
+            // Parse dates (simple parsing, in real implementation use DateFormat)
+            String[] startParts = startDateStr.split("/");
+            String[] endParts = endDateStr.split("/");
+            
+            if (startParts.length != 3 || endParts.length != 3) {
+                System.out.println("Invalid date format. Please use MM/DD/YYYY.");
+                return;
+            }
+            
+            // Create java.util.Date objects
+            Date startDate = new Date(
+                    Integer.parseInt(startParts[2]) - 1900,  // Year (YYYY - 1900)
+                    Integer.parseInt(startParts[0]) - 1,     // Month (0-based)
+                    Integer.parseInt(startParts[1])          // Day
+            );
+            
+            Date endDate = new Date(
+                    Integer.parseInt(endParts[2]) - 1900,   // Year (YYYY - 1900)
+                    Integer.parseInt(endParts[0]) - 1,      // Month (0-based)
+                    Integer.parseInt(endParts[1])           // Day
+            );
+            
+            // Get statistics
+            Map<String, Object> statistics = getOrderStatistics(startDate, endDate);
+            
+            // Display statistics
+            System.out.println("\nOrder Statistics for " + startDateStr + " to " + endDateStr + ":");
+            System.out.println("Total Orders: " + statistics.get("totalOrders"));
+            System.out.println("Completed Orders: " + statistics.get("completedOrders"));
+            System.out.println("Pending Orders: " + statistics.get("pendingOrders"));
+            System.out.println("Total Sales: $" + String.format("%.2f", (Double)statistics.get("totalSales")));
+            System.out.println("Average Order Value: $" + String.format("%.2f", (Double)statistics.get("averageOrderValue")));
+            
+            // Display popular meals
+            @SuppressWarnings("unchecked")
+            Map<String, Integer> mealPopularity = (Map<String, Integer>)statistics.get("mealPopularity");
+            
+            System.out.println("\nMost Popular Meals:");
+            
+            // Sort meals by popularity
+            List<Map.Entry<String, Integer>> sortedMeals = new ArrayList<>(mealPopularity.entrySet());
+            sortedMeals.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+            
+            for (int i = 0; i < Math.min(5, sortedMeals.size()); i++) {
+                Map.Entry<String, Integer> entry = sortedMeals.get(i);
+                System.out.println((i + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " orders");
+            }
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid date format. Please use MM/DD/YYYY.");
+        } catch (Exception e) {
+            System.out.println("Error processing date range: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Generate a customer preferences report.
+     */
     private static void generateCustomerPreferencesReport() {
         System.out.println("\n===== Customer Preferences Report =====");
         
@@ -1360,7 +1937,7 @@ private static void viewChefSchedules() {
             }
         }
         
-        // Display report//
+        // Display report
         System.out.println("Total Customers: " + customers.size());
         
         System.out.println("\nDietary Preferences:");
@@ -1392,4 +1969,3 @@ private static void viewChefSchedules() {
         }
     }
 }
-
