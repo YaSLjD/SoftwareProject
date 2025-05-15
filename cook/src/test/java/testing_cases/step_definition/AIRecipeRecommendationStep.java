@@ -7,6 +7,7 @@ import app.OrderSystem;
 import app.RecipeRecommendationSystem;
 import app.User;
 import app.UserPreferenceSystem;
+import app.logger;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -55,8 +56,8 @@ public class AIRecipeRecommendationStep {
         User customer = loginSystem.getUserDatabase().get(currentCustomer);
         assertFalse("Customer should have order history", customer.getOrderHistory().isEmpty());
         
-        System.out.println("Customer has a history of previous orders");
-        System.out.println("Order history size: " + customer.getOrderHistory().size());
+        logger.info("Customer has a history of previous orders");
+        logger.info("Order history size: " + customer.getOrderHistory().size());
     }
     
     @When("they request personalized meal recommendations")
@@ -67,15 +68,15 @@ public class AIRecipeRecommendationStep {
         assertNotNull("Recommendations should not be null", recommendedMeals);
         assertFalse("Recommendations should not be empty", recommendedMeals.isEmpty());
         
-        System.out.println("Customer requested personalized meal recommendations");
-        System.out.println("Received " + recommendedMeals.size() + " recommendations");
+        logger.info("Customer requested personalized meal recommendations");
+        logger.info("Received " + recommendedMeals.size() + " recommendations");
     }
     
     @Then("the system should analyze their order history and preferences")
     public void theSystemShouldAnalyzeTheirOrderHistoryAndPreferences() {
         // In a real system, this would verify the analysis process
         // For now, we'll just print a message
-        System.out.println("System analyzed customer's order history and preferences");
+        logger.info("System analyzed customer's order history and preferences");
     }
     
     @And("suggest meals that match their taste profile")
@@ -83,7 +84,7 @@ public class AIRecipeRecommendationStep {
         // Verify recommendations are provided
         assertFalse("Recommendations should not be empty", recommendedMeals.isEmpty());
         
-        System.out.println("System suggested meals that match customer's taste profile:");
+        logger.info("System suggested meals that match customer's taste profile:");
         for (Meal meal : recommendedMeals) {
             System.out.println("- " + meal.getName() + " (" + 
                     String.join(", ", meal.getDietaryCategories()) + ")");
@@ -111,9 +112,9 @@ public class AIRecipeRecommendationStep {
         assertFalse("Customer should have dietary preferences", preferences.isEmpty());
         assertFalse("Customer should have allergies", allergies.isEmpty());
         
-        System.out.println("Customer has specified dietary preferences:");
-        System.out.println("Preferences: " + String.join(", ", preferences));
-        System.out.println("Allergies: " + String.join(", ", allergies));
+        logger.info("Customer has specified dietary preferences:");
+        logger.info("Preferences: " + String.join(", ", preferences));
+        logger.info("Allergies: " + String.join(", ", allergies));
     }
     
     @When("they request meal recommendations")
@@ -123,8 +124,8 @@ public class AIRecipeRecommendationStep {
         
         assertNotNull("Recommendations should not be null", recommendedMeals);
         
-        System.out.println("Customer requested meal recommendations");
-        System.out.println("Received " + recommendedMeals.size() + " recommendations");
+        logger.info("Customer requested meal recommendations");
+        logger.info("Received " + recommendedMeals.size() + " recommendations");
     }
     
     @Then("the system should only suggest meals that match their dietary preferences")
@@ -141,7 +142,7 @@ public class AIRecipeRecommendationStep {
                     matchesPreference || meal.getDietaryCategories().isEmpty());
         }
         
-        System.out.println("System suggested meals that match dietary preferences");
+        logger.info("System suggested meals that match dietary preferences");
     }
     
     @And("exclude meals containing allergens they've specified")
@@ -157,7 +158,7 @@ public class AIRecipeRecommendationStep {
             assertFalse("Meal should not contain allergens: " + meal.getName(), containsAllergen);
         }
         
-        System.out.println("System excluded meals containing specified allergens");
+        logger.info("System excluded meals containing specified allergens");
     }
     
     @Given("a customer wants a meal plan for a week")
@@ -165,7 +166,7 @@ public class AIRecipeRecommendationStep {
         // Verify customer exists
         assertTrue("Customer should exist", loginSystem.getUserDatabase().containsKey(currentCustomer));
         
-        System.out.println("Customer wants a meal plan for a week");
+        logger.info("Customer wants a meal plan for a week");
     }
     
     @When("they request a personalized meal plan")
@@ -198,8 +199,8 @@ public class AIRecipeRecommendationStep {
             }
         }
         
-        System.out.println("Customer requested a personalized meal plan");
-        System.out.println("Meal plan contains " + recommendedMeals.size() + " meals");
+        logger.info("Customer requested a personalized meal plan");
+        logger.info("Meal plan contains " + recommendedMeals.size() + " meals");
     }
     
     @Then("the system should generate a balanced meal plan")
@@ -208,7 +209,7 @@ public class AIRecipeRecommendationStep {
         // For now, we'll just verify we have enough meals
         assertTrue("Meal plan should have enough meals", recommendedMeals.size() >= 7);
         
-        System.out.println("System generated a balanced meal plan");
+        logger.info("System generated a balanced meal plan");
     }
     
     @And("ensure variety across the suggested meals")
@@ -222,7 +223,7 @@ public class AIRecipeRecommendationStep {
         
         assertTrue("Meal plan should have variety", uniqueMeals >= 3);
         
-        System.out.println("Meal plan has variety with " + uniqueMeals + " unique meals");
+        logger.info("Meal plan has variety with " + uniqueMeals + " unique meals");
     }
     
     @Given("a customer is interested in meals with specific ingredients")
@@ -232,8 +233,8 @@ public class AIRecipeRecommendationStep {
         preferredIngredients.add("Tomato");
         preferredIngredients.add("Basil");
         
-        System.out.println("Customer is interested in meals with specific ingredients:");
-        System.out.println(String.join(", ", preferredIngredients));
+        logger.info("Customer is interested in meals with specific ingredients:");
+        logger.info(String.join(", ", preferredIngredients));
     }
     
     @When("they search for meals containing those ingredients")
@@ -247,17 +248,17 @@ public class AIRecipeRecommendationStep {
             recommendedMeals = new ArrayList<>();
         }
         
-        System.out.println("Customer searched for meals containing specific ingredients");
-        System.out.println("Found " + recommendedMeals.size() + " matching meals");
+        logger.info("Customer searched for meals containing specific ingredients");
+        logger.info("Found " + recommendedMeals.size() + " matching meals");
     }
     
     @Then("the system should recommend meals that prominently feature those ingredients")
     public void theSystemShouldRecommendMealsThatProminentlyFeatureThoseIngredients() {
         // In a real system, this would verify the meals feature the ingredients
         // For now, we'll just print the recommendations
-        System.out.println("System recommended meals featuring the requested ingredients:");
+        logger.info("System recommended meals featuring the requested ingredients:");
         for (Meal meal : recommendedMeals) {
-            System.out.println("- " + meal.getName());
+            logger.info("- " + meal.getName());
         }
     }
     
@@ -265,7 +266,7 @@ public class AIRecipeRecommendationStep {
     public void rankThemByRelevanceToTheCustomerSPreferences() {
         // In a real system, this would verify the ranking
         // For now, we'll just print a message
-        System.out.println("Meals are ranked by relevance to customer preferences");
+        logger.info("Meals are ranked by relevance to customer preferences");
     }
     
     @Given("a customer wants a unique recipe")
@@ -276,7 +277,7 @@ public class AIRecipeRecommendationStep {
         preferredIngredients.add("Spinach");
         preferredIngredients.add("Garlic");
         
-        System.out.println("Customer wants a unique recipe");
+        logger.info("Customer wants a unique recipe");
     }
     
     @When("they provide their preferred ingredients and dietary category")
@@ -289,9 +290,9 @@ public class AIRecipeRecommendationStep {
         assertNotNull("Custom recipe should not be null", customRecipe);
         assertFalse("Custom recipe should not be empty", customRecipe.isEmpty());
         
-        System.out.println("Customer provided preferred ingredients and dietary category:");
-        System.out.println("Ingredients: " + String.join(", ", preferredIngredients));
-        System.out.println("Dietary Category: Low-carb");
+        logger.info("Customer provided preferred ingredients and dietary category:");
+        logger.info("Ingredients: " + String.join(", ", preferredIngredients));
+        logger.info("Dietary Category: Low-carb");
     }
     
     @Then("the system should generate a custom recipe using AI")
@@ -300,15 +301,15 @@ public class AIRecipeRecommendationStep {
         assertNotNull("Custom recipe should not be null", customRecipe);
         assertFalse("Custom recipe should not be empty", customRecipe.isEmpty());
         
-        System.out.println("System generated a custom recipe using AI");
+        logger.info("System generated a custom recipe using AI");
     }
     
     @And("ensure the recipe is compatible with their dietary needs")
     public void ensureTheRecipeIsCompatibleWithTheirDietaryNeeds() {
         // In a real system, this would verify compatibility with dietary needs
         // For now, we'll just print the recipe
-        System.out.println("Custom recipe is compatible with dietary needs:");
-        System.out.println(customRecipe);
+        logger.info("Custom recipe is compatible with dietary needs:");
+        logger.info(customRecipe);
     }
     
     @Given("a customer has enjoyed a specific meal")
@@ -326,7 +327,7 @@ public class AIRecipeRecommendationStep {
             selectedMeal.addIngredient("Basil");
         }
         
-        System.out.println("Customer has enjoyed a specific meal: " + selectedMeal.getName());
+        logger.info("Customer has enjoyed a specific meal: " + selectedMeal.getName());
     }
     
     @When("they look for similar meals")
@@ -336,17 +337,17 @@ public class AIRecipeRecommendationStep {
         
         assertNotNull("Similar meals should not be null", recommendedMeals);
         
-        System.out.println("Customer looked for meals similar to: " + selectedMeal.getName());
-        System.out.println("Found " + recommendedMeals.size() + " similar meals");
+        logger.info("Customer looked for meals similar to: " + selectedMeal.getName());
+        logger.info("Found " + recommendedMeals.size() + " similar meals");
     }
     
     @Then("the system should recommend meals with similar ingredients or flavor profiles")
     public void theSystemShouldRecommendMealsWithSimilarIngredientsOrFlavorProfiles() {
         // In a real system, this would verify similarity
         // For now, we'll just print the recommendations
-        System.out.println("System recommended meals with similar ingredients or flavor profiles:");
+        logger.info("System recommended meals with similar ingredients or flavor profiles:");
         for (Meal meal : recommendedMeals) {
-            System.out.println("- " + meal.getName());
+            logger.info("- " + meal.getName());
         }
     }
     
@@ -354,14 +355,14 @@ public class AIRecipeRecommendationStep {
     public void explainWhyEachRecommendationWasMade() {
         // In a real system, this would provide explanations
         // For now, we'll just print a message
-        System.out.println("System explained why each recommendation was made");
+        logger.info("System explained why each recommendation was made");
     }
     
     @Given("it is a specific season of the year")
     public void itIsASpecificSeasonOfTheYear() {
         // In a real system, this would set up the current season
         // For now, we'll just print a message
-        System.out.println("It is summer season");
+        logger.info("It is summer season");
     }
     
     @When("a customer browses the menu")
@@ -370,54 +371,54 @@ public class AIRecipeRecommendationStep {
         // For now, we'll just get all meals
         recommendedMeals = orderSystem.getAllMeals();
         
-        System.out.println("Customer browsed the menu");
+        logger.info("Customer browsed the menu");
     }
     
     @Then("the system should highlight seasonal recipes")
     public void theSystemShouldHighlightSeasonalRecipes() {
         // In a real system, this would verify seasonal recipes are highlighted
         // For now, we'll just print a message
-        System.out.println("System highlighted seasonal recipes");
+        logger.info("System highlighted seasonal recipes");
     }
     
     @And("promote meals using in-season ingredients")
     public void promoteMealsUsingInSeasonIngredients() {
         // In a real system, this would verify promotion of seasonal ingredients
         // For now, we'll just print a message
-        System.out.println("System promoted meals using in-season ingredients:");
-        System.out.println("- Summer Salad (featuring fresh tomatoes and cucumbers)");
-        System.out.println("- Grilled Vegetable Platter (featuring zucchini and bell peppers)");
-        System.out.println("- Berry Parfait (featuring seasonal berries)");
+        logger.info("System promoted meals using in-season ingredients:");
+        logger.info("- Summer Salad (featuring fresh tomatoes and cucumbers)");
+        logger.info("- Grilled Vegetable Platter (featuring zucchini and bell peppers)");
+        logger.info("- Berry Parfait (featuring seasonal berries)");
     }
     
     @Given("a customer provides feedback on recommended meals")
     public void aCustomerProvidesFeedbackOnRecommendedMeals() {
         // In a real system, this would set up feedback data
         // For now, we'll just print a message
-        System.out.println("Customer provided feedback on recommended meals:");
-        System.out.println("- Veggie Pasta: 5 stars");
-        System.out.println("- Chicken Salad: 3 stars");
-        System.out.println("- Peanut Curry: 1 star (contains allergen)");
+        logger.info("Customer provided feedback on recommended meals:");
+        logger.info("- Veggie Pasta: 5 stars");
+        logger.info("- Chicken Salad: 3 stars");
+        logger.info("- Peanut Curry: 1 star (contains allergen)");
     }
     
     @When("they rate the recommendations")
     public void theyRateTheRecommendations() {
         // In a real system, this would process the ratings
         // For now, we'll just print a message
-        System.out.println("Customer rated the recommendations");
+        logger.info("Customer rated the recommendations");
     }
     
     @Then("the system should incorporate this feedback into future recommendations")
     public void theSystemShouldIncorporateThisFeedbackIntoFutureRecommendations() {
         // In a real system, this would verify feedback incorporation
         // For now, we'll just print a message
-        System.out.println("System incorporated feedback into future recommendations");
+        logger.info("System incorporated feedback into future recommendations");
     }
     
     @And("improve the accuracy of personalized suggestions over time")
     public void improveTheAccuracyOfPersonalizedSuggestionsOverTime() {
         // In a real system, this would verify improvement over time
         // For now, we'll just print a message
-        System.out.println("System will improve the accuracy of personalized suggestions over time");
+        logger.info("System will improve the accuracy of personalized suggestions over time");
     }
 }

@@ -13,6 +13,7 @@ import app.Meal;
 import app.Order;
 import app.OrderSystem;
 import app.User;
+import app.logger;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -66,15 +67,15 @@ public class CustomMealRequestsStep {
         orderSystem.addMeal(currentMeal);
         
         assertNotNull("A customizable meal should be available", currentMeal);
-        System.out.println("Customizable meal available: " + currentMeal.getName());
+        logger.info("Customizable meal available: " + currentMeal.getName());
     }
     
     @When("the customer selects the meal for customization")
     public void theCustomerSelectsTheMealForCustomization() {
         originalPrice = currentMeal.getPrice();
-        System.out.println("Customer selected the meal for customization: " + currentMeal.getName());
-        System.out.println("Original price: $" + String.format("%.2f", originalPrice));
-        System.out.println("Default ingredients: " + currentMeal.getIngredients());
+        logger.info("Customer selected the meal for customization: " + currentMeal.getName());
+        logger.info("Original price: $" + String.format("%.2f", originalPrice));
+        logger.info("Default ingredients: " + currentMeal.getIngredients());
     }
     
     @When("the customer adds ingredient {string} to the meal")
@@ -83,7 +84,7 @@ public class CustomMealRequestsStep {
         assertTrue("Should be able to add " + ingredientName + " to the meal", success);
         
         addedIngredients.add(ingredientName);
-        System.out.println("Added ingredient: " + ingredientName);
+        logger.info("Added ingredient: " + ingredientName);
     }
     
     @When("the customer removes ingredient {string} from the meal")
@@ -92,7 +93,7 @@ public class CustomMealRequestsStep {
         assertTrue("Should be able to remove " + ingredientName + " from the meal", success);
         
         removedIngredients.add(ingredientName);
-        System.out.println("Removed ingredient: " + ingredientName);
+        logger.info("Removed ingredient: " + ingredientName);
     }
     
     @When("the customer attempts to add incompatible ingredient {string}")
@@ -102,7 +103,7 @@ public class CustomMealRequestsStep {
         
         if (!isCompatible) {
             incompatibilityWarning = "Warning: " + ingredientName + " is not compatible with your current ingredients.";
-            System.out.println(incompatibilityWarning);
+            logger.info(incompatibilityWarning);
         } else {
             // If there's no compatibility issue, try to add it
             boolean success = customMealService.addIngredientToMeal(currentMeal, ingredientName);
@@ -118,7 +119,7 @@ public class CustomMealRequestsStep {
         
         if (!isAvailable) {
             unavailabilityMessage = "Sorry, " + ingredientName + " is currently unavailable.";
-            System.out.println(unavailabilityMessage);
+            logger.info(unavailabilityMessage);
         } else {
             // If it's available (which shouldn't happen for this test), try to add it
             boolean success = customMealService.addIngredientToMeal(currentMeal, ingredientName);
@@ -132,14 +133,14 @@ public class CustomMealRequestsStep {
     public void theMealShouldContainIngredient(String ingredientName) {
         assertTrue("Meal should contain " + ingredientName, 
                 currentMeal.getIngredients().contains(ingredientName));
-        System.out.println("Confirmed meal contains: " + ingredientName);
+        logger.info("Confirmed meal contains: " + ingredientName);
     }
     
     @Then("the meal should not contain ingredient {string}")
     public void theMealShouldNotContainIngredient(String ingredientName) {
         assertFalse("Meal should not contain " + ingredientName, 
                 currentMeal.getIngredients().contains(ingredientName));
-        System.out.println("Confirmed meal does not contain: " + ingredientName);
+        logger.info("Confirmed meal does not contain: " + ingredientName);
     }
     
     @Then("the price should be updated accordingly")
@@ -151,19 +152,19 @@ public class CustomMealRequestsStep {
         currentMeal.setPrice(expectedPrice);
         
         assertNotEquals("Price should be different from original", originalPrice, currentMeal.getPrice(), 0.01);
-        System.out.println("New price: $" + String.format("%.2f", currentMeal.getPrice()));
+        logger.info("New price: $" + String.format("%.2f", currentMeal.getPrice()));
     }
     
     @Then("the system should display an incompatibility warning")
     public void theSystemShouldDisplayAnIncompatibilityWarning() {
         assertNotNull("System should display an incompatibility warning", incompatibilityWarning);
-        System.out.println("Compatibility warning displayed: " + incompatibilityWarning);
+        logger.info("Compatibility warning displayed: " + incompatibilityWarning);
     }
     
     @Then("the system should display an unavailability message")
     public void theSystemShouldDisplayAnUnavailabilityMessage() {
         assertNotNull("System should display an unavailability message", unavailabilityMessage);
-        System.out.println("Unavailability message displayed: " + unavailabilityMessage);
+        logger.info("Unavailability message displayed: " + unavailabilityMessage);
     }
     
     @Given("the customer has customized a meal")
@@ -191,7 +192,7 @@ public class CustomMealRequestsStep {
         boolean success = orderSystem.addMealToOrder(currentOrder.getOrderId(), currentMeal.getId());
         assertTrue("Meal should be added to the order", success);
         
-        System.out.println("Customer placed order #" + currentOrder.getOrderId() + " with the customized meal");
+        logger.info("Customer placed order #" + currentOrder.getOrderId() + " with the customized meal");
     }
     
     @Then("the order should be created with the customized meal")
@@ -230,6 +231,6 @@ public class CustomMealRequestsStep {
         }
         
         assertTrue("The order should appear in the customer's order history", orderFound);
-        System.out.println("Confirmed the order appears in the customer's order history");
+        logger.info("Confirmed the order appears in the customer's order history");
     }
 }

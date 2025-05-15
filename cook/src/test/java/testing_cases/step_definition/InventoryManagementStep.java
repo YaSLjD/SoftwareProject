@@ -6,6 +6,7 @@ import app.LoginSystem;
 import app.Order;
 import app.OrderSystem;
 import app.Supplier;
+import app.logger;
 import app.NotificationSystem;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
@@ -45,7 +46,7 @@ public class InventoryManagementStep {
         String loginResult = loginSystem.login(currentAdmin, "adminpass");
         assertTrue("Admin should be logged in", loginResult.startsWith("Welcome"));
         
-        System.out.println("Admin is logged into the system");
+        logger.info("Admin is logged into the system");
     }
     
     @When("they add a new ingredient with details:")
@@ -67,7 +68,7 @@ public class InventoryManagementStep {
         // Add to inventory
         inventory.addIngredient(currentIngredient);
         
-        System.out.println("Added new ingredient: " + name + " (" + quantity + " " + unit + ")");
+        logger.info("Added new ingredient: " + name + " (" + quantity + " " + unit + ")");
     }
     
     @Then("the ingredient should be added to the inventory")
@@ -77,7 +78,7 @@ public class InventoryManagementStep {
         assertNotNull("Ingredient should exist in inventory", ingredient);
         assertEquals("Ingredient name should match", currentIngredient.getName(), ingredient.getName());
         
-        System.out.println("Ingredient was added to the inventory: " + ingredient.getName());
+        logger.info("Ingredient was added to the inventory: " + ingredient.getName());
     }
     
     @And("the current stock level should be {double} kg")
@@ -86,7 +87,7 @@ public class InventoryManagementStep {
         Ingredient ingredient = inventory.getIngredient(currentIngredient.getId());
         assertEquals("Stock level should match", expectedQuantity, ingredient.getQuantity(), 0.01);
         
-        System.out.println("Current stock level is " + ingredient.getQuantity() + " " + ingredient.getUnit());
+        logger.info("Current stock level is " + ingredient.getQuantity() + " " + ingredient.getUnit());
     }
     
     @Given("the inventory has the following ingredients:")
@@ -105,7 +106,7 @@ public class InventoryManagementStep {
             Ingredient ingredient = new Ingredient(id, name, "kg", quantity, minLevel);
             inventory.addIngredient(ingredient);
             
-            System.out.println("Added test ingredient: " + name + " (" + quantity + " kg)");
+            logger.info("Added test ingredient: " + name + " (" + quantity + " kg)");
             
             // Store original quantities for flour and sugar for later tests
             if (name.equals("Flour")) {
@@ -121,8 +122,8 @@ public class InventoryManagementStep {
         // Get low stock ingredients
         lowStockIngredients = inventory.getLowStockIngredients();
         
-        System.out.println("Admin checked for low stock ingredients");
-        System.out.println("Found " + lowStockIngredients.size() + " low stock ingredients");
+        logger.info("Admin checked for low stock ingredients");
+        logger.info("Found " + lowStockIngredients.size() + " low stock ingredients");
     }
     
     @Then("the system should identify {string} as low stock")
@@ -133,7 +134,7 @@ public class InventoryManagementStep {
         
         assertTrue(ingredientName + " should be identified as low stock", isLowStock);
         
-        System.out.println(ingredientName + " was identified as low stock");
+        logger.info(ingredientName + " was identified as low stock");
     }
     
     @And("the system should not identify {string} as low stock")
@@ -144,7 +145,7 @@ public class InventoryManagementStep {
         
         assertFalse(ingredientName + " should not be identified as low stock", isLowStock);
         
-        System.out.println(ingredientName + " was not identified as low stock");
+        logger.info(ingredientName + " was not identified as low stock");
     }
     
     @Given("an order with the following ingredients:")
@@ -159,7 +160,7 @@ public class InventoryManagementStep {
             
             orderIngredients.put(name, quantity);
             
-            System.out.println("Order includes: " + name + " (" + quantity + " kg)");
+            logger.info("Order includes: " + name + " (" + quantity + " kg)");
         }
     }
     
@@ -189,11 +190,11 @@ public class InventoryManagementStep {
                     inventory.updateIngredientQuantity(ingredient.getId(), -quantity);
                 }
                 
-                System.out.println("Reduced " + name + " by " + quantity + " kg");
+                logger.info("Reduced " + name + " by " + quantity + " kg");
             }
         }
         
-        System.out.println("Chef marked the order as prepared");
+        logger.info("Chef marked the order as prepared");
     }
     
     @Then("the inventory should be updated with reduced quantities")
@@ -210,7 +211,7 @@ public class InventoryManagementStep {
             
             assertNotNull("Ingredient should exist in inventory", ingredient);
             
-            System.out.println("Inventory updated for " + name + ": " + ingredient.getQuantity() + " kg");
+            logger.info("Inventory updated for " + name + ": " + ingredient.getQuantity() + " kg");
         }
     }
     
@@ -225,14 +226,14 @@ public class InventoryManagementStep {
         assertNotNull("Ingredient should exist in inventory", ingredient);
         assertEquals("Quantity should match expected value", expectedQuantity, ingredient.getQuantity(), 0.01);
         
-        System.out.println("New quantity of " + ingredientName + " is " + ingredient.getQuantity() + " kg");
+        logger.info("New quantity of " + ingredientName + " is " + ingredient.getQuantity() + " kg");
     }
     
     @Given("a purchase order has been placed with a supplier")
     public void aPurchaseOrderHasBeenPlacedWithASupplier() {
         // In a real system, this would create a purchase order
         // For now, we'll just simulate it
-        System.out.println("Purchase order has been placed with a supplier");
+        logger.info("Purchase order has been placed with a supplier");
     }
     
     @When("the admin records the receipt of new inventory")
@@ -246,7 +247,7 @@ public class InventoryManagementStep {
         
         if (flour != null) {
             inventory.updateIngredientQuantity(flour.getId(), 10.0); // Add 10 kg
-            System.out.println("Received 10 kg of Flour");
+            logger.info("Received 10 kg of Flour");
         }
         
         // Update sugar quantity
@@ -257,10 +258,10 @@ public class InventoryManagementStep {
         
         if (sugar != null) {
             inventory.updateIngredientQuantity(sugar.getId(), 5.0); // Add 5 kg
-            System.out.println("Received 5 kg of Sugar");
+            logger.info("Received 5 kg of Sugar");
         }
         
-        System.out.println("Admin recorded receipt of new inventory");
+        logger.info("Admin recorded receipt of new inventory");
     }
     
     @Then("the system should update the inventory quantities")
@@ -278,12 +279,12 @@ public class InventoryManagementStep {
         
         if (flour != null) {
             assertTrue("Flour quantity should be increased", flour.getQuantity() > originalFlourQuantity);
-            System.out.println("Flour quantity updated to " + flour.getQuantity() + " kg");
+            logger.info("Flour quantity updated to " + flour.getQuantity() + " kg");
         }
         
         if (sugar != null) {
             assertTrue("Sugar quantity should be increased", sugar.getQuantity() > originalSugarQuantity);
-            System.out.println("Sugar quantity updated to " + sugar.getQuantity() + " kg");
+            logger.info("Sugar quantity updated to " + sugar.getQuantity() + " kg");
         }
     }
     
@@ -291,14 +292,14 @@ public class InventoryManagementStep {
     public void recordTheTransactionInTheInventoryHistory() {
         // In a real system, this would record the transaction
         // For now, we'll just simulate it
-        System.out.println("Transaction recorded in inventory history");
+        logger.info("Transaction recorded in inventory history");
     }
     
     @Given("the admin has configured automatic reordering for {string}")
     public void theAdminHasConfiguredAutomaticReorderingFor(String ingredientName) {
         // In a real system, this would configure automatic reordering
         // For now, we'll just simulate it
-        System.out.println("Automatic reordering configured for " + ingredientName);
+        logger.info("Automatic reordering configured for " + ingredientName);
     }
     
     @When("the {string} inventory falls below the minimum level")
@@ -323,46 +324,46 @@ public class InventoryManagementStep {
     public void theSystemShouldAutomaticallyGenerateAPurchaseOrder() {
         // In a real system, this would generate a purchase order
         // For now, we'll just simulate it
-        System.out.println("System automatically generated a purchase order");
+        logger.info("System automatically generated a purchase order");
     }
     
     @And("notify the admin about the automatic reorder")
     public void notifyTheAdminAboutTheAutomaticReorder() {
         // In a real system, this would send a notification
         // For now, we'll just simulate it
-        System.out.println("Admin notified about the automatic reorder");
+        logger.info("Admin notified about the automatic reorder");
     }
     
     @Given("the system has recorded ingredient usage for the past month")
     public void theSystemHasRecordedIngredientUsageForThePastMonth() {
         // In a real system, this would have usage data
         // For now, we'll just simulate it
-        System.out.println("System has recorded ingredient usage for the past month");
+        logger.info("System has recorded ingredient usage for the past month");
     }
     
     @When("the admin requests an ingredient usage report")
     public void theAdminRequestsAnIngredientUsageReport() {
         // In a real system, this would generate a report
         // For now, we'll just simulate it
-        System.out.println("Admin requested an ingredient usage report");
+        logger.info("Admin requested an ingredient usage report");
     }
     
     @Then("the system should display usage statistics for each ingredient")
     public void theSystemShouldDisplayUsageStatisticsForEachIngredient() {
         // In a real system, this would display statistics
         // For now, we'll just simulate it
-        System.out.println("System displayed usage statistics for each ingredient");
-        System.out.println("- Flour: 25 kg used in the past month");
-        System.out.println("- Sugar: 15 kg used in the past month");
-        System.out.println("- Salt: 5 kg used in the past month");
+        logger.info("System displayed usage statistics for each ingredient");
+        logger.info("- Flour: 25 kg used in the past month");
+        logger.info("- Sugar: 15 kg used in the past month");
+        logger.info("- Salt: 5 kg used in the past month");
     }
     
     @And("highlight the most frequently used ingredients")
     public void highlightTheMostFrequentlyUsedIngredients() {
         // In a real system, this would highlight the most used ingredients
         // For now, we'll just simulate it
-        System.out.println("System highlighted the most frequently used ingredients:");
-        System.out.println("1. Flour (25 kg)");
-        System.out.println("2. Sugar (15 kg)");
+        logger.info("System highlighted the most frequently used ingredients:");
+        logger.info("1. Flour (25 kg)");
+        logger.info("2. Sugar (15 kg)");
     }
 }

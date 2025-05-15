@@ -5,6 +5,7 @@ import app.Invoice;
 import app.LoginSystem;
 import app.Order;
 import app.OrderSystem;
+import app.logger;
 import app.NotificationSystem;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -48,8 +49,8 @@ public class BillingAndInvoicingStep {
         
         assertTrue("Meals should be added to order", added1 && added2);
         
-        System.out.println("Customer has placed an order: " + currentOrder.getOrderId());
-        System.out.println("Order contains " + currentOrder.getMeals().size() + " meals");
+        logger.info("Customer has placed an order: " + currentOrder.getOrderId());
+        logger.info("Order contains " + currentOrder.getMeals().size() + " meals");
     }
     
     @When("the order is completed")
@@ -60,7 +61,7 @@ public class BillingAndInvoicingStep {
         
         assertEquals("Order status should be completed", "completed", currentOrder.getStatus());
         
-        System.out.println("Order has been completed: " + currentOrder.getOrderId());
+        logger.info("Order has been completed: " + currentOrder.getOrderId());
     }
     
     @Then("the system should automatically generate an invoice")
@@ -69,7 +70,7 @@ public class BillingAndInvoicingStep {
         currentInvoice = billingSystem.generateInvoice(currentOrder);
         assertNotNull("Invoice should be generated", currentInvoice);
         
-        System.out.println("System generated invoice: " + currentInvoice.getInvoiceId());
+        logger.info("System generated invoice: " + currentInvoice.getInvoiceId());
     }
     
     @And("include all order items with correct prices")
@@ -83,8 +84,8 @@ public class BillingAndInvoicingStep {
         assertEquals("Invoice total should match order total", 
                 currentOrder.getTotalPrice(), currentInvoice.getTotalAmount(), 0.01);
         
-        System.out.println("Invoice includes all order items with correct prices");
-        System.out.println("Invoice total: $" + String.format("%.2f", currentInvoice.getTotalAmount()));
+        logger.info("Invoice includes all order items with correct prices");
+        logger.info("Invoice total: $" + String.format("%.2f", currentInvoice.getTotalAmount()));
     }
     
     @Given("an invoice has been generated for an order")
@@ -100,7 +101,7 @@ public class BillingAndInvoicingStep {
         currentInvoice = billingSystem.generateInvoice(currentOrder);
         assertNotNull("Invoice should be generated", currentInvoice);
         
-        System.out.println("Invoice has been generated: " + currentInvoice.getInvoiceId());
+        logger.info("Invoice has been generated: " + currentInvoice.getInvoiceId());
     }
     
     @When("the system processes the invoice")
@@ -109,22 +110,22 @@ public class BillingAndInvoicingStep {
         currentInvoice.issue();
         assertEquals("Invoice status should be issued", "issued", currentInvoice.getStatus());
         
-        System.out.println("System processed the invoice: " + currentInvoice.getInvoiceId());
+        logger.info("System processed the invoice: " + currentInvoice.getInvoiceId());
     }
     
     @Then("the customer should receive a notification with the invoice details")
     public void theCustomerShouldReceiveANotificationWithTheInvoiceDetails() {
         // In a real system, we would verify that a notification was sent
         // For now, we'll just print a message
-        System.out.println("Customer received notification with invoice details");
+        logger.info("Customer received notification with invoice details");
     }
     
     @And("be able to view the full invoice")
     public void beAbleToViewTheFullInvoice() {
         // In a real system, this would verify the customer can view the invoice
         // For now, we'll just print the invoice details
-        System.out.println("Customer can view the full invoice:");
-        System.out.println(currentInvoice.toString());
+        logger.info("Customer can view the full invoice:");
+        logger.info(currentInvoice.toString());
     }
     
     @Given("a customer has received an invoice")
@@ -138,7 +139,7 @@ public class BillingAndInvoicingStep {
             currentInvoice.issue();
         }
         
-        System.out.println("Customer has received invoice: " + currentInvoice.getInvoiceId());
+        logger.info("Customer has received invoice: " + currentInvoice.getInvoiceId());
     }
     
     @When("they make a payment using a credit card")
@@ -159,7 +160,7 @@ public class BillingAndInvoicingStep {
         Invoice updatedInvoice = billingSystem.getInvoice(currentInvoice.getInvoiceId());
         assertNotNull("Invoice should exist", updatedInvoice);
         
-        System.out.println("System processed the payment");
+        logger.info("System processed the payment");
     }
     
     @And("update the invoice status to {string}")
@@ -168,14 +169,14 @@ public class BillingAndInvoicingStep {
         Invoice updatedInvoice = billingSystem.getInvoice(currentInvoice.getInvoiceId());
         assertEquals("Invoice status should be updated", status, updatedInvoice.getStatus());
         
-        System.out.println("Invoice status updated to: " + updatedInvoice.getStatus());
+        logger.info("Invoice status updated to: " + updatedInvoice.getStatus());
     }
     
     @And("send a payment confirmation to the customer")
     public void sendAPaymentConfirmationToTheCustomer() {
         // In a real system, this would verify a confirmation was sent
         // For now, we'll just print a message
-        System.out.println("Payment confirmation sent to customer");
+        logger.info("Payment confirmation sent to customer");
     }
     
     @Given("a customer has a large invoice")
@@ -216,7 +217,7 @@ public class BillingAndInvoicingStep {
     public void theSystemShouldRecordThePartialPayment() {
         // In a real system, this would verify the payment was recorded
         // For now, we'll just print a message
-        System.out.println("System recorded the partial payment");
+        logger.info("System recorded the partial payment");
     }
     
     @And("update the remaining balance")
@@ -224,7 +225,7 @@ public class BillingAndInvoicingStep {
         // In a real system, this would verify the balance was updated
         // For now, we'll just print a message
         double remainingBalance = currentInvoice.getTotalAmount() / 2;
-        System.out.println("Remaining balance: $" + String.format("%.2f", remainingBalance));
+        logger.info("Remaining balance: $" + String.format("%.2f", remainingBalance));
     }
     
     @And("maintain the invoice status as {string}")
@@ -233,7 +234,7 @@ public class BillingAndInvoicingStep {
         Invoice updatedInvoice = billingSystem.getInvoice(currentInvoice.getInvoiceId());
         assertEquals("Invoice status should be maintained", status, updatedInvoice.getStatus());
         
-        System.out.println("Invoice status maintained as: " + updatedInvoice.getStatus());
+        logger.info("Invoice status maintained as: " + updatedInvoice.getStatus());
     }
     
     @Given("a customer has multiple invoices in a month")
@@ -257,14 +258,14 @@ public class BillingAndInvoicingStep {
         List<Invoice> customerInvoices = billingSystem.getCustomerInvoices(currentCustomer);
         assertTrue("Customer should have multiple invoices", customerInvoices.size() >= 3);
         
-        System.out.println("Customer has " + customerInvoices.size() + " invoices in the month");
+        logger.info("Customer has " + customerInvoices.size() + " invoices in the month");
     }
     
     @When("the end of month is reached")
     public void theEndOfMonthIsReached() {
         // In a real system, this might trigger a scheduled job
         // For now, we'll just print a message
-        System.out.println("End of month reached");
+        logger.info("End of month reached");
     }
     
     @Then("the system should generate a monthly statement")
@@ -277,7 +278,7 @@ public class BillingAndInvoicingStep {
         assertNotNull("Monthly statement should be generated", statement);
         assertFalse("Monthly statement should not be empty", statement.isEmpty());
         
-        System.out.println("System generated a monthly statement");
+        logger.info("System generated a monthly statement");
     }
     
     @And("include all invoices with their payment status")
@@ -288,8 +289,8 @@ public class BillingAndInvoicingStep {
         String statement = billingSystem.generateMonthlyStatement(
                 currentCustomer, now.getYear(), now.getMonthValue());
         
-        System.out.println("Monthly statement includes all invoices with their payment status:");
-        System.out.println(statement);
+        logger.info("Monthly statement includes all invoices with their payment status:");
+        logger.info(statement);
     }
     
     @Given("an invoice is past its due date")
@@ -306,7 +307,7 @@ public class BillingAndInvoicingStep {
         // Directly set the status to overdue for the test
         currentInvoice.setStatus("overdue");
         
-        System.out.println("Invoice is past its due date: " + currentInvoice.getInvoiceId());
+        logger.info("Invoice is past its due date: " + currentInvoice.getInvoiceId());
     }
     
     @When("the system runs the daily payment check")
@@ -314,8 +315,8 @@ public class BillingAndInvoicingStep {
         // Check for overdue invoices
         List<Invoice> overdueInvoices = billingSystem.checkOverdueInvoices();
         
-        System.out.println("System ran the daily payment check");
-        System.out.println("Found " + overdueInvoices.size() + " overdue invoices");
+        logger.info("System ran the daily payment check");
+        logger.info("Found " + overdueInvoices.size() + " overdue invoices");
     }
     
     @Then("it should mark the invoice as {string}")
@@ -324,21 +325,21 @@ public class BillingAndInvoicingStep {
         Invoice updatedInvoice = billingSystem.getInvoice(currentInvoice.getInvoiceId());
         assertEquals("Invoice status should be marked as " + status, status, updatedInvoice.getStatus());
         
-        System.out.println("Invoice marked as: " + updatedInvoice.getStatus());
+        logger.info("Invoice marked as: " + updatedInvoice.getStatus());
     }
     
     @And("send a payment reminder to the customer")
     public void sendAPaymentReminderToTheCustomer() {
         // In a real system, this would verify a reminder was sent
         // For now, we'll just print a message
-        System.out.println("Payment reminder sent to customer");
+        logger.info("Payment reminder sent to customer");
     }
     
     @Given("a customer qualifies for a discount")
     public void aCustomerQualifiesForADiscount() {
         // In a real system, this would set up discount eligibility
         // For now, we'll just print a message
-        System.out.println("Customer qualifies for a discount");
+        logger.info("Customer qualifies for a discount");
     }
     
     @When("an invoice is generated for their order")
@@ -351,7 +352,7 @@ public class BillingAndInvoicingStep {
         // Generate invoice
         currentInvoice = billingSystem.generateInvoice(currentOrder);
         
-        System.out.println("Invoice generated for order: " + currentOrder.getOrderId());
+        logger.info("Invoice generated for order: " + currentOrder.getOrderId());
     }
     
     @Then("the system should apply the appropriate discount")
@@ -362,15 +363,15 @@ public class BillingAndInvoicingStep {
         double discountRate = 0.1; // 10% discount
         double discountAmount = originalTotal * discountRate;
         
-        System.out.println("System applied a " + (discountRate * 100) + "% discount");
-        System.out.println("Discount amount: $" + String.format("%.2f", discountAmount));
+        logger.info("System applied a " + (discountRate * 100) + "% discount");
+        logger.info("Discount amount: $" + String.format("%.2f", discountAmount));
     }
     
     @And("clearly show the discount on the invoice")
     public void clearlyShowTheDiscountOnTheInvoice() {
         // In a real system, this would verify the discount is shown
         // For now, we'll just print a message
-        System.out.println("Discount is clearly shown on the invoice");
+        logger.info("Discount is clearly shown on the invoice");
     }
     
     @Given("the admin wants to analyze revenue")
@@ -379,7 +380,7 @@ public class BillingAndInvoicingStep {
         String loginResult = loginSystem.login(adminUsername, "adminpass");
         assertTrue("Admin should be logged in", loginResult.startsWith("Welcome"));
         
-        System.out.println("Admin wants to analyze revenue");
+        logger.info("Admin wants to analyze revenue");
     }
     
     @When("they request a revenue report for a specific period")
@@ -392,14 +393,14 @@ public class BillingAndInvoicingStep {
         assertNotNull("Revenue report should be generated", report);
         assertFalse("Revenue report should not be empty", report.isEmpty());
         
-        System.out.println("Admin requested a revenue report for the past month");
+        logger.info("Admin requested a revenue report for the past month");
     }
     
     @Then("the system should generate a detailed report")
     public void theSystemShouldGenerateADetailedReport() {
         // In a real system, this would verify the report details
         // For now, we'll just print a message
-        System.out.println("System generated a detailed revenue report");
+        logger.info("System generated a detailed revenue report");
     }
     
     @And("show total revenue, paid invoices, and pending payments")
@@ -411,7 +412,7 @@ public class BillingAndInvoicingStep {
         
         String report = billingSystem.generateRevenueReport(start, end);
         
-        System.out.println("Revenue report shows total revenue, paid invoices, and pending payments:");
-        System.out.println(report);
+        logger.info("Revenue report shows total revenue, paid invoices, and pending payments:");
+        logger.info(report);
     }
 }

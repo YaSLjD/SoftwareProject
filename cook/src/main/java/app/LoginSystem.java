@@ -60,7 +60,7 @@ public class LoginSystem {
 
     // Simulate user navigation to login page
     public void navigateToLoginPage() {
-        System.out.println("Navigating to the login page...");
+        logger.info("Navigating to the login page...");
     }
 
     // Perform login operation
@@ -80,19 +80,19 @@ public class LoginSystem {
     // Verify user redirection to homepage
     public void verifyHomepageRedirection(String message) {
         if (message.startsWith("Welcome")) {
-            System.out.println("User redirected to the homepage successfully.");
+            logger.info("User redirected to the homepage successfully.");
         } else {
-            System.out.println("User remains on the login page.");
+            logger.info("User remains on the login page.");
         }
     }
 
     // Verify welcome message display
     public void verifyWelcomeMessage(String message) {
-        System.out.println("Displayed message: " + message);
+        logger.info("Displayed message: " + message);
     }
 
     // Verify error message display on login failure
     public void verifyErrorMessage(String message) {
-        System.out.println("Error message: " + message);
+        logger.info("Error message: " + message);
     }
 }

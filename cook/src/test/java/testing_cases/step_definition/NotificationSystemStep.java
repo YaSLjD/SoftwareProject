@@ -3,6 +3,7 @@ package testing_cases.step_definition;
 import app.LoginSystem;
 import app.Order;
 import app.OrderSystem;
+import app.logger;
 import app.Notification;
 import app.NotificationSystem;
 import app.Ingredient;
@@ -56,7 +57,7 @@ public class NotificationSystemStep {
         boolean added = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M001");
         assertTrue("Meal should be added to order", added);
         
-        System.out.println("Customer has placed an order: " + currentOrder.getOrderId());
+        logger.info("Customer has placed an order: " + currentOrder.getOrderId());
     }
     
     @When("the order status changes to {string}")
@@ -71,7 +72,7 @@ public class NotificationSystemStep {
         currentNotification = notificationSystem.notifyOrderStatusChange(
                 currentCustomer, currentOrder.getOrderId(), status);
         
-        System.out.println("Order status changed to: " + status);
+        logger.info("Order status changed to: " + status);
     }
     
     @Then("the system should send a notification to the customer")
@@ -83,7 +84,7 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentCustomer);
         assertFalse("User should have notifications", userNotifications.isEmpty());
         
-        System.out.println("System sent notification to customer");
+        logger.info("System sent notification to customer");
     }
     
     @And("include the updated status and estimated completion time")
@@ -93,8 +94,8 @@ public class NotificationSystemStep {
         assertTrue("Notification should include order status", 
                 currentNotification.getMessage().contains(currentOrder.getStatus()));
         
-        System.out.println("Notification includes updated status and estimated completion time");
-        System.out.println("Notification message: " + currentNotification.getMessage());
+        logger.info("Notification includes updated status and estimated completion time");
+        logger.info("Notification message: " + currentNotification.getMessage());
     }
     
     @Given("a chef is available in the system")
@@ -103,7 +104,7 @@ public class NotificationSystemStep {
         assertTrue("Chef should exist in the system", 
                 loginSystem.getUserDatabase().containsKey(currentChef));
         
-        System.out.println("Chef is available in the system");
+        logger.info("Chef is available in the system");
     }
     
     @When("a new order is assigned to the chef")
@@ -115,7 +116,7 @@ public class NotificationSystemStep {
         // Send notification
         currentNotification = notificationSystem.notifyChefAssignment(currentChef, currentOrder.getOrderId());
         
-        System.out.println("New order assigned to chef: " + currentOrder.getOrderId());
+        logger.info("New order assigned to chef: " + currentOrder.getOrderId());
     }
     
     @Then("the system should send a notification to the chef")
@@ -127,7 +128,7 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentChef);
         assertFalse("Chef should have notifications", userNotifications.isEmpty());
         
-        System.out.println("System sent notification to chef");
+        logger.info("System sent notification to chef");
     }
     
     @And("include the order details and preparation requirements")
@@ -137,8 +138,8 @@ public class NotificationSystemStep {
         assertTrue("Notification should include order ID", 
                 currentNotification.getMessage().contains(currentOrder.getOrderId()));
         
-        System.out.println("Notification includes order details and preparation requirements");
-        System.out.println("Notification message: " + currentNotification.getMessage());
+        logger.info("Notification includes order details and preparation requirements");
+        logger.info("Notification message: " + currentNotification.getMessage());
     }
     
     @Given("the inventory system detects low stock of ingredients")
@@ -154,7 +155,7 @@ public class NotificationSystemStep {
         List<Ingredient> lowStockIngredients = inventory.getLowStockIngredients();
         assertTrue("Should have low stock ingredients", lowStockIngredients.size() >= 2);
         
-        System.out.println("Inventory system detected low stock of ingredients");
+        logger.info("Inventory system detected low stock of ingredients");
         for (Ingredient ingredient : lowStockIngredients) {
             System.out.println("- " + ingredient.getName() + ": " + ingredient.getQuantity() + 
                     " " + ingredient.getUnit() + " (min: " + ingredient.getMinimumStockLevel() + ")");
@@ -169,7 +170,7 @@ public class NotificationSystemStep {
         // Send notification
         notificationSystem.notifyLowInventory(lowStockIngredients);
         
-        System.out.println("Stock fell below the minimum threshold");
+        logger.info("Stock fell below the minimum threshold");
     }
     
     @Then("the system should send an alert to the admin")
@@ -179,14 +180,14 @@ public class NotificationSystemStep {
         
         // In a real system, we would verify the notification was sent
         // For now, we'll just print a message
-        System.out.println("System sent alert to admin");
+        logger.info("System sent alert to admin");
     }
     
     @And("include the list of low stock ingredients")
     public void includeTheListOfLowStockIngredients() {
         // In a real system, we would verify the notification content
         // For now, we'll just print a message
-        System.out.println("Alert includes the list of low stock ingredients");
+        logger.info("Alert includes the list of low stock ingredients");
     }
     
     @Given("an invoice has been generated for a customer")
@@ -200,7 +201,7 @@ public class NotificationSystemStep {
         currentInvoice = billingSystem.generateInvoice(currentOrder);
         assertNotNull("Invoice should be generated", currentInvoice);
         
-        System.out.println("Invoice has been generated for customer: " + currentInvoice.getInvoiceId());
+        logger.info("Invoice has been generated for customer: " + currentInvoice.getInvoiceId());
     }
     
     @When("the system processes the invoice for notification")
@@ -212,7 +213,7 @@ public class NotificationSystemStep {
         // Send notification
         currentNotification = notificationSystem.notifyNewInvoice(currentCustomer, currentInvoice);
         
-        System.out.println("System processed the invoice");
+        logger.info("System processed the invoice");
     }
     
     @Then("the customer should receive a notification about the new invoice")
@@ -224,7 +225,7 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentCustomer);
         assertFalse("Customer should have notifications", userNotifications.isEmpty());
         
-        System.out.println("Customer received notification about the new invoice");
+        logger.info("Customer received notification about the new invoice");
     }
     
     @And("the notification should include the invoice amount and due date")
@@ -234,8 +235,8 @@ public class NotificationSystemStep {
         assertTrue("Notification should include invoice ID", 
                 currentNotification.getMessage().contains(currentInvoice.getInvoiceId()));
         
-        System.out.println("Notification includes the invoice amount and due date");
-        System.out.println("Notification message: " + currentNotification.getMessage());
+        logger.info("Notification includes the invoice amount and due date");
+        logger.info("Notification message: " + currentNotification.getMessage());
     }
     
     @Given("an invoice is approaching its due date")
@@ -248,7 +249,7 @@ public class NotificationSystemStep {
         currentInvoice = billingSystem.generateInvoice(currentOrder);
         currentInvoice.issue();
         
-        System.out.println("Invoice is approaching its due date: " + currentInvoice.getInvoiceId());
+        logger.info("Invoice is approaching its due date: " + currentInvoice.getInvoiceId());
     }
     
     @When("the system runs the daily payment reminder check")
@@ -260,7 +261,7 @@ public class NotificationSystemStep {
         currentNotification = notificationSystem.notifyInvoicePaymentDue(
                 currentCustomer, currentInvoice);
         
-        System.out.println("System ran the daily payment check");
+        logger.info("System ran the daily payment check");
     }
     
     @Then("it should send a payment reminder to the customer")
@@ -272,7 +273,7 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentCustomer);
         assertFalse("Customer should have notifications", userNotifications.isEmpty());
         
-        System.out.println("System sent payment reminder to customer");
+        logger.info("System sent payment reminder to customer");
     }
     
     @And("include the invoice details and payment options")
@@ -282,8 +283,8 @@ public class NotificationSystemStep {
         assertTrue("Notification should include invoice ID", 
                 currentNotification.getMessage().contains(currentInvoice.getInvoiceId()));
         
-        System.out.println("Notification includes the invoice details and payment options");
-        System.out.println("Notification message: " + currentNotification.getMessage());
+        logger.info("Notification includes the invoice details and payment options");
+        logger.info("Notification message: " + currentNotification.getMessage());
     }
     
     @Given("a user has received multiple notifications")
@@ -300,7 +301,7 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentCustomer);
         assertTrue("User should have multiple notifications", userNotifications.size() >= 3);
         
-        System.out.println("User has received " + userNotifications.size() + " notifications");
+        logger.info("User has received " + userNotifications.size() + " notifications");
     }
     
     @When("they view a notification")
@@ -314,7 +315,7 @@ public class NotificationSystemStep {
         
         assertTrue("Notification should be marked as read", marked);
         
-        System.out.println("User viewed notification: " + currentNotification.getTitle());
+        logger.info("User viewed notification: " + currentNotification.getTitle());
     }
     
     @Then("the system should mark that notification as read")
@@ -331,7 +332,7 @@ public class NotificationSystemStep {
         assertNotNull("Notification should exist", updatedNotification);
         assertTrue("Notification should be marked as read", updatedNotification.isRead());
         
-        System.out.println("System marked notification as read");
+        logger.info("System marked notification as read");
     }
     
     @And("update the unread notification count")
@@ -339,38 +340,38 @@ public class NotificationSystemStep {
         // Get unread notifications
         List<Notification> unreadNotifications = notificationSystem.getUnreadNotifications(currentCustomer);
         
-        System.out.println("Unread notification count updated: " + unreadNotifications.size());
+        logger.info("Unread notification count updated: " + unreadNotifications.size());
     }
     
     @Given("a user wants to customize their notification settings")
     public void aUserWantsToCustomizeTheirNotificationSettings() {
         // In a real system, this would set up notification preferences
         // For now, we'll just print a message
-        System.out.println("User wants to customize their notification settings");
+        logger.info("User wants to customize their notification settings");
     }
     
     @When("they update their notification preferences")
     public void theyUpdateTheirNotificationPreferences() {
         // In a real system, this would update preferences
         // For now, we'll just print a message
-        System.out.println("User updated notification preferences:");
-        System.out.println("- Order updates: Email only");
-        System.out.println("- Billing notifications: Email and SMS");
-        System.out.println("- Promotional messages: Disabled");
+        logger.info("User updated notification preferences:");
+        logger.info("- Order updates: Email only");
+        logger.info("- Billing notifications: Email and SMS");
+        logger.info("- Promotional messages: Disabled");
     }
     
     @Then("the system should only send notifications according to their preferences")
     public void theSystemShouldOnlySendNotificationsAccordingToTheirPreferences() {
         // In a real system, this would verify notifications respect preferences
         // For now, we'll just print a message
-        System.out.println("System will only send notifications according to user preferences");
+        logger.info("System will only send notifications according to user preferences");
     }
     
     @And("respect their preferred notification channels")
     public void respectTheirPreferredNotificationChannels() {
         // In a real system, this would verify notification channels
         // For now, we'll just print a message
-        System.out.println("System will respect preferred notification channels");
+        logger.info("System will respect preferred notification channels");
     }
     
     @Given("multiple notifications need to be sent")
@@ -389,7 +390,7 @@ public class NotificationSystemStep {
         // 3. Invoice generation
         currentInvoice = billingSystem.generateInvoice(currentOrder);
         
-        System.out.println("Multiple notifications need to be sent");
+        logger.info("Multiple notifications need to be sent");
     }
     
     @When("the system processes the notification queue")
@@ -407,7 +408,7 @@ public class NotificationSystemStep {
         // 3. Invoice notification
         notificationSystem.notifyNewInvoice(currentCustomer, currentInvoice);
         
-        System.out.println("System processed the notification queue");
+        logger.info("System processed the notification queue");
     }
     
     @Then("it should send all pending notifications")
@@ -419,15 +420,15 @@ public class NotificationSystemStep {
         // Get admin notifications
         List<Notification> adminNotifications = notificationSystem.getUserNotifications(adminUsername);
         
-        System.out.println("System sent all pending notifications");
-        System.out.println("Customer received " + userNotifications.size() + " notifications");
-        System.out.println("Admin received " + adminNotifications.size() + " notifications");
+        logger.info("System sent all pending notifications");
+        logger.info("Customer received " + userNotifications.size() + " notifications");
+        logger.info("Admin received " + adminNotifications.size() + " notifications");
     }
     
     @And("record the delivery status for each notification")
     public void recordTheDeliveryStatusForEachNotification() {
         // In a real system, this would record delivery status
         // For now, we'll just print a message
-        System.out.println("System recorded delivery status for each notification");
+        logger.info("System recorded delivery status for each notification");
     }
 }

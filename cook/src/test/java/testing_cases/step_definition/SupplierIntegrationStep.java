@@ -4,6 +4,7 @@ import app.Ingredient;
 import app.Inventory;
 import app.LoginSystem;
 import app.Supplier;
+import app.logger;
 import app.NotificationSystem;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
@@ -43,7 +44,7 @@ public class SupplierIntegrationStep {
         String loginResult = loginSystem.login(currentAdmin, "adminpass");
         assertTrue("Admin should be logged in", loginResult.startsWith("Welcome"));
         
-        System.out.println("Admin is logged into the system");
+        logger.info("Admin is logged into the system");
     }
     
     @When("they add a new supplier with details:")
@@ -64,7 +65,7 @@ public class SupplierIntegrationStep {
         // Add to inventory
         inventory.addSupplier(currentSupplier);
         
-        System.out.println("Added new supplier: " + name + " (" + id + ")");
+        logger.info("Added new supplier: " + name + " (" + id + ")");
     }
     
     @Then("the supplier should be added to the system")
@@ -74,7 +75,7 @@ public class SupplierIntegrationStep {
         assertNotNull("Supplier should exist in the system", supplier);
         assertEquals("Supplier name should match", currentSupplier.getName(), supplier.getName());
         
-        System.out.println("Supplier was added to the system: " + supplier.getName());
+        logger.info("Supplier was added to the system: " + supplier.getName());
     }
     
     @And("be available for ingredient sourcing")
@@ -84,7 +85,7 @@ public class SupplierIntegrationStep {
         assertTrue("Supplier should be in the list of all suppliers", 
                 suppliers.stream().anyMatch(s -> s.getId().equals(currentSupplier.getId())));
         
-        System.out.println("Supplier is available for ingredient sourcing");
+        logger.info("Supplier is available for ingredient sourcing");
     }
     
     @Given("a supplier {string} exists in the system")
@@ -106,7 +107,7 @@ public class SupplierIntegrationStep {
         }
         
         assertNotNull("Supplier should exist in the system", currentSupplier);
-        System.out.println("Supplier exists in the system: " + supplierName);
+        logger.info("Supplier exists in the system: " + supplierName);
     }
     
     @When("the admin associates the following ingredients with the supplier:")
@@ -120,7 +121,7 @@ public class SupplierIntegrationStep {
             // For now, we'll just add the ingredient name to the supplier's list
             currentSupplier.addIngredientId("ING" + ingredientName.toUpperCase().replaceAll("\\s+", ""));
             
-            System.out.println("Associated ingredient with supplier: " + ingredientName);
+            logger.info("Associated ingredient with supplier: " + ingredientName);
         }
     }
     
@@ -134,7 +135,7 @@ public class SupplierIntegrationStep {
             assertTrue("Ingredient should be linked to supplier: " + ingredientName, 
                     supplierIngredients.contains(ingredientId));
             
-            System.out.println("Verified ingredient is linked to supplier: " + ingredientName);
+            logger.info("Verified ingredient is linked to supplier: " + ingredientName);
         }
     }
     
@@ -142,7 +143,7 @@ public class SupplierIntegrationStep {
     public void theSystemShouldKnowTheSourceForTheseIngredients() {
         // In a real system, we would verify that the system can look up the supplier for each ingredient
         // For now, we'll just print a message
-        System.out.println("System knows the source for these ingredients");
+        logger.info("System knows the source for these ingredients");
     }
     
     @Given("the inventory shows low stock for several ingredients")
@@ -158,7 +159,7 @@ public class SupplierIntegrationStep {
         List<Ingredient> lowStockIngredients = inventory.getLowStockIngredients();
         assertTrue("Should have low stock ingredients", lowStockIngredients.size() >= 2);
         
-        System.out.println("Inventory shows low stock for several ingredients");
+        logger.info("Inventory shows low stock for several ingredients");
         for (Ingredient ingredient : lowStockIngredients) {
             System.out.println("- " + ingredient.getName() + ": " + ingredient.getQuantity() + 
                     " " + ingredient.getUnit() + " (min: " + ingredient.getMinimumStockLevel() + ")");
@@ -190,7 +191,7 @@ public class SupplierIntegrationStep {
                     " - " + orderQuantity + " " + ingredient.getUnit());
         }
         
-        System.out.println("Admin generated a purchase order for supplier: " + currentSupplier.getName());
+        logger.info("Admin generated a purchase order for supplier: " + currentSupplier.getName());
     }
     
     @Then("the system should create a purchase order with the required quantities")
@@ -199,8 +200,8 @@ public class SupplierIntegrationStep {
         // For now, we'll just verify the purchase order items
         assertFalse("Purchase order should have items", purchaseOrderItems.isEmpty());
         
-        System.out.println("System created a purchase order with the required quantities");
-        System.out.println("Purchase order contains " + purchaseOrderItems.size() + " items");
+        logger.info("System created a purchase order with the required quantities");
+        logger.info("Purchase order contains " + purchaseOrderItems.size() + " items");
     }
     
     @And("send the purchase order to the supplier")
@@ -212,7 +213,7 @@ public class SupplierIntegrationStep {
         
         assertTrue("Order should be placed successfully", orderPlaced);
         
-        System.out.println("Purchase order sent to supplier: " + currentSupplier.getName());
+        logger.info("Purchase order sent to supplier: " + currentSupplier.getName());
     }
     
     @Given("a purchase order has been sent to a supplier")
@@ -230,35 +231,35 @@ public class SupplierIntegrationStep {
         // Simulate sending the purchase order
         inventory.orderIngredientsFromSupplier(currentSupplier.getId(), purchaseOrderItems);
         
-        System.out.println("Purchase order has been sent to supplier: " + currentSupplier.getName());
+        logger.info("Purchase order has been sent to supplier: " + currentSupplier.getName());
     }
     
     @When("the supplier updates the order status to {string}")
     public void theSupplierUpdatesTheOrderStatusTo(String status) {
         // In a real system, this would update the purchase order status
         // For now, we'll just print a message
-        System.out.println("Supplier updated order status to: " + status);
+        logger.info("Supplier updated order status to: " + status);
     }
     
     @Then("the system should update the purchase order status")
     public void theSystemShouldUpdateThePurchaseOrderStatus() {
         // In a real system, this would verify the purchase order status was updated
         // For now, we'll just print a message
-        System.out.println("System updated purchase order status");
+        logger.info("System updated purchase order status");
     }
     
     @And("notify the admin about the shipment")
     public void notifyTheAdminAboutTheShipment() {
         // In a real system, this would send a notification
         // For now, we'll just print a message
-        System.out.println("Admin notified about the shipment");
+        logger.info("Admin notified about the shipment");
     }
     
     @Given("a supplier delivery has arrived")
     public void aSupplierDeliveryHasArrived() {
         // In a real system, this would set up a delivery
         // For now, we'll just print a message
-        System.out.println("Supplier delivery has arrived");
+        logger.info("Supplier delivery has arrived");
     }
     
     @When("the admin records the received items")
@@ -271,11 +272,11 @@ public class SupplierIntegrationStep {
         
         if (flour != null) {
             inventory.updateIngredientQuantity(flour.getId(), 10.0);
-            System.out.println("Received 10 kg of Flour");
+            logger.info("Received 10 kg of Flour");
         } else {
             flour = new Ingredient("INGFLOUR", "Flour", "kg", 10.0, 5.0);
             inventory.addIngredient(flour);
-            System.out.println("Added new ingredient: Flour (10 kg)");
+            logger.info("Added new ingredient: Flour (10 kg)");
         }
         
         Ingredient sugar = inventory.getAllIngredients().stream()
@@ -285,42 +286,42 @@ public class SupplierIntegrationStep {
         
         if (sugar != null) {
             inventory.updateIngredientQuantity(sugar.getId(), 5.0);
-            System.out.println("Received 5 kg of Sugar");
+            logger.info("Received 5 kg of Sugar");
         } else {
             sugar = new Ingredient("INGSUGAR", "Sugar", "kg", 5.0, 3.0);
             inventory.addIngredient(sugar);
-            System.out.println("Added new ingredient: Sugar (5 kg)");
+            logger.info("Added new ingredient: Sugar (5 kg)");
         }
         
-        System.out.println("Admin recorded the received items");
+        logger.info("Admin recorded the received items");
     }
     
     @Then("the system should compare the received items with the purchase order")
     public void theSystemShouldCompareTheReceivedItemsWithThePurchaseOrder() {
         // In a real system, this would compare the received items with the purchase order
         // For now, we'll just print a message
-        System.out.println("System compared received items with purchase order");
+        logger.info("System compared received items with purchase order");
     }
     
     @And("highlight any discrepancies")
     public void highlightAnyDiscrepancies() {
         // In a real system, this would highlight discrepancies
         // For now, we'll just print a message
-        System.out.println("No discrepancies found in the delivery");
+        logger.info("No discrepancies found in the delivery");
     }
     
     @Given("the system has tracked supplier deliveries for the past quarter")
     public void theSystemHasTrackedSupplierDeliveriesForThePastQuarter() {
         // In a real system, this would set up delivery tracking data
         // For now, we'll just print a message
-        System.out.println("System has tracked supplier deliveries for the past quarter");
+        logger.info("System has tracked supplier deliveries for the past quarter");
     }
     
     @When("the admin requests a supplier performance report")
     public void theAdminRequestsASupplierPerformanceReport() {
         // In a real system, this would generate a report
         // For now, we'll just print a message
-        System.out.println("Admin requested a supplier performance report");
+        logger.info("Admin requested a supplier performance report");
     }
     
     @Then("the system should display metrics for each supplier including:")
@@ -330,17 +331,17 @@ public class SupplierIntegrationStep {
         
         // In a real system, this would display metrics
         // For now, we'll just print the metrics
-        System.out.println("System displayed the following metrics for each supplier:");
+        logger.info("System displayed the following metrics for each supplier:");
         for (String metric : metrics) {
-            System.out.println("- " + metric);
+            logger.info("- " + metric);
         }
         
         // Print sample data
-        System.out.println("\nSample data for Test Supplier:");
-        System.out.println("- On-time delivery rate: 95%");
-        System.out.println("- Order accuracy: 98%");
-        System.out.println("- Price competitiveness: 4.2/5");
-        System.out.println("- Quality rating: 4.5/5");
+        logger.info("\nSample data for Test Supplier:");
+        logger.info("- On-time delivery rate: 95%");
+        logger.info("- Order accuracy: 98%");
+        logger.info("- Price competitiveness: 4.2/5");
+        logger.info("- Quality rating: 4.5/5");
     }
     
     @Given("multiple suppliers provide the same ingredient")
@@ -356,9 +357,9 @@ public class SupplierIntegrationStep {
         supplier1.addIngredientId("INGFLOUR");
         supplier2.addIngredientId("INGFLOUR");
         
-        System.out.println("Multiple suppliers provide the same ingredient:");
-        System.out.println("- " + supplier1.getName());
-        System.out.println("- " + supplier2.getName());
+        logger.info("Multiple suppliers provide the same ingredient:");
+        logger.info("- " + supplier1.getName());
+        logger.info("- " + supplier2.getName());
     }
     
     @When("the admin marks a supplier as {string} for an ingredient")
@@ -377,13 +378,13 @@ public class SupplierIntegrationStep {
     public void theSystemShouldPrioritizeThatSupplierForFutureOrders() {
         // In a real system, this would verify the supplier is prioritized
         // For now, we'll just print a message
-        System.out.println("System will prioritize " + currentSupplier.getName() + " for future orders");
+        logger.info("System will prioritize " + currentSupplier.getName() + " for future orders");
     }
     
     @And("use alternative suppliers only when necessary")
     public void useAlternativeSuppliersOnlyWhenNecessary() {
         // In a real system, this would verify alternative suppliers are used only when necessary
         // For now, we'll just print a message
-        System.out.println("System will use alternative suppliers only when necessary");
+        logger.info("System will use alternative suppliers only when necessary");
     }
 }

@@ -30,7 +30,7 @@ public class Main {
     private static String currentUser;
     
     public static void main(String[] args) {
-        System.out.println("Starting Special Cook Project Management System...");
+        logger.info("Starting Special Cook Project Management System...");
         
         // Initialize system components
         initializeSystem();
@@ -58,7 +58,7 @@ public class Main {
         }
         
         scanner.close();
-        System.out.println("System shutdown. Goodbye!");
+        logger.info("System shutdown. Goodbye!");
     }
     
     /**
@@ -82,7 +82,7 @@ public class Main {
         // Initialize CustomMealService
         customMealService = new CustomMealService(inventory);
         
-        System.out.println("System initialized successfully.");
+        logger.info("System initialized successfully.");
     }
     
     /**
@@ -103,10 +103,10 @@ public class Main {
      * Show the login menu with options to input username and password.
      */
     private static void showLoginMenu() {
-        System.out.println("\n===== Login Menu =====");
-        System.out.println("1. Login");
-        System.out.println("2. View Available Demo Accounts");
-        System.out.println("0. Exit");
+        logger.info("\n===== Login Menu =====");
+        logger.info("1. Login");
+        logger.info("2. View Available Demo Accounts");
+        logger.info("0. Exit");
         System.out.print("Enter your choice: ");
     }
     
@@ -114,11 +114,11 @@ public class Main {
      * Show available demo accounts.
      */
     private static void showDemoAccounts() {
-        System.out.println("\n===== Available Demo Accounts =====");
-        System.out.println("Customer: username = testuser, password = password123");
-        System.out.println("Chef: username = chef, password = chefpass");
-        System.out.println("Admin: username = admin, password = adminpass");
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\n===== Available Demo Accounts =====");
+        logger.info("Customer: username = testuser, password = password123");
+        logger.info("Chef: username = chef, password = chefpass");
+        logger.info("Admin: username = admin, password = adminpass");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -139,17 +139,17 @@ public class Main {
      * Show the customer menu.
      */
     private static void showCustomerMenu() {
-        System.out.println("\n===== Customer Menu =====");
-        System.out.println("1. View Profile");
-        System.out.println("2. Manage Dietary Preferences");
-        System.out.println("3. Place New Order");
-        System.out.println("4. Create Custom Meal");
-        System.out.println("5. View Order History");
-        System.out.println("6. View Invoices");
-        System.out.println("7. Get Meal Recommendations");
-        System.out.println("8. View Notifications");
-        System.out.println("9. Logout");
-        System.out.println("0. Exit");
+        logger.info("\n===== Customer Menu =====");
+        logger.info("1. View Profile");
+        logger.info("2. Manage Dietary Preferences");
+        logger.info("3. Place New Order");
+        logger.info("4. Create Custom Meal");
+        logger.info("5. View Order History");
+        logger.info("6. View Invoices");
+        logger.info("7. Get Meal Recommendations");
+        logger.info("8. View Notifications");
+        logger.info("9. Logout");
+        logger.info("0. Exit");
         System.out.print("Enter your choice: ");
     }
     
@@ -157,14 +157,14 @@ public class Main {
      * Show the chef menu.
      */
     private static void showChefMenu() {
-        System.out.println("\n===== Chef Menu =====");
-        System.out.println("1. View Today's Schedule");
-        System.out.println("2. View All Tasks");
-        System.out.println("3. Mark Task as Completed");
-        System.out.println("4. Check Inventory");
-        System.out.println("5. View Notifications");
-        System.out.println("6. Logout");
-        System.out.println("0. Exit");
+        logger.info("\n===== Chef Menu =====");
+        logger.info("1. View Today's Schedule");
+        logger.info("2. View All Tasks");
+        logger.info("3. Mark Task as Completed");
+        logger.info("4. Check Inventory");
+        logger.info("5. View Notifications");
+        logger.info("6. Logout");
+        logger.info("0. Exit");
         System.out.print("Enter your choice: ");
     }
     
@@ -172,15 +172,15 @@ public class Main {
      * Show the admin menu.
      */
     private static void showAdminMenu() {
-        System.out.println("\n===== Admin Menu =====");
-        System.out.println("1. Manage Users");
-        System.out.println("2. Manage Inventory");
-        System.out.println("3. Manage Suppliers");
-        System.out.println("4. View Chef Schedules");
-        System.out.println("5. Generate Reports");
-        System.out.println("6. View Notifications");
-        System.out.println("7. Logout");
-        System.out.println("0. Exit");
+        logger.info("\n===== Admin Menu =====");
+        logger.info("1. Manage Users");
+        logger.info("2. Manage Inventory");
+        logger.info("3. Manage Suppliers");
+        logger.info("4. View Chef Schedules");
+        logger.info("5. Generate Reports");
+        logger.info("6. View Notifications");
+        logger.info("7. Logout");
+        logger.info("0. Exit");
         System.out.print("Enter your choice: ");
     }
     
@@ -203,7 +203,7 @@ public class Main {
                 case "0":
                     return false;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    logger.info("Invalid choice. Please try again.");
             }
         } else {
             User user = loginSystem.getUserDatabase().get(currentUser);
@@ -235,7 +235,7 @@ public class Main {
                     case "0":
                         return false;
                     default:
-                        System.out.println("Invalid choice. Please try again.");
+                        logger.info("Invalid choice. Please try again.");
                 }
             } else if (user.hasRole("chef")) {
                 // Process chef menu choices
@@ -261,7 +261,7 @@ public class Main {
                     case "0":
                         return false;
                     default:
-                        System.out.println("Invalid choice. Please try again.");
+                        logger.info("Invalid choice. Please try again.");
                 }
             } else {  // Customer
                 // Process customer menu choices
@@ -296,7 +296,7 @@ public class Main {
                     case "0":
                         return false;
                     default:
-                        System.out.println("Invalid choice. Please try again.");
+                        logger.info("Invalid choice. Please try again.");
                 }
             }
         }
@@ -308,13 +308,13 @@ public class Main {
      */
     private static void login(String username, String password) {
         String result = loginSystem.login(username, password);
-        System.out.println(result);
+        logger.info(result);
         
         if (result.startsWith("Welcome")) {
             currentUser = username;
-            System.out.println("Logged in as: " + username);
+            logger.info("Logged in as: " + username);
         } else {
-            System.out.println("Login failed. Please check your credentials.");
+            logger.info("Login failed. Please check your credentials.");
         }
     }
     
@@ -322,7 +322,7 @@ public class Main {
      * Logout the current user.
      */
     private static void logout() {
-        System.out.println("Logging out...");
+        logger.info("Logging out...");
         currentUser = null;
     }
     
@@ -332,27 +332,27 @@ public class Main {
     private static void viewProfile() {
         User user = loginSystem.getUserDatabase().get(currentUser);
         
-        System.out.println("\n===== User Profile =====");
-        System.out.println("Username: " + user.getUsername());
-        System.out.println("Role: " + user.getRole());
+        logger.info("\n===== User Profile =====");
+        logger.info("Username: " + user.getUsername());
+        logger.info("Role: " + user.getRole());
         
-        System.out.println("\nDietary Preferences:");
+        logger.info("\nDietary Preferences:");
         for (String preference : user.getDietaryPreferences()) {
-            System.out.println("- " + preference);
+            logger.info("- " + preference);
         }
         
-        System.out.println("\nAllergies:");
+        logger.info("\nAllergies:");
         for (String allergy : user.getAllergies()) {
-            System.out.println("- " + allergy);
+            logger.info("- " + allergy);
         }
         
-        System.out.println("\nOrder History:");
+        logger.info("\nOrder History:");
         for (Order order : user.getOrderHistory()) {
             System.out.println("- Order #" + order.getOrderId() + 
                     " (" + order.getOrderDate() + ") - " + order.getStatus());
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -365,24 +365,24 @@ public class Main {
         while (managing) {
             User user = loginSystem.getUserDatabase().get(currentUser);
             
-            System.out.println("\n===== Manage Dietary Preferences =====");
-            System.out.println("Current Preferences:");
+            logger.info("\n===== Manage Dietary Preferences =====");
+            logger.info("Current Preferences:");
             int i = 1;
             for (String preference : user.getDietaryPreferences()) {
-                System.out.println(i++ + ". " + preference);
+                logger.info(i++ + ". " + preference);
             }
             
-            System.out.println("\nCurrent Allergies:");
+            logger.info("\nCurrent Allergies:");
             i = 1;
             for (String allergy : user.getAllergies()) {
-                System.out.println(i++ + ". " + allergy);
+                logger.info(i++ + ". " + allergy);
             }
             
-            System.out.println("\n1. Add Dietary Preference");
-            System.out.println("2. Remove Dietary Preference");
-            System.out.println("3. Add Allergy");
-            System.out.println("4. Remove Allergy");
-            System.out.println("5. Back to Main Menu");
+            logger.info("\n1. Add Dietary Preference");
+            logger.info("2. Remove Dietary Preference");
+            logger.info("3. Add Allergy");
+            logger.info("4. Remove Allergy");
+            logger.info("5. Back to Main Menu");
             System.out.print("Enter your choice: ");
             
             String choice = scanner.nextLine();
@@ -392,31 +392,31 @@ public class Main {
                     System.out.print("Enter dietary preference to add: ");
                     String preference = scanner.nextLine();
                     preferenceSystem.addDietaryPreference(currentUser, preference);
-                    System.out.println("Dietary preference added: " + preference);
+                    logger.info("Dietary preference added: " + preference);
                     break;
                 case "2":
                     System.out.print("Enter dietary preference to remove: ");
                     preference = scanner.nextLine();
                     user.removeDietaryPreference(preference);
-                    System.out.println("Dietary preference removed: " + preference);
+                    logger.info("Dietary preference removed: " + preference);
                     break;
                 case "3":
                     System.out.print("Enter allergy to add: ");
                     String allergy = scanner.nextLine();
                     preferenceSystem.addAllergy(currentUser, allergy);
-                    System.out.println("Allergy added: " + allergy);
+                    logger.info("Allergy added: " + allergy);
                     break;
                 case "4":
                     System.out.print("Enter allergy to remove: ");
                     allergy = scanner.nextLine();
                     user.removeAllergy(allergy);
-                    System.out.println("Allergy removed: " + allergy);
+                    logger.info("Allergy removed: " + allergy);
                     break;
                 case "5":
                     managing = false;
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    logger.info("Invalid choice. Please try again.");
             }
         }
     }
@@ -425,15 +425,15 @@ public class Main {
      * Place a new order.
      */
     private static void placeNewOrder() {
-        System.out.println("\n===== Place New Order =====");
+        logger.info("\n===== Place New Order =====");
         
         // Create a new order
         Order order = orderSystem.createOrder(currentUser);
-        System.out.println("New order created: " + order.getOrderId());
+        logger.info("New order created: " + order.getOrderId());
         
         // Show available meals
         List<Meal> availableMeals = orderSystem.getAllMeals();
-        System.out.println("\nAvailable Meals:");
+        logger.info("\nAvailable Meals:");
         for (int i = 0; i < availableMeals.size(); i++) {
             Meal meal = availableMeals.get(i);
             System.out.println((i + 1) + ". " + meal.getName() + 
@@ -455,19 +455,19 @@ public class Main {
                     if (mealIndex >= 0 && mealIndex < availableMeals.size()) {
                         Meal meal = availableMeals.get(mealIndex);
                         orderSystem.addMealToOrder(order.getOrderId(), meal.getId());
-                        System.out.println("Added to order: " + meal.getName());
+                        logger.info("Added to order: " + meal.getName());
                     } else {
-                        System.out.println("Invalid meal number. Please try again.");
+                        logger.info("Invalid meal number. Please try again.");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
+                    logger.info("Invalid input. Please enter a number.");
                 }
             }
         }
         
         // Update order status
         orderSystem.updateOrderStatus(order.getOrderId(), "pending");
-        System.out.println("\nOrder placed successfully!");
+        logger.info("\nOrder placed successfully!");
         System.out.println("Order #" + order.getOrderId() + " - Total: $" + 
                 String.format("%.2f", order.getTotalPrice()));
         
@@ -487,7 +487,7 @@ public class Main {
         notificationSystem.notifyChefAssignment("chef", order.getOrderId());
         notificationSystem.notifyNewInvoice(currentUser, invoice);
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -495,20 +495,20 @@ public class Main {
      * View the current user's order history.
      */
     private static void viewOrderHistory() {
-        System.out.println("\n===== Order History =====");
+        logger.info("\n===== Order History =====");
         
         List<Order> orders = orderSystem.getUserOrders(currentUser);
         
         if (orders.isEmpty()) {
-            System.out.println("No orders found.");
+            logger.info("No orders found.");
         } else {
             for (Order order : orders) {
-                System.out.println("\nOrder #" + order.getOrderId());
-                System.out.println("Date: " + order.getOrderDate());
-                System.out.println("Status: " + order.getStatus());
-                System.out.println("Total: $" + String.format("%.2f", order.getTotalPrice()));
+                logger.info("\nOrder #" + order.getOrderId());
+                logger.info("Date: " + order.getOrderDate());
+                logger.info("Status: " + order.getStatus());
+                logger.info("Total: $" + String.format("%.2f", order.getTotalPrice()));
                 
-                System.out.println("Meals:");
+                logger.info("Meals:");
                 for (Meal meal : order.getMeals()) {
                     System.out.println("- " + meal.getName() + 
                             " - $" + String.format("%.2f", meal.getPrice()));
@@ -516,7 +516,7 @@ public class Main {
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -524,22 +524,22 @@ public class Main {
      * View the current user's invoices.
      */
     private static void viewInvoices() {
-        System.out.println("\n===== Invoices =====");
+        logger.info("\n===== Invoices =====");
         
         List<Invoice> invoices = billingSystem.getCustomerInvoices(currentUser);
         
         if (invoices.isEmpty()) {
-            System.out.println("No invoices found.");
+            logger.info("No invoices found.");
         } else {
             for (Invoice invoice : invoices) {
-                System.out.println("\nInvoice #" + invoice.getInvoiceId());
-                System.out.println("Order: " + invoice.getOrderId());
-                System.out.println("Issue Date: " + invoice.getIssueDate());
-                System.out.println("Due Date: " + invoice.getDueDate());
-                System.out.println("Status: " + invoice.getStatus());
-                System.out.println("Total: $" + String.format("%.2f", invoice.getTotalAmount()));
+                logger.info("\nInvoice #" + invoice.getInvoiceId());
+                logger.info("Order: " + invoice.getOrderId());
+                logger.info("Issue Date: " + invoice.getIssueDate());
+                logger.info("Due Date: " + invoice.getDueDate());
+                logger.info("Status: " + invoice.getStatus());
+                logger.info("Total: $" + String.format("%.2f", invoice.getTotalAmount()));
                 
-                System.out.println("Items:");
+                logger.info("Items:");
                 for (Invoice.InvoiceItem item : invoice.getItems()) {
                     System.out.println("- " + item.getDescription() + 
                             " - " + item.getQuantity() + " x $" + 
@@ -554,13 +554,13 @@ public class Main {
                     
                     if (choice.equalsIgnoreCase("y")) {
                         billingSystem.processPayment(invoice.getInvoiceId(), invoice.getTotalAmount(), "Credit Card");
-                        System.out.println("Payment processed successfully!");
+                        logger.info("Payment processed successfully!");
                     }
                 }
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -568,15 +568,15 @@ public class Main {
      * Get meal recommendations for the current user.
      */
     private static void getMealRecommendations() {
-        System.out.println("\n===== Meal Recommendations =====");
+        logger.info("\n===== Meal Recommendations =====");
         
         // Get personalized recommendations
         List<Meal> recommendations = recommendationSystem.getPersonalizedRecommendations(currentUser, 5);
         
         if (recommendations.isEmpty()) {
-            System.out.println("No recommendations available.");
+            logger.info("No recommendations available.");
         } else {
-            System.out.println("Based on your preferences and order history, we recommend:");
+            logger.info("Based on your preferences and order history, we recommend:");
             for (int i = 0; i < recommendations.size(); i++) {
                 Meal meal = recommendations.get(i);
                 System.out.println((i + 1) + ". " + meal.getName() + 
@@ -590,7 +590,7 @@ public class Main {
         String choice = scanner.nextLine();
         
         if (choice.equalsIgnoreCase("y")) {
-            System.out.println("\nEnter ingredients (comma-separated):");
+            logger.info("\nEnter ingredients (comma-separated):");
             String ingredientsInput = scanner.nextLine();
             String[] ingredients = ingredientsInput.split(",");
             
@@ -603,11 +603,11 @@ public class Main {
             String category = scanner.nextLine();
             
             String recipe = recommendationSystem.generateCustomRecipe(currentUser, ingredientList, category);
-            System.out.println("\nCustom Recipe:");
-            System.out.println(recipe);
+            logger.info("\nCustom Recipe:");
+            logger.info(recipe);
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -615,18 +615,18 @@ public class Main {
      * View notifications for the current user.
      */
     private static void viewNotifications() {
-        System.out.println("\n===== Notifications =====");
+        logger.info("\n===== Notifications =====");
         
         List<Notification> notifications = notificationSystem.getUserNotifications(currentUser);
         
         if (notifications.isEmpty()) {
-            System.out.println("No notifications found.");
+            logger.info("No notifications found.");
         } else {
             for (int i = 0; i < notifications.size(); i++) {
                 Notification notification = notifications.get(i);
                 System.out.println((i + 1) + ". " + (notification.isRead() ? "[Read] " : "[Unread] ") + 
                         notification.getTitle() + " - " + notification.getTimestamp());
-                System.out.println("   " + notification.getMessage());
+                logger.info("   " + notification.getMessage());
                 
                 // Mark as read
                 if (!notification.isRead()) {
@@ -635,7 +635,7 @@ public class Main {
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -643,24 +643,24 @@ public class Main {
      * View today's schedule for the chef.
      */
     private static void viewTodaySchedule() {
-        System.out.println("\n===== Today's Schedule =====");
+        logger.info("\n===== Today's Schedule =====");
         
         List<Task> tasks = chefSchedule.getChefTasksForDate(currentUser, LocalDate.now());
         
         if (tasks.isEmpty()) {
-            System.out.println("No tasks scheduled for today.");
+            logger.info("No tasks scheduled for today.");
         } else {
             for (int i = 0; i < tasks.size(); i++) {
                 Task task = tasks.get(i);
-                System.out.println((i + 1) + ". " + task.getDescription());
-                System.out.println("   Start: " + task.getStartTime());
-                System.out.println("   End: " + task.getEndTime());
-                System.out.println("   Status: " + task.getStatus());
-                System.out.println("   Priority: " + task.getPriority());
+                logger.info((i + 1) + ". " + task.getDescription());
+                logger.info("   Start: " + task.getStartTime());
+                logger.info("   End: " + task.getEndTime());
+                logger.info("   Status: " + task.getStatus());
+                logger.info("   Priority: " + task.getPriority());
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -668,24 +668,24 @@ public class Main {
      * View all tasks for the chef.
      */
     private static void viewAllTasks() {
-        System.out.println("\n===== All Tasks =====");
+        logger.info("\n===== All Tasks =====");
         
         List<Task> tasks = chefSchedule.getChefTasks(currentUser);
         
         if (tasks.isEmpty()) {
-            System.out.println("No tasks assigned.");
+            logger.info("No tasks assigned.");
         } else {
             for (int i = 0; i < tasks.size(); i++) {
                 Task task = tasks.get(i);
-                System.out.println((i + 1) + ". " + task.getDescription());
-                System.out.println("   Start: " + task.getStartTime());
-                System.out.println("   End: " + task.getEndTime());
-                System.out.println("   Status: " + task.getStatus());
-                System.out.println("   Priority: " + task.getPriority());
+                logger.info((i + 1) + ". " + task.getDescription());
+                logger.info("   Start: " + task.getStartTime());
+                logger.info("   End: " + task.getEndTime());
+                logger.info("   Status: " + task.getStatus());
+                logger.info("   Priority: " + task.getPriority());
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -693,14 +693,14 @@ public class Main {
      * Mark a task as completed.
      */
     private static void markTaskAsCompleted() {
-        System.out.println("\n===== Mark Task as Completed =====");
+        logger.info("\n===== Mark Task as Completed =====");
         
         List<Task> tasks = chefSchedule.getActiveChefTasks(currentUser);
         
         if (tasks.isEmpty()) {
-            System.out.println("No active tasks found.");
+            logger.info("No active tasks found.");
         } else {
-            System.out.println("Active Tasks:");
+            logger.info("Active Tasks:");
             for (int i = 0; i < tasks.size(); i++) {
                 Task task = tasks.get(i);
                 System.out.println((i + 1) + ". " + task.getDescription() + 
@@ -736,21 +736,21 @@ public class Main {
                                 notificationSystem.notifyOrderStatusChange(order.getUsername(), task.getOrderId(), "completed");
                             }
                             
-                            System.out.println("Task marked as completed!");
+                            logger.info("Task marked as completed!");
                         } catch (Exception e) {
-                            System.out.println("Error completing task: " + e.getMessage());
-                            System.out.println("Please contact system administrator if this problem persists.");
+                            logger.info("Error completing task: " + e.getMessage());
+                            logger.info("Please contact system administrator if this problem persists.");
                         }
                     } else {
-                        System.out.println("Invalid task number.");
+                        logger.info("Invalid task number.");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
+                    logger.info("Invalid input. Please enter a number.");
                 }
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -758,24 +758,24 @@ public class Main {
      * Check inventory.
      */
     private static void checkInventory() {
-        System.out.println("\n===== Inventory =====");
+        logger.info("\n===== Inventory =====");
         
         List<Ingredient> ingredients = inventory.getAllIngredients();
         
         if (ingredients.isEmpty()) {
-            System.out.println("No ingredients found.");
+            logger.info("No ingredients found.");
         } else {
-            System.out.println("Current Inventory:");
+            logger.info("Current Inventory:");
             for (Ingredient ingredient : ingredients) {
                 System.out.println("- " + ingredient.getName() + ": " + 
                         ingredient.getQuantity() + " " + ingredient.getUnit() + 
                         " (min: " + ingredient.getMinimumStockLevel() + ")");
             }
             
-            System.out.println("\nLow Stock Ingredients:");
+            logger.info("\nLow Stock Ingredients:");
             List<Ingredient> lowStock = inventory.getLowStockIngredients();
             if (lowStock.isEmpty()) {
-                System.out.println("No low stock ingredients.");
+                logger.info("No low stock ingredients.");
             } else {
                 for (Ingredient ingredient : lowStock) {
                     System.out.println("- " + ingredient.getName() + ": " + 
@@ -785,7 +785,7 @@ public class Main {
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -793,16 +793,16 @@ public class Main {
      * Manage users (admin function).
      */
     private static void manageUsers() {
-        System.out.println("\n===== Manage Users =====");
+        logger.info("\n===== Manage Users =====");
         
         Map<String, User> users = loginSystem.getUserDatabase();
         
-        System.out.println("Users:");
+        logger.info("Users:");
         for (User user : users.values()) {
-            System.out.println("- " + user.getUsername() + " (" + user.getRole() + ")");
+            logger.info("- " + user.getUsername() + " (" + user.getRole() + ")");
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -810,13 +810,13 @@ public class Main {
      * Manage inventory (admin function).
      */
     private static void manageInventory() {
-        System.out.println("\n===== Manage Inventory =====");
+        logger.info("\n===== Manage Inventory =====");
         
         boolean managing = true;
         while (managing) {
             List<Ingredient> ingredients = inventory.getAllIngredients();
             
-            System.out.println("Current Inventory:");
+            logger.info("Current Inventory:");
             for (int i = 0; i < ingredients.size(); i++) {
                 Ingredient ingredient = ingredients.get(i);
                 System.out.println((i + 1) + ". " + ingredient.getName() + ": " + 
@@ -824,12 +824,12 @@ public class Main {
                         " (min: " + ingredient.getMinimumStockLevel() + ")");
             }
             
-            System.out.println("\n1. Add New Ingredient");
-            System.out.println("2. Update Ingredient Quantity");
-            System.out.println("3. Update Minimum Stock Level");
-            System.out.println("4. Remove Ingredient");
-            System.out.println("5. View Low Stock Ingredients");
-            System.out.println("6. Back to Main Menu");
+            logger.info("\n1. Add New Ingredient");
+            logger.info("2. Update Ingredient Quantity");
+            logger.info("3. Update Minimum Stock Level");
+            logger.info("4. Remove Ingredient");
+            logger.info("5. View Low Stock Ingredients");
+            logger.info("6. Back to Main Menu");
             System.out.print("Enter your choice: ");
             
             String choice = scanner.nextLine();
@@ -852,7 +852,7 @@ public class Main {
                     String id = "ING" + System.currentTimeMillis();
                     Ingredient newIngredient = new Ingredient(id, name, unit, quantity, minStock);
                     inventory.addIngredient(newIngredient);
-                    System.out.println("Ingredient added successfully!");
+                    logger.info("Ingredient added successfully!");
                     break;
                     
                 case "2":
@@ -866,9 +866,9 @@ public class Main {
                         double newQuantity = Double.parseDouble(scanner.nextLine());
                         
                         inventory.updateIngredientQuantity(ingredient.getId(), newQuantity - ingredient.getQuantity());
-                        System.out.println("Quantity updated successfully!");
+                        logger.info("Quantity updated successfully!");
                     } else {
-                        System.out.println("Invalid ingredient number.");
+                        logger.info("Invalid ingredient number.");
                     }
                     break;
                     
@@ -883,9 +883,9 @@ public class Main {
                         double newMinStock = Double.parseDouble(scanner.nextLine());
                         
                         ingredient.setMinimumStockLevel(newMinStock);
-                        System.out.println("Minimum stock level updated successfully!");
+                        logger.info("Minimum stock level updated successfully!");
                     } else {
-                        System.out.println("Invalid ingredient number.");
+                        logger.info("Invalid ingredient number.");
                     }
                     break;
                     
@@ -898,21 +898,21 @@ public class Main {
                         
                         // Remove the ingredient
                         if (inventory.removeIngredient(ingredient.getId())) {
-                            System.out.println("Ingredient removed successfully!");
+                            logger.info("Ingredient removed successfully!");
                         } else {
-                            System.out.println("Failed to remove ingredient.");
+                            logger.info("Failed to remove ingredient.");
                         }
                     } else {
-                        System.out.println("Invalid ingredient number.");
+                        logger.info("Invalid ingredient number.");
                     }
                     break;
                     
                 case "5":
                     List<Ingredient> lowStock = inventory.getLowStockIngredients();
                     
-                    System.out.println("\nLow Stock Ingredients:");
+                    logger.info("\nLow Stock Ingredients:");
                     if (lowStock.isEmpty()) {
-                        System.out.println("No low stock ingredients.");
+                        logger.info("No low stock ingredients.");
                     } else {
                         for (Ingredient ingredient : lowStock) {
                             System.out.println("- " + ingredient.getName() + ": " + 
@@ -921,7 +921,7 @@ public class Main {
                         }
                     }
                     
-                    System.out.println("\nPress Enter to continue...");
+                    logger.info("\nPress Enter to continue...");
                     scanner.nextLine();
                     break;
                     
@@ -930,7 +930,7 @@ public class Main {
                     break;
                     
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    logger.info("Invalid choice. Please try again.");
             }
         }
     }
@@ -939,24 +939,24 @@ public class Main {
      * Manage suppliers (admin function).
      */
     private static void manageSuppliers() {
-        System.out.println("\n===== Manage Suppliers =====");
+        logger.info("\n===== Manage Suppliers =====");
         
         boolean managing = true;
         while (managing) {
             List<Supplier> suppliers = inventory.getAllSuppliers();
             
-            System.out.println("Current Suppliers:");
+            logger.info("Current Suppliers:");
             for (int i = 0; i < suppliers.size(); i++) {
                 Supplier supplier = suppliers.get(i);
                 System.out.println((i + 1) + ". " + supplier.getName() + 
                         " - Email: " + supplier.getEmail() + ", Phone: " + supplier.getPhone());
             }
             
-            System.out.println("\n1. Add New Supplier");
-            System.out.println("2. Update Supplier Information");
-            System.out.println("3. Remove Supplier");
-            System.out.println("4. Place Order with Supplier");
-            System.out.println("5. Back to Main Menu");
+            logger.info("\n1. Add New Supplier");
+            logger.info("2. Update Supplier Information");
+            logger.info("3. Remove Supplier");
+            logger.info("4. Place Order with Supplier");
+            logger.info("5. Back to Main Menu");
             System.out.print("Enter your choice: ");
             
             String choice = scanner.nextLine();
@@ -979,7 +979,7 @@ public class Main {
                     String id = "SUP" + System.currentTimeMillis();
                     Supplier newSupplier = new Supplier(id, name, email, phone, address);
                     inventory.addSupplier(newSupplier);
-                    System.out.println("Supplier added successfully!");
+                    logger.info("Supplier added successfully!");
                     break;
                     
                 case "2":
@@ -1001,9 +1001,9 @@ public class Main {
                         String newAddress = scanner.nextLine();
                         supplier.setAddress(newAddress);
                         
-                        System.out.println("Supplier information updated successfully!");
+                        logger.info("Supplier information updated successfully!");
                     } else {
-                        System.out.println("Invalid supplier number.");
+                        logger.info("Invalid supplier number.");
                     }
                     break;
                     
@@ -1016,12 +1016,12 @@ public class Main {
                         
                         // Remove the supplier
                         if (inventory.removeSupplier(supplier.getId())) {
-                            System.out.println("Supplier removed successfully!");
+                            logger.info("Supplier removed successfully!");
                         } else {
-                            System.out.println("Failed to remove supplier.");
+                            logger.info("Failed to remove supplier.");
                         }
                     } else {
-                        System.out.println("Invalid supplier number.");
+                        logger.info("Invalid supplier number.");
                     }
                     break;
                     
@@ -1032,8 +1032,8 @@ public class Main {
                     if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
                         Supplier supplier = suppliers.get(supplierIndex);
                         
-                        System.out.println("\nPlace Order with " + supplier.getName());
-                        System.out.println("Available Ingredients:");
+                        logger.info("\nPlace Order with " + supplier.getName());
+                        logger.info("Available Ingredients:");
                         
                         List<Ingredient> ingredients = inventory.getAllIngredients();
                         for (int i = 0; i < ingredients.size(); i++) {
@@ -1052,9 +1052,9 @@ public class Main {
                             double quantity = Double.parseDouble(scanner.nextLine());
                             
                             // Simulate placing an order
-                            System.out.println("\nOrder placed with " + supplier.getName() + ":");
-                            System.out.println("- " + ingredient.getName() + ": " + quantity + " " + ingredient.getUnit());
-                            System.out.println("Expected delivery: 3-5 business days");
+                            logger.info("\nOrder placed with " + supplier.getName() + ":");
+                            logger.info("- " + ingredient.getName() + ": " + quantity + " " + ingredient.getUnit());
+                            logger.info("Expected delivery: 3-5 business days");
                             
                             // Create a notification for the order
                             notificationSystem.sendNotification(
@@ -1065,10 +1065,10 @@ public class Main {
                                     "order"
                             );
                         } else {
-                            System.out.println("Invalid ingredient number.");
+                            logger.info("Invalid ingredient number.");
                         }
                     } else {
-                        System.out.println("Invalid supplier number.");
+                        logger.info("Invalid supplier number.");
                     }
                     break;
                     
@@ -1077,11 +1077,11 @@ public class Main {
                     break;
                     
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    logger.info("Invalid choice. Please try again.");
             }
             
             if (!choice.equals("5")) {
-                System.out.println("\nPress Enter to continue...");
+                logger.info("\nPress Enter to continue...");
                 scanner.nextLine();
             }
         }
@@ -1091,7 +1091,7 @@ public class Main {
      * View chef schedules (admin function).
      */
     private static void viewChefSchedules() {
-        System.out.println("\n===== Chef Schedules =====");
+        logger.info("\n===== Chef Schedules =====");
         
         Map<String, User> users = loginSystem.getUserDatabase();
         List<String> chefs = new ArrayList<>();
@@ -1104,11 +1104,11 @@ public class Main {
         }
         
         if (chefs.isEmpty()) {
-            System.out.println("No chefs found in the system.");
+            logger.info("No chefs found in the system.");
         } else {
-            System.out.println("Select a chef to view schedule:");
+            logger.info("Select a chef to view schedule:");
             for (int i = 0; i < chefs.size(); i++) {
-                System.out.println((i + 1) + ". " + chefs.get(i));
+                logger.info((i + 1) + ". " + chefs.get(i));
             }
             
             System.out.print("\nEnter chef number (0 to view all): ");
@@ -1116,20 +1116,20 @@ public class Main {
             
             if (choice.equals("0")) {
                 // View all chef schedules
-                System.out.println("\nAll Chef Schedules:");
+                logger.info("\nAll Chef Schedules:");
                 
                 for (String chef : chefs) {
-                    System.out.println("\nSchedule for " + chef + ":");
+                    logger.info("\nSchedule for " + chef + ":");
                     List<Task> tasks = chefSchedule.getChefTasks(chef);
                     
                     if (tasks.isEmpty()) {
-                        System.out.println("No tasks assigned.");
+                        logger.info("No tasks assigned.");
                     } else {
                         for (Task task : tasks) {
-                            System.out.println("- " + task.getDescription());
-                            System.out.println("  Start: " + task.getStartTime());
-                            System.out.println("  End: " + task.getEndTime());
-                            System.out.println("  Status: " + task.getStatus());
+                            logger.info("- " + task.getDescription());
+                            logger.info("  Start: " + task.getStartTime());
+                            logger.info("  End: " + task.getEndTime());
+                            logger.info("  Status: " + task.getStatus());
                         }
                     }
                 }
@@ -1139,12 +1139,12 @@ public class Main {
                     if (chefIndex >= 0 && chefIndex < chefs.size()) {
                         String chef = chefs.get(chefIndex);
                         
-                        System.out.println("\nSchedule for " + chef + ":");
+                        logger.info("\nSchedule for " + chef + ":");
                         
                         // Show schedule by date
-                        System.out.println("\n1. View Today's Schedule");
-                        System.out.println("2. View Week Schedule");
-                        System.out.println("3. View All Tasks");
+                        logger.info("\n1. View Today's Schedule");
+                        logger.info("2. View Week Schedule");
+                        logger.info("3. View All Tasks");
                         System.out.print("Enter your choice: ");
                         
                         String scheduleChoice = scanner.nextLine();
@@ -1153,36 +1153,36 @@ public class Main {
                             case "1":
                                 List<Task> todayTasks = chefSchedule.getChefTasksForDate(chef, LocalDate.now());
                                 
-                                System.out.println("\nToday's Schedule for " + chef + ":");
+                                logger.info("\nToday's Schedule for " + chef + ":");
                                 if (todayTasks.isEmpty()) {
-                                    System.out.println("No tasks scheduled for today.");
+                                    logger.info("No tasks scheduled for today.");
                                 } else {
                                     for (Task task : todayTasks) {
-                                        System.out.println("- " + task.getDescription());
-                                        System.out.println("  Start: " + task.getStartTime());
-                                        System.out.println("  End: " + task.getEndTime());
-                                        System.out.println("  Status: " + task.getStatus());
+                                        logger.info("- " + task.getDescription());
+                                        logger.info("  Start: " + task.getStartTime());
+                                        logger.info("  End: " + task.getEndTime());
+                                        logger.info("  Status: " + task.getStatus());
                                     }
                                 }
                                 break;
                                 
                             case "2":
-                                System.out.println("\nWeek Schedule for " + chef + ":");
+                                logger.info("\nWeek Schedule for " + chef + ":");
                                 
                                 LocalDate today = LocalDate.now();
                                 for (int i = 0; i < 7; i++) {
                                     LocalDate date = today.plusDays(i);
                                     List<Task> dateTasks = chefSchedule.getChefTasksForDate(chef, date);
                                     
-                                    System.out.println("\n" + date + ":");
+                                    logger.info("\n" + date + ":");
                                     if (dateTasks.isEmpty()) {
-                                        System.out.println("No tasks scheduled.");
+                                        logger.info("No tasks scheduled.");
                                     } else {
                                         for (Task task : dateTasks) {
-                                            System.out.println("- " + task.getDescription());
-                                            System.out.println("  Start: " + task.getStartTime());
-                                            System.out.println("  End: " + task.getEndTime());
-                                            System.out.println("  Status: " + task.getStatus());
+                                            logger.info("- " + task.getDescription());
+                                            logger.info("  Start: " + task.getStartTime());
+                                            logger.info("  End: " + task.getEndTime());
+                                            logger.info("  Status: " + task.getStatus());
                                         }
                                     }
                                 }
@@ -1191,32 +1191,32 @@ public class Main {
                             case "3":
                                 List<Task> allTasks = chefSchedule.getChefTasks(chef);
                                 
-                                System.out.println("\nAll Tasks for " + chef + ":");
+                                logger.info("\nAll Tasks for " + chef + ":");
                                 if (allTasks.isEmpty()) {
-                                    System.out.println("No tasks assigned.");
+                                    logger.info("No tasks assigned.");
                                 } else {
                                     for (Task task : allTasks) {
-                                        System.out.println("- " + task.getDescription());
-                                        System.out.println("  Start: " + task.getStartTime());
-                                        System.out.println("  End: " + task.getEndTime());
-                                        System.out.println("  Status: " + task.getStatus());
+                                        logger.info("- " + task.getDescription());
+                                        logger.info("  Start: " + task.getStartTime());
+                                        logger.info("  End: " + task.getEndTime());
+                                        logger.info("  Status: " + task.getStatus());
                                     }
                                 }
                                 break;
                                 
                             default:
-                                System.out.println("Invalid choice.");
+                                logger.info("Invalid choice.");
                         }
                     } else {
-                        System.out.println("Invalid chef number.");
+                        logger.info("Invalid chef number.");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
+                    logger.info("Invalid input. Please enter a number.");
                 }
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -1224,15 +1224,15 @@ public class Main {
      * Generate reports (admin function).
      */
     private static void generateReports() {
-        System.out.println("\n===== Generate Reports =====");
+        logger.info("\n===== Generate Reports =====");
         
-        System.out.println("Select report type:");
-        System.out.println("1. Sales Report");
-        System.out.println("2. Inventory Report");
-        System.out.println("3. Chef Performance Report");
-        System.out.println("4. Customer Preferences Report");
-        System.out.println("5. Order History Reports");
-        System.out.println("6. Back to Main Menu");
+        logger.info("Select report type:");
+        logger.info("1. Sales Report");
+        logger.info("2. Inventory Report");
+        logger.info("3. Chef Performance Report");
+        logger.info("4. Customer Preferences Report");
+        logger.info("5. Order History Reports");
+        logger.info("6. Back to Main Menu");
         System.out.print("Enter your choice: ");
         
         String choice = scanner.nextLine();
@@ -1262,10 +1262,10 @@ public class Main {
                 return;
                 
             default:
-                System.out.println("Invalid choice. Please try again.");
+                logger.info("Invalid choice. Please try again.");
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -1273,7 +1273,7 @@ public class Main {
      * Generate a sales report.
      */
     private static void generateSalesReport() {
-        System.out.println("\n===== Sales Report =====");
+        logger.info("\n===== Sales Report =====");
         
         // Get all orders from all users
         List<Order> allOrders = new ArrayList<>();
@@ -1305,12 +1305,12 @@ public class Main {
         }
         
         // Display report
-        System.out.println("Total Sales: $" + String.format("%.2f", totalSales));
-        System.out.println("Total Orders: " + allOrders.size());
-        System.out.println("Completed Orders: " + completedOrders);
-        System.out.println("Pending Orders: " + pendingOrders);
+        logger.info("Total Sales: $" + String.format("%.2f", totalSales));
+        logger.info("Total Orders: " + allOrders.size());
+        logger.info("Completed Orders: " + completedOrders);
+        logger.info("Pending Orders: " + pendingOrders);
         
-        System.out.println("\nMost Popular Meals:");
+        logger.info("\nMost Popular Meals:");
         
         // Sort meals by popularity
         List<Map.Entry<String, Integer>> sortedMeals = new ArrayList<>(mealPopularity.entrySet());
@@ -1318,7 +1318,7 @@ public class Main {
         
         for (int i = 0; i < Math.min(5, sortedMeals.size()); i++) {
             Map.Entry<String, Integer> entry = sortedMeals.get(i);
-            System.out.println((i + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " orders");
+            logger.info((i + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " orders");
         }
     }
     
@@ -1326,15 +1326,15 @@ public class Main {
      * Generate an inventory report.
      */
     private static void generateInventoryReport() {
-        System.out.println("\n===== Inventory Report =====");
+        logger.info("\n===== Inventory Report =====");
         
         List<Ingredient> ingredients = inventory.getAllIngredients();
         List<Ingredient> lowStock = inventory.getLowStockIngredients();
         
-        System.out.println("Total Ingredients: " + ingredients.size());
-        System.out.println("Low Stock Ingredients: " + lowStock.size());
+        logger.info("Total Ingredients: " + ingredients.size());
+        logger.info("Low Stock Ingredients: " + lowStock.size());
         
-        System.out.println("\nInventory Value:");
+        logger.info("\nInventory Value:");
         double totalValue = 0;
         
         for (Ingredient ingredient : ingredients) {
@@ -1348,11 +1348,11 @@ public class Main {
                     " = $" + String.format("%.2f", value));
         }
         
-        System.out.println("\nTotal Inventory Value: $" + String.format("%.2f", totalValue));
+        logger.info("\nTotal Inventory Value: $" + String.format("%.2f", totalValue));
         
-        System.out.println("\nLow Stock Ingredients:");
+        logger.info("\nLow Stock Ingredients:");
         if (lowStock.isEmpty()) {
-            System.out.println("No low stock ingredients.");
+            logger.info("No low stock ingredients.");
         } else {
             for (Ingredient ingredient : lowStock) {
                 System.out.println("- " + ingredient.getName() + ": " + 
@@ -1366,7 +1366,7 @@ public class Main {
      * Generate a chef performance report.
      */
     private static void generateChefPerformanceReport() {
-        System.out.println("\n===== Chef Performance Report =====");
+        logger.info("\n===== Chef Performance Report =====");
         
         Map<String, User> users = loginSystem.getUserDatabase();
         List<String> chefs = new ArrayList<>();
@@ -1379,11 +1379,11 @@ public class Main {
         }
         
         if (chefs.isEmpty()) {
-            System.out.println("No chefs found in the system.");
+            logger.info("No chefs found in the system.");
             return;
         }
         
-        System.out.println("Chef Performance Summary:");
+        logger.info("Chef Performance Summary:");
         
         for (String chef : chefs) {
             List<Task> tasks = chefSchedule.getChefTasks(chef);
@@ -1414,13 +1414,13 @@ public class Main {
             double completionRate = totalTasks > 0 ? (double) completedTasks / totalTasks * 100 : 0;
             double onTimeRate = completedTasks > 0 ? (double) (completedTasks - lateTasks) / completedTasks * 100 : 0;
             
-            System.out.println("\nChef: " + chef);
-            System.out.println("Total Tasks: " + totalTasks);
-            System.out.println("Completed Tasks: " + completedTasks);
-            System.out.println("Pending Tasks: " + pendingTasks);
-            System.out.println("Late Tasks: " + lateTasks);
-            System.out.println("Completion Rate: " + String.format("%.1f", completionRate) + "%");
-            System.out.println("On-Time Rate: " + String.format("%.1f", onTimeRate) + "%");
+            logger.info("\nChef: " + chef);
+            logger.info("Total Tasks: " + totalTasks);
+            logger.info("Completed Tasks: " + completedTasks);
+            logger.info("Pending Tasks: " + pendingTasks);
+            logger.info("Late Tasks: " + lateTasks);
+            logger.info("Completion Rate: " + String.format("%.1f", completionRate) + "%");
+            logger.info("On-Time Rate: " + String.format("%.1f", onTimeRate) + "%");
         }
     }
     
@@ -1434,7 +1434,7 @@ public class Main {
      * @return The created custom meal
      */
     private static Meal createCustomMeal(List<String> ingredients) {
-        System.out.println("\n===== Creating Custom Meal =====");
+        logger.info("\n===== Creating Custom Meal =====");
         
         // Generate a unique meal ID
         String mealId = "MEAL" + System.currentTimeMillis();
@@ -1447,13 +1447,13 @@ public class Main {
                 10.0);  // Base price
         
         // Add the selected ingredients
-        System.out.println("Adding ingredients to your custom meal...");
+        logger.info("Adding ingredients to your custom meal...");
         for (String ingredient : ingredients) {
             boolean added = customMealService.addIngredientToMeal(customMeal, ingredient);
             if (added) {
-                System.out.println("Added: " + ingredient);
+                logger.info("Added: " + ingredient);
             } else {
-                System.out.println("Could not add: " + ingredient + " (incompatible or unavailable)");
+                logger.info("Could not add: " + ingredient + " (incompatible or unavailable)");
             }
         }
         
@@ -1470,7 +1470,7 @@ public class Main {
      * @return true if all ingredients are compatible, false otherwise
      */
     private static boolean validateIngredients(List<String> ingredients) {
-        System.out.println("\n===== Validating Ingredients =====");
+        logger.info("\n===== Validating Ingredients =====");
         
         // Create a temporary meal to test compatibility
         Meal testMeal = new Meal("TEST", "Test Meal", "For validation", 0.0);
@@ -1481,13 +1481,13 @@ public class Main {
             if (!customMealService.addIngredientToMeal(testMeal, ingredient)) {
                 // Check if it's because of incompatibility (not availability)
                 if (customMealService.isIngredientAvailable(ingredient)) {
-                    System.out.println("Invalid combination: " + ingredient + " is incompatible with other ingredients");
+                    logger.info("Invalid combination: " + ingredient + " is incompatible with other ingredients");
                     return false;
                 }
             }
         }
         
-        System.out.println("All ingredient combinations are valid!");
+        logger.info("All ingredient combinations are valid!");
         return true;
     }
     
@@ -1501,9 +1501,9 @@ public class Main {
         boolean available = customMealService.isIngredientAvailable(ingredient);
         
         if (available) {
-            System.out.println("Ingredient is available: " + ingredient);
+            logger.info("Ingredient is available: " + ingredient);
         } else {
-            System.out.println("Ingredient is unavailable: " + ingredient);
+            logger.info("Ingredient is unavailable: " + ingredient);
         }
         
         return available;
@@ -1513,13 +1513,13 @@ public class Main {
      * Create a custom meal through the command line interface.
      */
     private static void createCustomMeal() {
-        System.out.println("\n===== Custom Meal Creator =====");
+        logger.info("\n===== Custom Meal Creator =====");
         
         // Show available ingredients
         List<Ingredient> availableIngredients = inventory.getAllIngredients();
-        System.out.println("\nAvailable Ingredients:");
+        logger.info("\nAvailable Ingredients:");
         for (int i = 0; i < availableIngredients.size(); i++) {
-            System.out.println((i + 1) + ". " + availableIngredients.get(i).getName());
+            logger.info((i + 1) + ". " + availableIngredients.get(i).getName());
         }
         
         // Get ingredients from user
@@ -1542,24 +1542,24 @@ public class Main {
                         if (checkIngredientAvailability(ingredientName)) {
                             // Add to selected ingredients
                             selectedIngredients.add(ingredientName);
-                            System.out.println("Added to selection: " + ingredientName);
+                            logger.info("Added to selection: " + ingredientName);
                             
                             // Validate the current combination
                             validateIngredients(selectedIngredients);
                         }
                     } else {
-                        System.out.println("Invalid ingredient number. Please try again.");
+                        logger.info("Invalid ingredient number. Please try again.");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
+                    logger.info("Invalid input. Please enter a number.");
                 }
             }
         }
         
         // If no ingredients were selected, return
         if (selectedIngredients.isEmpty()) {
-            System.out.println("No ingredients selected. Returning to main menu.");
-            System.out.println("\nPress Enter to continue...");
+            logger.info("No ingredients selected. Returning to main menu.");
+            logger.info("\nPress Enter to continue...");
             scanner.nextLine();
             return;
         }
@@ -1574,14 +1574,14 @@ public class Main {
         if (orderChoice.equalsIgnoreCase("y")) {
             // Create a new order
             Order order = orderSystem.createOrder(currentUser);
-            System.out.println("New order created: " + order.getOrderId());
+            logger.info("New order created: " + order.getOrderId());
             
             // Add the custom meal to the order
             order.addMeal(customMeal);
             
             // Update order status
             orderSystem.updateOrderStatus(order.getOrderId(), "pending");
-            System.out.println("\nOrder placed successfully!");
+            logger.info("\nOrder placed successfully!");
             System.out.println("Order #" + order.getOrderId() + " - Total: $" + 
                     String.format("%.2f", order.getTotalPrice()));
             
@@ -1602,7 +1602,7 @@ public class Main {
             notificationSystem.notifyNewInvoice(currentUser, invoice);
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -1615,7 +1615,7 @@ public class Main {
     private static List<Order> getOrderHistory(String customerId) {
         User user = loginSystem.getUserDatabase().get(customerId);
         if (user == null) {
-            System.out.println("User not found: " + customerId);
+            logger.info("User not found: " + customerId);
             return new ArrayList<>();
         }
         
@@ -1703,13 +1703,13 @@ public class Main {
      * View and analyze order history reports (admin function).
      */
     private static void orderHistoryReports() {
-        System.out.println("\n===== Order History Reports =====");
+        logger.info("\n===== Order History Reports =====");
         
-        System.out.println("Select report type:");
-        System.out.println("1. View All Orders");
-        System.out.println("2. View Orders by Customer");
-        System.out.println("3. View Order Statistics by Date Range");
-        System.out.println("4. Back to Reports Menu");
+        logger.info("Select report type:");
+        logger.info("1. View All Orders");
+        logger.info("2. View Orders by Customer");
+        logger.info("3. View Order Statistics by Date Range");
+        logger.info("4. Back to Reports Menu");
         System.out.print("Enter your choice: ");
         
         String choice = scanner.nextLine();
@@ -1731,10 +1731,10 @@ public class Main {
                 return;
                 
             default:
-                System.out.println("Invalid choice. Please try again.");
+                logger.info("Invalid choice. Please try again.");
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -1742,23 +1742,23 @@ public class Main {
      * View all orders in the system.
      */
     private static void viewAllOrders() {
-        System.out.println("\n===== All Orders =====");
+        logger.info("\n===== All Orders =====");
         
         List<Order> allOrders = getAllOrderHistory();
         
         if (allOrders.isEmpty()) {
-            System.out.println("No orders found in the system.");
+            logger.info("No orders found in the system.");
         } else {
-            System.out.println("Total Orders: " + allOrders.size());
+            logger.info("Total Orders: " + allOrders.size());
             
             for (Order order : allOrders) {
-                System.out.println("\nOrder #" + order.getOrderId());
-                System.out.println("Customer: " + order.getUsername());
-                System.out.println("Date: " + order.getOrderDate());
-                System.out.println("Status: " + order.getStatus());
-                System.out.println("Total: $" + String.format("%.2f", order.getTotalPrice()));
+                logger.info("\nOrder #" + order.getOrderId());
+                logger.info("Customer: " + order.getUsername());
+                logger.info("Date: " + order.getOrderDate());
+                logger.info("Status: " + order.getStatus());
+                logger.info("Total: $" + String.format("%.2f", order.getTotalPrice()));
                 
-                System.out.println("Meals:");
+                logger.info("Meals:");
                 for (Meal meal : order.getMeals()) {
                     System.out.println("- " + meal.getName() + 
                             " - $" + String.format("%.2f", meal.getPrice()));
@@ -1771,7 +1771,7 @@ public class Main {
      * View orders for a specific customer.
      */
     private static void viewOrdersByCustomer() {
-        System.out.println("\n===== Orders by Customer =====");
+        logger.info("\n===== Orders by Customer =====");
         
         // Show list of customers
         Map<String, User> users = loginSystem.getUserDatabase();
@@ -1785,13 +1785,13 @@ public class Main {
         }
         
         if (customers.isEmpty()) {
-            System.out.println("No customers found in the system.");
+            logger.info("No customers found in the system.");
             return;
         }
         
-        System.out.println("\nAvailable Customers:");
+        logger.info("\nAvailable Customers:");
         for (int i = 0; i < customers.size(); i++) {
-            System.out.println((i + 1) + ". " + customers.get(i));
+            logger.info((i + 1) + ". " + customers.get(i));
         }
         
         System.out.print("\nEnter customer number: ");
@@ -1805,18 +1805,18 @@ public class Main {
                 // Get and display customer's orders
                 List<Order> customerOrders = getOrderHistory(customerId);
                 
-                System.out.println("\nOrders for Customer: " + customerId);
+                logger.info("\nOrders for Customer: " + customerId);
                 
                 if (customerOrders.isEmpty()) {
-                    System.out.println("No orders found for this customer.");
+                    logger.info("No orders found for this customer.");
                 } else {
                     for (Order order : customerOrders) {
-                        System.out.println("\nOrder #" + order.getOrderId());
-                        System.out.println("Date: " + order.getOrderDate());
-                        System.out.println("Status: " + order.getStatus());
-                        System.out.println("Total: $" + String.format("%.2f", order.getTotalPrice()));
+                        logger.info("\nOrder #" + order.getOrderId());
+                        logger.info("Date: " + order.getOrderDate());
+                        logger.info("Status: " + order.getStatus());
+                        logger.info("Total: $" + String.format("%.2f", order.getTotalPrice()));
                         
-                        System.out.println("Meals:");
+                        logger.info("Meals:");
                         for (Meal meal : order.getMeals()) {
                             System.out.println("- " + meal.getName() + 
                                     " - $" + String.format("%.2f", meal.getPrice()));
@@ -1824,10 +1824,10 @@ public class Main {
                     }
                 }
             } else {
-                System.out.println("Invalid customer number.");
+                logger.info("Invalid customer number.");
             }
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a number.");
+            logger.info("Invalid input. Please enter a number.");
         }
     }
     
@@ -1835,13 +1835,13 @@ public class Main {
      * View order statistics for a specified date range.
      */
     private static void viewOrderStatisticsByDateRange() {
-        System.out.println("\n===== Order Statistics by Date Range =====");
+        logger.info("\n===== Order Statistics by Date Range =====");
         
         // Simple date input (in real implementation, use proper date parsing)
-        System.out.println("Enter start date (MM/DD/YYYY):");
+        logger.info("Enter start date (MM/DD/YYYY):");
         String startDateStr = scanner.nextLine();
         
-        System.out.println("Enter end date (MM/DD/YYYY):");
+        logger.info("Enter end date (MM/DD/YYYY):");
         String endDateStr = scanner.nextLine();
         
         try {
@@ -1850,7 +1850,7 @@ public class Main {
             String[] endParts = endDateStr.split("/");
             
             if (startParts.length != 3 || endParts.length != 3) {
-                System.out.println("Invalid date format. Please use MM/DD/YYYY.");
+                logger.info("Invalid date format. Please use MM/DD/YYYY.");
                 return;
             }
             
@@ -1871,18 +1871,18 @@ public class Main {
             Map<String, Object> statistics = getOrderStatistics(startDate, endDate);
             
             // Display statistics
-            System.out.println("\nOrder Statistics for " + startDateStr + " to " + endDateStr + ":");
-            System.out.println("Total Orders: " + statistics.get("totalOrders"));
-            System.out.println("Completed Orders: " + statistics.get("completedOrders"));
-            System.out.println("Pending Orders: " + statistics.get("pendingOrders"));
-            System.out.println("Total Sales: $" + String.format("%.2f", (Double)statistics.get("totalSales")));
-            System.out.println("Average Order Value: $" + String.format("%.2f", (Double)statistics.get("averageOrderValue")));
+            logger.info("\nOrder Statistics for " + startDateStr + " to " + endDateStr + ":");
+            logger.info("Total Orders: " + statistics.get("totalOrders"));
+            logger.info("Completed Orders: " + statistics.get("completedOrders"));
+            logger.info("Pending Orders: " + statistics.get("pendingOrders"));
+            logger.info("Total Sales: $" + String.format("%.2f", (Double)statistics.get("totalSales")));
+            logger.info("Average Order Value: $" + String.format("%.2f", (Double)statistics.get("averageOrderValue")));
             
             // Display popular meals
             @SuppressWarnings("unchecked")
             Map<String, Integer> mealPopularity = (Map<String, Integer>)statistics.get("mealPopularity");
             
-            System.out.println("\nMost Popular Meals:");
+            logger.info("\nMost Popular Meals:");
             
             // Sort meals by popularity
             List<Map.Entry<String, Integer>> sortedMeals = new ArrayList<>(mealPopularity.entrySet());
@@ -1890,13 +1890,13 @@ public class Main {
             
             for (int i = 0; i < Math.min(5, sortedMeals.size()); i++) {
                 Map.Entry<String, Integer> entry = sortedMeals.get(i);
-                System.out.println((i + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " orders");
+                logger.info((i + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " orders");
             }
             
         } catch (NumberFormatException e) {
-            System.out.println("Invalid date format. Please use MM/DD/YYYY.");
+            logger.info("Invalid date format. Please use MM/DD/YYYY.");
         } catch (Exception e) {
-            System.out.println("Error processing date range: " + e.getMessage());
+            logger.info("Error processing date range: " + e.getMessage());
         }
     }
     
@@ -1904,7 +1904,7 @@ public class Main {
      * Generate a customer preferences report.
      */
     private static void generateCustomerPreferencesReport() {
-        System.out.println("\n===== Customer Preferences Report =====");
+        logger.info("\n===== Customer Preferences Report =====");
         
         Map<String, User> users = loginSystem.getUserDatabase();
         List<String> customers = new ArrayList<>();
@@ -1917,7 +1917,7 @@ public class Main {
         }
         
         if (customers.isEmpty()) {
-            System.out.println("No customers found in the system.");
+            logger.info("No customers found in the system.");
             return;
         }
         
@@ -1938,11 +1938,11 @@ public class Main {
         }
         
         // Display report
-        System.out.println("Total Customers: " + customers.size());
+        logger.info("Total Customers: " + customers.size());
         
-        System.out.println("\nDietary Preferences:");
+        logger.info("\nDietary Preferences:");
         if (dietaryPreferences.isEmpty()) {
-            System.out.println("No dietary preferences found.");
+            logger.info("No dietary preferences found.");
         } else {
             List<Map.Entry<String, Integer>> sortedPreferences = new ArrayList<>(dietaryPreferences.entrySet());
             sortedPreferences.sort((a, b) -> b.getValue().compareTo(a.getValue()));
@@ -1954,9 +1954,9 @@ public class Main {
             }
         }
         
-        System.out.println("\nAllergies:");
+        logger.info("\nAllergies:");
         if (allergies.isEmpty()) {
-            System.out.println("No allergies found.");
+            logger.info("No allergies found.");
         } else {
             List<Map.Entry<String, Integer>> sortedAllergies = new ArrayList<>(allergies.entrySet());
             sortedAllergies.sort((a, b) -> b.getValue().compareTo(a.getValue()));

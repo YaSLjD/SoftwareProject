@@ -6,6 +6,7 @@ import app.Order;
 import app.OrderSystem;
 import app.User;
 import app.UserPreferenceSystem;
+import app.logger;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -34,7 +35,7 @@ public class PersonalizedMealPlansStep {
     public void theCustomerHasPlacedPreviousOrders() {
         User customer = loginSystem.getUserDatabase().get(customerUsername);
         assertFalse("Customer should have order history", customer.getOrderHistory().isEmpty());
-        System.out.println("Customer has " + customer.getOrderHistory().size() + " previous orders");
+        logger.info("Customer has " + customer.getOrderHistory().size() + " previous orders");
     }
     
     @Given("the chef has accessed the customer's order history")
@@ -42,7 +43,7 @@ public class PersonalizedMealPlansStep {
         // Simulate chef accessing customer order history
         List<Order> customerOrders = orderSystem.getUserOrders(customerUsername);
         assertFalse("Customer should have order history", customerOrders.isEmpty());
-        System.out.println("Chef accessed customer's order history with " + customerOrders.size() + " orders");
+        logger.info("Chef accessed customer's order history with " + customerOrders.size() + " orders");
     }
     
     @Given("the system has recorded the customer's dietary preferences")
@@ -53,8 +54,8 @@ public class PersonalizedMealPlansStep {
         assertFalse("Customer should have dietary preferences", preferences.isEmpty());
         assertFalse("Customer should have allergies", allergies.isEmpty());
         
-        System.out.println("System has recorded customer preferences: " + preferences);
-        System.out.println("System has recorded customer allergies: " + allergies);
+        logger.info("System has recorded customer preferences: " + preferences);
+        logger.info("System has recorded customer allergies: " + allergies);
     }
     
     @When("the chef selects meals based on past preferences and dietary needs")
@@ -72,7 +73,7 @@ public class PersonalizedMealPlansStep {
             orderSystem.addMealToOrder(personalizedMealPlan.getOrderId(), meal.getId());
         }
         
-        System.out.println("Chef selected " + personalizedMealPlan.getMeals().size() + " meals for the plan");
+        logger.info("Chef selected " + personalizedMealPlan.getMeals().size() + " meals for the plan");
     }
     
     @Then("the system should allow the chef to save and send the meal plan")
@@ -81,7 +82,7 @@ public class PersonalizedMealPlansStep {
         orderSystem.updateOrderStatus(personalizedMealPlan.getOrderId(), "pending");
         assertEquals("pending", personalizedMealPlan.getStatus());
         
-        System.out.println("Chef saved and sent the meal plan with ID: " + personalizedMealPlan.getOrderId());
+        logger.info("Chef saved and sent the meal plan with ID: " + personalizedMealPlan.getOrderId());
     }
     
     @Given("the chef has submitted a personalized meal plan")
@@ -100,7 +101,7 @@ public class PersonalizedMealPlansStep {
             orderSystem.updateOrderStatus(personalizedMealPlan.getOrderId(), "pending");
         }
         
-        System.out.println("Chef has submitted a personalized meal plan with ID: " + personalizedMealPlan.getOrderId());
+        logger.info("Chef has submitted a personalized meal plan with ID: " + personalizedMealPlan.getOrderId());
     }
     
     @When("the system processes and sends the plan")
@@ -109,7 +110,7 @@ public class PersonalizedMealPlansStep {
         orderSystem.updateOrderStatus(personalizedMealPlan.getOrderId(), "processed");
         assertEquals("processed", personalizedMealPlan.getStatus());
         
-        System.out.println("System processed and sent the meal plan");
+        logger.info("System processed and sent the meal plan");
     }
     
     @Then("the customer should receive a notification with the suggested meals")
@@ -119,7 +120,7 @@ public class PersonalizedMealPlansStep {
                 personalizedMealPlan.getMeals().size() + " suggested meals");
         
         for (Meal meal : personalizedMealPlan.getMeals()) {
-            System.out.println("- " + meal.getName() + " ($" + meal.getPrice() + ")");
+            logger.info("- " + meal.getName() + " ($" + meal.getPrice() + ")");
         }
     }
     
@@ -137,7 +138,7 @@ public class PersonalizedMealPlansStep {
             }
         }
         
-        System.out.println("Customer placed order with ID: " + personalizedMealPlan.getOrderId());
+        logger.info("Customer placed order with ID: " + personalizedMealPlan.getOrderId());
     }
     
     @When("the system processes the order")
@@ -146,7 +147,7 @@ public class PersonalizedMealPlansStep {
         orderSystem.updateOrderStatus(personalizedMealPlan.getOrderId(), "processing");
         assertEquals("processing", personalizedMealPlan.getStatus());
         
-        System.out.println("System processed the order");
+        logger.info("System processed the order");
     }
     
     @Then("the system should store the order details in the database")
@@ -156,7 +157,7 @@ public class PersonalizedMealPlansStep {
         assertNotNull("Order should be stored in the database", storedOrder);
         assertEquals(personalizedMealPlan.getOrderId(), storedOrder.getOrderId());
         
-        System.out.println("Order details stored in the database");
+        logger.info("Order details stored in the database");
     }
     
     @Given("the system administrator wants to analyze trends")
@@ -165,19 +166,19 @@ public class PersonalizedMealPlansStep {
         String loginResult = loginSystem.login("admin", "adminpass");
         assertTrue("Admin should be logged in", loginResult.startsWith("Welcome"));
         
-        System.out.println("System administrator is analyzing trends");
+        logger.info("System administrator is analyzing trends");
     }
     
     @When("they request order history data")
     public void theyRequestOrderHistoryData() {
         // Simulate requesting order history data
-        System.out.println("Administrator requested order history data");
+        logger.info("Administrator requested order history data");
     }
     
     @Then("the system should retrieve and display historical order data")
     public void theSystemShouldRetrieveAndDisplayHistoricalOrderData() {
         // Simulate retrieving historical data
-        System.out.println("System retrieved and displayed historical order data");
+        logger.info("System retrieved and displayed historical order data");
     }
     
     @Given("the system administrator wants to improve service offerings")
@@ -186,19 +187,19 @@ public class PersonalizedMealPlansStep {
         String loginResult = loginSystem.login("admin", "adminpass");
         assertTrue("Admin should be logged in", loginResult.startsWith("Welcome"));
         
-        System.out.println("System administrator wants to improve service offerings");
+        logger.info("System administrator wants to improve service offerings");
     }
     
     @When("they generate a report on past order data")
     public void theyGenerateAReportOnPastOrderData() {
         // Simulate generating a report
-        System.out.println("Administrator generated a report on past order data");
+        logger.info("Administrator generated a report on past order data");
     }
     
     @Then("the system should provide insights and trends based on order history")
     public void theSystemShouldProvideInsightsAndTrendsBasedOnOrderHistory() {
         // Simulate providing insightss
-        System.out.println("System provided insights and trends based on order history");
+        logger.info("System provided insights and trends based on order history");
     }
 }
 

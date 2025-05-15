@@ -5,6 +5,7 @@ import app.LoginSystem;
 import app.Order;
 import app.OrderSystem;
 import app.Task;
+import app.logger;
 import app.NotificationSystem;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -44,7 +45,7 @@ public class ChefSchedulingStep {
         assertTrue("Chef should exist in the system", 
                 loginSystem.getUserDatabase().containsKey(currentChef));
         
-        System.out.println("Multiple chefs are available in the system");
+        logger.info("Multiple chefs are available in the system");
     }
     
     @When("an order is placed with preparation time of {int} minutes")
@@ -65,7 +66,7 @@ public class ChefSchedulingStep {
         String description = "Prepare order #" + currentOrder.getOrderId();
         currentTask = new Task(currentOrder.getOrderId(), currentChef, description, now, endTime);
         
-        System.out.println("Order placed with " + preparationTime + " minutes preparation time");
+        logger.info("Order placed with " + preparationTime + " minutes preparation time");
     }
     
     @Then("the system should assign the order to an available chef")
@@ -77,7 +78,7 @@ public class ChefSchedulingStep {
         assertTrue("Chef should be available", 
                 chefSchedule.isChefAvailable(currentChef, currentTask.getStartTime(), currentTask.getEndTime()));
         
-        System.out.println("System assigned the order to chef: " + currentChef);
+        logger.info("System assigned the order to chef: " + currentChef);
     }
     
     @And("add the task to the chef's schedule")
@@ -90,7 +91,7 @@ public class ChefSchedulingStep {
         assertTrue("Task should be added to chef's schedule", 
                 tasks.stream().anyMatch(t -> t.getId().equals(currentTask.getId())));
         
-        System.out.println("Task added to chef's schedule");
+        logger.info("Task added to chef's schedule");
     }
     
     @Given("a chef is logged into the system")
@@ -99,7 +100,7 @@ public class ChefSchedulingStep {
         String loginResult = loginSystem.login(currentChef, "chefpass");
         assertTrue("Chef should be logged in", loginResult.startsWith("Welcome"));
         
-        System.out.println("Chef is logged into the system");
+        logger.info("Chef is logged into the system");
     }
     
     @When("they request to view their schedule for today")
@@ -107,14 +108,14 @@ public class ChefSchedulingStep {
         // Get chef's tasks for today
         chefTasks = chefSchedule.getChefTasksForDate(currentChef, LocalDate.now());
         
-        System.out.println("Chef requested to view schedule for today");
+        logger.info("Chef requested to view schedule for today");
     }
     
     @Then("the system should display all assigned tasks for the day")
     public void theSystemShouldDisplayAllAssignedTasksForTheDay() {
         assertNotNull("Chef should have tasks", chefTasks);
         
-        System.out.println("System displayed " + chefTasks.size() + " tasks for today");
+        logger.info("System displayed " + chefTasks.size() + " tasks for today");
         
         // In a real implementation, we would verify that the UI displays these tasks
         for (Task task : chefTasks) {
@@ -131,7 +132,7 @@ public class ChefSchedulingStep {
                     ": " + task.getStartTime() + " to " + task.getEndTime());
         }
         
-        System.out.println("System showed start and completion times for each task");
+        logger.info("System showed start and completion times for each task");
     }
     
     @Given("a chef has tasks assigned for the day")
@@ -149,7 +150,7 @@ public class ChefSchedulingStep {
         }
         
         assertNotNull("Chef should have a task assigned", currentTask);
-        System.out.println("Chef has tasks assigned for today");
+        logger.info("Chef has tasks assigned for today");
     }
     
     @When("they mark a task as completed")
@@ -161,7 +162,7 @@ public class ChefSchedulingStep {
         boolean updated = chefSchedule.updateTaskStatus(currentTask.getId(), "completed");
         assertTrue("Task status should be updated", updated);
         
-        System.out.println("Chef marked task as completed: " + currentTask.getDescription());
+        logger.info("Chef marked task as completed: " + currentTask.getDescription());
     }
     
     @Then("the system should update the task status")
@@ -171,14 +172,14 @@ public class ChefSchedulingStep {
         assertNotNull("Task should exist", updatedTask);
         assertEquals("Task status should be completed", "completed", updatedTask.getStatus());
         
-        System.out.println("System updated task status to: " + updatedTask.getStatus());
+        logger.info("System updated task status to: " + updatedTask.getStatus());
     }
     
     @And("notify the customer that their order is ready")
     public void notifyTheCustomerThatTheirOrderIsReady() {
         // In a real implementation, we would verify that a notification was sent
         // For now, we'll just print a message
-        System.out.println("System notified customer that their order is ready");
+        logger.info("System notified customer that their order is ready");
     }
     
     @Given("a chef is unavailable for their assigned task")
@@ -196,7 +197,7 @@ public class ChefSchedulingStep {
         }
         
         assertNotNull("Chef should have a task assigned", currentTask);
-        System.out.println("Chef is unavailable for assigned task: " + currentTask.getDescription());
+        logger.info("Chef is unavailable for assigned task: " + currentTask.getDescription());
     }
     
     @When("an admin reassigns the task to another chef")
@@ -208,7 +209,7 @@ public class ChefSchedulingStep {
         boolean reassigned = chefSchedule.reassignTask(currentTask.getId(), newChefId);
         assertTrue("Task should be reassigned", reassigned);
         
-        System.out.println("Admin reassigned task to chef: " + newChefId);
+        logger.info("Admin reassigned task to chef: " + newChefId);
     }
     
     @Then("the system should update the task assignment")
@@ -218,14 +219,14 @@ public class ChefSchedulingStep {
         assertNotNull("Task should exist", updatedTask);
         assertEquals("Task should be assigned to the new chef", "chef", updatedTask.getChefId());
         
-        System.out.println("System updated task assignment to chef: " + updatedTask.getChefId());
+        logger.info("System updated task assignment to chef: " + updatedTask.getChefId());
     }
     
     @And("notify both chefs about the change")
     public void notifyBothChefsAboutTheChange() {
         // In a real implementation, we would verify that notifications were sent
         // For now, we'll just print a message
-        System.out.println("System notified both chefs about the task reassignment");
+        logger.info("System notified both chefs about the task reassignment");
     }
     
     @Given("there are multiple orders in the system")
@@ -242,7 +243,7 @@ public class ChefSchedulingStep {
         assertTrue("There should be multiple orders", 
                 orderSystem.getUserOrders("testuser").size() >= 2);
         
-        System.out.println("Multiple orders exist in the system");
+        logger.info("Multiple orders exist in the system");
     }
     
     @When("an admin marks an order as {string}")
@@ -256,7 +257,7 @@ public class ChefSchedulingStep {
         currentTask = new Task(currentOrder.getOrderId(), currentChef, 
                 "Urgent: Prepare order #" + currentOrder.getOrderId(), now, end, 1);
         
-        System.out.println("Admin marked order as " + priority + ": " + currentOrder.getOrderId());
+        logger.info("Admin marked order as " + priority + ": " + currentOrder.getOrderId());
     }
     
     @Then("the system should assign a high priority to the related tasks")
@@ -269,21 +270,21 @@ public class ChefSchedulingStep {
         assertNotNull("Task should exist", task);
         assertEquals("Task should have high priority", 1, task.getPriority());
         
-        System.out.println("System assigned high priority to task: " + task.getDescription());
+        logger.info("System assigned high priority to task: " + task.getDescription());
     }
     
     @And("schedule them before non-urgent tasks")
     public void scheduleThemBeforeNonUrgentTasks() {
         // In a real implementation, we would verify that high priority tasks are scheduled first
         // For now, we'll just print a message
-        System.out.println("System scheduled urgent tasks before non-urgent tasks");
+        logger.info("System scheduled urgent tasks before non-urgent tasks");
     }
     
     @Given("a chef sets their availability for the week")
     public void aChefSetsTheirAvailabilityForTheWeek() {
         // In a real implementation, we would have a method to set chef availability
         // For now, we'll just simulate this
-        System.out.println("Chef set their availability for the week");
+        logger.info("Chef set their availability for the week");
     }
     
     @When("a new order comes in during their available hours")
@@ -300,7 +301,7 @@ public class ChefSchedulingStep {
         currentTask = new Task(currentOrder.getOrderId(), currentChef, 
                 "Prepare order #" + currentOrder.getOrderId(), start, end);
         
-        System.out.println("New order came in during available hours");
+        logger.info("New order came in during available hours");
     }
     
     @Then("the system should consider the chef for task assignment")
@@ -310,7 +311,7 @@ public class ChefSchedulingStep {
                 currentTask.getStartTime(), currentTask.getEndTime());
         
         assertTrue("Chef should be available during these hours", available);
-        System.out.println("System considered chef for task assignment");
+        logger.info("System considered chef for task assignment");
     }
     
     @And("not assign tasks during their unavailable hours")
@@ -325,6 +326,6 @@ public class ChefSchedulingStep {
         
         // In a real implementation, we would verify that the system doesn't assign this task
         // For now, we'll just print a message
-        System.out.println("System did not assign tasks during unavailable hours");
+        logger.info("System did not assign tasks during unavailable hours");
     }
 }

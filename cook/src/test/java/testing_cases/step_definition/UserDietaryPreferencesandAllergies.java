@@ -3,6 +3,7 @@ package testing_cases.step_definition;
 import app.LoginSystem;
 import app.Meal;
 import app.UserPreferenceSystem;
+import app.logger;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -41,7 +42,7 @@ public class UserDietaryPreferencesandAllergies {
         assertTrue("User should have Vegetarian preference", preferences.contains("Vegetarian"));
         
         // In a real implementation, we would check that only vegetarian meals are recommended
-        System.out.println("System recommends only vegetarian meals");
+        logger.info("System recommends only vegetarian meals");
     }
     
     @When("the user adds {string} as an allergy")
@@ -56,7 +57,7 @@ public class UserDietaryPreferencesandAllergies {
         assertTrue("User should have Peanuts allergy", allergies.contains("Peanuts"));
         
         // In a real implementation, we would check that meals with peanuts are excluded
-        System.out.println("System excludes meals containing peanuts");
+        logger.info("System excludes meals containing peanuts");
     }
     
     @When("the user selects {string} and {string}")
@@ -72,6 +73,6 @@ public class UserDietaryPreferencesandAllergies {
         assertTrue("User should have multiple preferences", preferences.size() >= 2);
         
         // In a real implementation, we would check that recommended meals match all preferences
-        System.out.println("System recommends meals matching all selected preferences");
+        logger.info("System recommends meals matching all selected preferences");
     }
 }

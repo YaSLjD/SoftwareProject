@@ -1,6 +1,7 @@
 package testing_cases.step_definition;
 
 import app.LoginSystem;
+import app.logger;
 import io.cucumber.java.en.*;
 import static org.junit.Assert.*;
 
@@ -26,7 +27,7 @@ public class LoginStep {
     @When("clicks the {string} button")
     public void clicksTheButton(String button) {
         // نحاكي النقر على زر تسجيل الدخول
-        System.out.println("User clicked the " + button + " button.");
+        logger.info("User clicked the " + button + " button.");
     }
 
     @Then("the user should be redirected to the homepage successfully")

@@ -23,24 +23,24 @@ public class AdminMethods {
      * Manage suppliers (admin function).
      */
     public static void manageSuppliers() {
-        System.out.println("\n===== Manage Suppliers =====");
+        logger.info("\n===== Manage Suppliers =====");
         
         boolean managing = true;
         while (managing) {
             List<Supplier> suppliers = inventory.getAllSuppliers();
             
-            System.out.println("Current Suppliers:");
+            logger.info("Current Suppliers:");
             for (int i = 0; i < suppliers.size(); i++) {
                 Supplier supplier = suppliers.get(i);
                 System.out.println((i + 1) + ". " + supplier.getName() + 
                         " - Email: " + supplier.getEmail() + ", Phone: " + supplier.getPhone());
             }
             
-            System.out.println("\n1. Add New Supplier");
-            System.out.println("2. Update Supplier Information");
-            System.out.println("3. Remove Supplier");
-            System.out.println("4. Place Order with Supplier");
-            System.out.println("5. Back to Main Menu");
+            logger.info("\n1. Add New Supplier");
+            logger.info("2. Update Supplier Information");
+            logger.info("3. Remove Supplier");
+            logger.info("4. Place Order with Supplier");
+            logger.info("5. Back to Main Menu");
             System.out.print("Enter your choice: ");
             
             String choice = scanner.nextLine();
@@ -63,7 +63,7 @@ public class AdminMethods {
                     String id = "SUP" + System.currentTimeMillis();
                     Supplier newSupplier = new Supplier(id, name, email, phone, address);
                     inventory.addSupplier(newSupplier);
-                    System.out.println("Supplier added successfully!");
+                    logger.info("Supplier added successfully!");
                     break;
                     
                 case "2":
@@ -85,9 +85,9 @@ public class AdminMethods {
                         String newAddress = scanner.nextLine();
                         supplier.setAddress(newAddress);
                         
-                        System.out.println("Supplier information updated successfully!");
+                        logger.info("Supplier information updated successfully!");
                     } else {
-                        System.out.println("Invalid supplier number.");
+                        logger.info("Invalid supplier number.");
                     }
                     break;
                     
@@ -101,9 +101,9 @@ public class AdminMethods {
                         // Remove the supplier
                         inventory.getSupplier(supplier.getId()); // Get the supplier first to ensure it exists
                         // In a real implementation, we would call a method like inventory.removeSupplier(supplier.getId())
-                        System.out.println("Supplier removed successfully!");
+                        logger.info("Supplier removed successfully!");
                     } else {
-                        System.out.println("Invalid supplier number.");
+                        logger.info("Invalid supplier number.");
                     }
                     break;
                     
@@ -114,8 +114,8 @@ public class AdminMethods {
                     if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
                         Supplier supplier = suppliers.get(supplierIndex);
                         
-                        System.out.println("\nPlace Order with " + supplier.getName());
-                        System.out.println("Available Ingredients:");
+                        logger.info("\nPlace Order with " + supplier.getName());
+                        logger.info("Available Ingredients:");
                         
                         List<Ingredient> ingredients = inventory.getAllIngredients();
                         for (int i = 0; i < ingredients.size(); i++) {
@@ -134,9 +134,9 @@ public class AdminMethods {
                             double quantity = Double.parseDouble(scanner.nextLine());
                             
                             // Simulate placing an order
-                            System.out.println("\nOrder placed with " + supplier.getName() + ":");
-                            System.out.println("- " + ingredient.getName() + ": " + quantity + " " + ingredient.getUnit());
-                            System.out.println("Expected delivery: 3-5 business days");
+                            logger.info("\nOrder placed with " + supplier.getName() + ":");
+                            logger.info("- " + ingredient.getName() + ": " + quantity + " " + ingredient.getUnit());
+                            logger.info("Expected delivery: 3-5 business days");
                             
                             // Create a notification for the order
                             notificationSystem.sendNotification(
@@ -147,10 +147,10 @@ public class AdminMethods {
                                     "order"
                             );
                         } else {
-                            System.out.println("Invalid ingredient number.");
+                            logger.info("Invalid ingredient number.");
                         }
                     } else {
-                        System.out.println("Invalid supplier number.");
+                        logger.info("Invalid supplier number.");
                     }
                     break;
                     
@@ -159,11 +159,11 @@ public class AdminMethods {
                     break;
                     
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    logger.info("Invalid choice. Please try again.");
             }
             
             if (!choice.equals("5")) {
-                System.out.println("\nPress Enter to continue...");
+                logger.info("\nPress Enter to continue...");
                 scanner.nextLine();
             }
         }
@@ -173,7 +173,7 @@ public class AdminMethods {
      * View chef schedules (admin function).
      */
     public static void viewChefSchedules() {
-        System.out.println("\n===== Chef Schedules =====");
+        logger.info("\n===== Chef Schedules =====");
         
         Map<String, User> users = loginSystem.getUserDatabase();
         List<String> chefs = new ArrayList<>();
@@ -186,11 +186,11 @@ public class AdminMethods {
         }
         
         if (chefs.isEmpty()) {
-            System.out.println("No chefs found in the system.");
+            logger.info("No chefs found in the system.");
         } else {
-            System.out.println("Select a chef to view schedule:");
+            logger.info("Select a chef to view schedule:");
             for (int i = 0; i < chefs.size(); i++) {
-                System.out.println((i + 1) + ". " + chefs.get(i));
+                logger.info((i + 1) + ". " + chefs.get(i));
             }
             
             System.out.print("\nEnter chef number (0 to view all): ");
@@ -198,20 +198,20 @@ public class AdminMethods {
             
             if (choice.equals("0")) {
                 // View all chef schedules
-                System.out.println("\nAll Chef Schedules:");
+                logger.info("\nAll Chef Schedules:");
                 
                 for (String chef : chefs) {
-                    System.out.println("\nSchedule for " + chef + ":");
+                    logger.info("\nSchedule for " + chef + ":");
                     List<Task> tasks = chefSchedule.getChefTasks(chef);
                     
                     if (tasks.isEmpty()) {
-                        System.out.println("No tasks assigned.");
+                        logger.info("No tasks assigned.");
                     } else {
                         for (Task task : tasks) {
-                            System.out.println("- " + task.getDescription());
-                            System.out.println("  Start: " + task.getStartTime());
-                            System.out.println("  End: " + task.getEndTime());
-                            System.out.println("  Status: " + task.getStatus());
+                            logger.info("- " + task.getDescription());
+                            logger.info("  Start: " + task.getStartTime());
+                            logger.info("  End: " + task.getEndTime());
+                            logger.info("  Status: " + task.getStatus());
                         }
                     }
                 }
@@ -221,12 +221,12 @@ public class AdminMethods {
                     if (chefIndex >= 0 && chefIndex < chefs.size()) {
                         String chef = chefs.get(chefIndex);
                         
-                        System.out.println("\nSchedule for " + chef + ":");
+                        logger.info("\nSchedule for " + chef + ":");
                         
                         // Show schedule by date
-                        System.out.println("\n1. View Today's Schedule");
-                        System.out.println("2. View Week Schedule");
-                        System.out.println("3. View All Tasks");
+                        logger.info("\n1. View Today's Schedule");
+                        logger.info("2. View Week Schedule");
+                        logger.info("3. View All Tasks");
                         System.out.print("Enter your choice: ");
                         
                         String scheduleChoice = scanner.nextLine();
@@ -235,36 +235,36 @@ public class AdminMethods {
                             case "1":
                                 List<Task> todayTasks = chefSchedule.getChefTasksForDate(chef, LocalDate.now());
                                 
-                                System.out.println("\nToday's Schedule for " + chef + ":");
+                                logger.info("\nToday's Schedule for " + chef + ":");
                                 if (todayTasks.isEmpty()) {
-                                    System.out.println("No tasks scheduled for today.");
+                                    logger.info("No tasks scheduled for today.");
                                 } else {
                                     for (Task task : todayTasks) {
-                                        System.out.println("- " + task.getDescription());
-                                        System.out.println("  Start: " + task.getStartTime());
-                                        System.out.println("  End: " + task.getEndTime());
-                                        System.out.println("  Status: " + task.getStatus());
+                                        logger.info("- " + task.getDescription());
+                                        logger.info("  Start: " + task.getStartTime());
+                                        logger.info("  End: " + task.getEndTime());
+                                        logger.info("  Status: " + task.getStatus());
                                     }
                                 }
                                 break;
                                 
                             case "2":
-                                System.out.println("\nWeek Schedule for " + chef + ":");
+                                logger.info("\nWeek Schedule for " + chef + ":");
                                 
                                 LocalDate today = LocalDate.now();
                                 for (int i = 0; i < 7; i++) {
                                     LocalDate date = today.plusDays(i);
                                     List<Task> dateTasks = chefSchedule.getChefTasksForDate(chef, date);
                                     
-                                    System.out.println("\n" + date + ":");
+                                    logger.info("\n" + date + ":");
                                     if (dateTasks.isEmpty()) {
-                                        System.out.println("No tasks scheduled.");
+                                        logger.info("No tasks scheduled.");
                                     } else {
                                         for (Task task : dateTasks) {
-                                            System.out.println("- " + task.getDescription());
-                                            System.out.println("  Start: " + task.getStartTime());
-                                            System.out.println("  End: " + task.getEndTime());
-                                            System.out.println("  Status: " + task.getStatus());
+                                            logger.info("- " + task.getDescription());
+                                            logger.info("  Start: " + task.getStartTime());
+                                            logger.info("  End: " + task.getEndTime());
+                                            logger.info("  Status: " + task.getStatus());
                                         }
                                     }
                                 }
@@ -273,32 +273,32 @@ public class AdminMethods {
                             case "3":
                                 List<Task> allTasks = chefSchedule.getChefTasks(chef);
                                 
-                                System.out.println("\nAll Tasks for " + chef + ":");
+                                logger.info("\nAll Tasks for " + chef + ":");
                                 if (allTasks.isEmpty()) {
-                                    System.out.println("No tasks assigned.");
+                                    logger.info("No tasks assigned.");
                                 } else {
                                     for (Task task : allTasks) {
-                                        System.out.println("- " + task.getDescription());
-                                        System.out.println("  Start: " + task.getStartTime());
-                                        System.out.println("  End: " + task.getEndTime());
-                                        System.out.println("  Status: " + task.getStatus());
+                                        logger.info("- " + task.getDescription());
+                                        logger.info("  Start: " + task.getStartTime());
+                                        logger.info("  End: " + task.getEndTime());
+                                        logger.info("  Status: " + task.getStatus());
                                     }
                                 }
                                 break;
                                 
                             default:
-                                System.out.println("Invalid choice.");
+                                logger.info("Invalid choice.");
                         }
                     } else {
-                        System.out.println("Invalid chef number.");
+                        logger.info("Invalid chef number.");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
+                    logger.info("Invalid input. Please enter a number.");
                 }
             }
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -306,14 +306,14 @@ public class AdminMethods {
      * Generate reports (admin function).
      */
     public static void generateReports() {
-        System.out.println("\n===== Generate Reports =====");
+        logger.info("\n===== Generate Reports =====");
         
-        System.out.println("Select report type:");
-        System.out.println("1. Sales Report");
-        System.out.println("2. Inventory Report");
-        System.out.println("3. Chef Performance Report");
-        System.out.println("4. Customer Preferences Report");
-        System.out.println("5. Back to Main Menu");
+        logger.info("Select report type:");
+        logger.info("1. Sales Report");
+        logger.info("2. Inventory Report");
+        logger.info("3. Chef Performance Report");
+        logger.info("4. Customer Preferences Report");
+        logger.info("5. Back to Main Menu");
         System.out.print("Enter your choice: ");
         
         String choice = scanner.nextLine();
@@ -339,10 +339,10 @@ public class AdminMethods {
                 return;
                 
             default:
-                System.out.println("Invalid choice. Please try again.");
+                logger.info("Invalid choice. Please try again.");
         }
         
-        System.out.println("\nPress Enter to continue...");
+        logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
     
@@ -350,7 +350,7 @@ public class AdminMethods {
      * Generate a sales report.
      */
     public static void generateSalesReport() {
-        System.out.println("\n===== Sales Report =====");
+        logger.info("\n===== Sales Report =====");
         
         // Get all orders from all users
         List<Order> allOrders = new ArrayList<>();
@@ -382,12 +382,12 @@ public class AdminMethods {
         }
         
         // Display report
-        System.out.println("Total Sales: $" + String.format("%.2f", totalSales));
-        System.out.println("Total Orders: " + allOrders.size());
-        System.out.println("Completed Orders: " + completedOrders);
-        System.out.println("Pending Orders: " + pendingOrders);
+        logger.info("Total Sales: $" + String.format("%.2f", totalSales));
+        logger.info("Total Orders: " + allOrders.size());
+        logger.info("Completed Orders: " + completedOrders);
+        logger.info("Pending Orders: " + pendingOrders);
         
-        System.out.println("\nMost Popular Meals:");
+        logger.info("\nMost Popular Meals:");
         
         // Sort meals by popularity
         List<Map.Entry<String, Integer>> sortedMeals = new ArrayList<>(mealPopularity.entrySet());
@@ -395,7 +395,7 @@ public class AdminMethods {
         
         for (int i = 0; i < Math.min(5, sortedMeals.size()); i++) {
             Map.Entry<String, Integer> entry = sortedMeals.get(i);
-            System.out.println((i + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " orders");
+            logger.info((i + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " orders");
         }
     }
     
@@ -403,15 +403,15 @@ public class AdminMethods {
      * Generate an inventory report.
      */
     public static void generateInventoryReport() {
-        System.out.println("\n===== Inventory Report =====");
+        logger.info("\n===== Inventory Report =====");
         
         List<Ingredient> ingredients = inventory.getAllIngredients();
         List<Ingredient> lowStock = inventory.getLowStockIngredients();
         
-        System.out.println("Total Ingredients: " + ingredients.size());
-        System.out.println("Low Stock Ingredients: " + lowStock.size());
+        logger.info("Total Ingredients: " + ingredients.size());
+        logger.info("Low Stock Ingredients: " + lowStock.size());
         
-        System.out.println("\nInventory Value:");
+        logger.info("\nInventory Value:");
         double totalValue = 0;
         
         for (Ingredient ingredient : ingredients) {
@@ -425,11 +425,11 @@ public class AdminMethods {
                     " = $" + String.format("%.2f", value));
         }
         
-        System.out.println("\nTotal Inventory Value: $" + String.format("%.2f", totalValue));
+        logger.info("\nTotal Inventory Value: $" + String.format("%.2f", totalValue));
         
-        System.out.println("\nLow Stock Ingredients:");
+        logger.info("\nLow Stock Ingredients:");
         if (lowStock.isEmpty()) {
-            System.out.println("No low stock ingredients.");
+            logger.info("No low stock ingredients.");
         } else {
             for (Ingredient ingredient : lowStock) {
                 System.out.println("- " + ingredient.getName() + ": " + 
@@ -443,7 +443,7 @@ public class AdminMethods {
      * Generate a chef performance report.
      */
     public static void generateChefPerformanceReport() {
-        System.out.println("\n===== Chef Performance Report =====");
+        logger.info("\n===== Chef Performance Report =====");
         
         Map<String, User> users = loginSystem.getUserDatabase();
         List<String> chefs = new ArrayList<>();
@@ -456,11 +456,11 @@ public class AdminMethods {
         }
         
         if (chefs.isEmpty()) {
-            System.out.println("No chefs found in the system.");
+            logger.info("No chefs found in the system.");
             return;
         }
         
-        System.out.println("Chef Performance Summary:");
+        logger.info("Chef Performance Summary:");
         
         for (String chef : chefs) {
             List<Task> tasks = chefSchedule.getChefTasks(chef);
@@ -491,13 +491,13 @@ public class AdminMethods {
             double completionRate = totalTasks > 0 ? (double) completedTasks / totalTasks * 100 : 0;
             double onTimeRate = completedTasks > 0 ? (double) (completedTasks - lateTasks) / completedTasks * 100 : 0;
             
-            System.out.println("\nChef: " + chef);
-            System.out.println("Total Tasks: " + totalTasks);
-            System.out.println("Completed Tasks: " + completedTasks);
-            System.out.println("Pending Tasks: " + pendingTasks);
-            System.out.println("Late Tasks: " + lateTasks);
-            System.out.println("Completion Rate: " + String.format("%.1f", completionRate) + "%");
-            System.out.println("On-Time Rate: " + String.format("%.1f", onTimeRate) + "%");
+            logger.info("\nChef: " + chef);
+            logger.info("Total Tasks: " + totalTasks);
+            logger.info("Completed Tasks: " + completedTasks);
+            logger.info("Pending Tasks: " + pendingTasks);
+            logger.info("Late Tasks: " + lateTasks);
+            logger.info("Completion Rate: " + String.format("%.1f", completionRate) + "%");
+            logger.info("On-Time Rate: " + String.format("%.1f", onTimeRate) + "%");
         }
     }
     
@@ -505,7 +505,7 @@ public class AdminMethods {
      * Generate a customer preferences report.
      */
     public static void generateCustomerPreferencesReport() {
-        System.out.println("\n===== Customer Preferences Report =====");
+        logger.info("\n===== Customer Preferences Report =====");
         
         Map<String, User> users = loginSystem.getUserDatabase();
         List<String> customers = new ArrayList<>();
@@ -518,7 +518,7 @@ public class AdminMethods {
         }
         
         if (customers.isEmpty()) {
-            System.out.println("No customers found in the system.");
+            logger.info("No customers found in the system.");
             return;
         }
         
@@ -539,11 +539,11 @@ public class AdminMethods {
         }
         
         // Display report
-        System.out.println("Total Customers: " + customers.size());
+        logger.info("Total Customers: " + customers.size());
         
-        System.out.println("\nDietary Preferences:");
+        logger.info("\nDietary Preferences:");
         if (dietaryPreferences.isEmpty()) {
-            System.out.println("No dietary preferences found.");
+            logger.info("No dietary preferences found.");
         } else {
             List<Map.Entry<String, Integer>> sortedPreferences = new ArrayList<>(dietaryPreferences.entrySet());
             sortedPreferences.sort((a, b) -> b.getValue().compareTo(a.getValue()));
@@ -555,9 +555,9 @@ public class AdminMethods {
             }
         }
         
-        System.out.println("\nAllergies:");
+        logger.info("\nAllergies:");
         if (allergies.isEmpty()) {
-            System.out.println("No allergies found.");
+            logger.info("No allergies found.");
         } else {
             List<Map.Entry<String, Integer>> sortedAllergies = new ArrayList<>(allergies.entrySet());
             sortedAllergies.sort((a, b) -> b.getValue().compareTo(a.getValue()));

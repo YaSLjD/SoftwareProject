@@ -3,6 +3,7 @@ package testing_cases.step_definition;
 import app.LoginSystem;
 import app.User;
 import app.UserPreferenceSystem;
+import app.logger;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -37,7 +38,7 @@ public class ViewingCustomerDietaryPreferencesStep {
         // Simulate viewing customer profile
         User customer = loginSystem.getUserDatabase().get(customerUsername);
         assertNotNull("Customer should exist", customer);
-        System.out.println("Chef is viewing profile for customer: " + customerUsername);
+        logger.info("Chef is viewing profile for customer: " + customerUsername);
     }
     
     @Then("the chef should see the customer's dietary preferences and allergies")
@@ -49,16 +50,16 @@ public class ViewingCustomerDietaryPreferencesStep {
         assertFalse("Customer should have dietary preferences", customerPreferences.isEmpty());
         assertFalse("Customer should have allergies", customerAllergies.isEmpty());
         
-        System.out.println("Chef can see customer preferences: " + customerPreferences);
-        System.out.println("Chef can see customer allergies: " + customerAllergies);
+        logger.info("Chef can see customer preferences: " + customerPreferences);
+        logger.info("Chef can see customer allergies: " + customerAllergies);
     }
     
     @Then("the chef should be able to customize meals based on those preferences")
     public void theChefShouldBeAbleToCustomizeMealsBasedOnThosePreferences() {
         // Simulate meal customization
-        System.out.println("Chef can customize meals based on:");
-        System.out.println("- Preferences: " + customerPreferences);
-        System.out.println("- Allergies to avoid: " + customerAllergies);
+        logger.info("Chef can customize meals based on:");
+        logger.info("- Preferences: " + customerPreferences);
+        logger.info("- Allergies to avoid: " + customerAllergies);
     }
     
     @When("the chef searches for the customer's profile")
@@ -66,7 +67,7 @@ public class ViewingCustomerDietaryPreferencesStep {
         // Simulate searching for customer profile
         User customer = loginSystem.getUserDatabase().get(customerUsername);
         assertNotNull("Customer should exist", customer);
-        System.out.println("Chef searched and found customer: " + customerUsername);
+        logger.info("Chef searched and found customer: " + customerUsername);
     }
     
     @Then("the system should display the customer's order history")
@@ -74,6 +75,6 @@ public class ViewingCustomerDietaryPreferencesStep {
         // Simulate viewing order history
         User customer = loginSystem.getUserDatabase().get(customerUsername);
         assertFalse("Customer should have order history", customer.getOrderHistory().isEmpty());
-        System.out.println("System displays " + customer.getOrderHistory().size() + " past orders");
+        logger.info("System displays " + customer.getOrderHistory().size() + " past orders");
     }
 }

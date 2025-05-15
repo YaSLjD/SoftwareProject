@@ -36,7 +36,7 @@ public class NotificationSystem {
         userNotifications.get(userId).add(notification);
         
         // In a real system, this would also trigger sending the notification via email, SMS, etc.
-        System.out.println("Notification sent to user " + userId + ": " + notification.getTitle());
+        logger.info("Notification sent to user " + userId + ": " + notification.getTitle());
     }
     
     // Get all notifications for a user

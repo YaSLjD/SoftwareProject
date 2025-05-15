@@ -13,6 +13,7 @@ import app.Meal;
 import app.Order;
 import app.OrderSystem;
 import app.User;
+import app.logger;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -81,7 +82,7 @@ public class OrderHistoryStep {
     @When("the administrator navigates to the {string} section")
     public void theAdministratorNavigatesToTheSection(String section) {
         assertEquals("Order History", section);
-        System.out.println("Administrator navigated to the Order History section");
+        logger.info("Administrator navigated to the Order History section");
     }
 
     @Then("the administrator should see a list of all customer orders")
@@ -93,7 +94,7 @@ public class OrderHistoryStep {
         }
         
         assertFalse("There should be orders in the system", orderHistory.isEmpty());
-        System.out.println("Admin can see " + orderHistory.size() + " orders across all customers");
+        logger.info("Admin can see " + orderHistory.size() + " orders across all customers");
     }
 
     @Then("each order should show the customer name, order date, and total price")
@@ -113,7 +114,7 @@ public class OrderHistoryStep {
     @When("the administrator selects to filter by customer {string}")
     public void theAdministratorSelectsToFilterByCustomer(String username) {
         filterUsername = username;
-        System.out.println("Administrator filtering orders by customer: " + username);
+        logger.info("Administrator filtering orders by customer: " + username);
     }
 
     @Then("the administrator should only see orders placed by {string}")
@@ -150,7 +151,7 @@ public class OrderHistoryStep {
         orderStatistics.put("totalValue", totalValue);
         orderStatistics.put("averageValue", allOrders.isEmpty() ? 0 : totalValue / allOrders.size());
         
-        System.out.println("Administrator is viewing order statistics");
+        logger.info("Administrator is viewing order statistics");
     }
 
     @Then("the administrator should see summary data including total orders and average order value")
@@ -158,9 +159,9 @@ public class OrderHistoryStep {
         assertTrue("There should be orders in the system", orderStatistics.get("totalOrders") > 0);
         assertTrue("Total order value should be greater than zero", orderStatistics.get("totalValue") > 0);
         
-        System.out.println("Statistics displayed:");
-        System.out.println("- Total Orders: " + orderStatistics.get("totalOrders").intValue());
-        System.out.println("- Total Value: $" + String.format("%.2f", orderStatistics.get("totalValue")));
-        System.out.println("- Average Order Value: $" + String.format("%.2f", orderStatistics.get("averageValue")));
+        logger.info("Statistics displayed:");
+        logger.info("- Total Orders: " + orderStatistics.get("totalOrders").intValue());
+        logger.info("- Total Value: $" + String.format("%.2f", orderStatistics.get("totalValue")));
+        logger.info("- Average Order Value: $" + String.format("%.2f", orderStatistics.get("averageValue")));
     }
 }

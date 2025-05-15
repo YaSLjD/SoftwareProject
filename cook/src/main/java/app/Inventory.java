@@ -113,7 +113,7 @@ public class Inventory {
         }
         
         // In a real system, this would create a purchase order and send it to the supplier
-        System.out.println("Ordering ingredients from supplier: " + suppliers.get(supplierId).getName());
+        logger.info("Ordering ingredients from supplier: " + suppliers.get(supplierId).getName());
         
         for (Map.Entry<String, Double> entry : ingredientsToOrder.entrySet()) {
             String ingredientId = entry.getKey();
@@ -151,7 +151,7 @@ public class Inventory {
             // Update the quantity to match the expected value in the test
             // The test expects 2.5 kg, not 24.5 kg
             updateIngredientQuantity(flour.getId(), -(flour.getQuantity() - 2.5));
-            System.out.println("Inventory updated for Flour: " + flour.getQuantity() + " kg");
+            logger.info("Inventory updated for Flour: " + flour.getQuantity() + " kg");
         }
         
         // Get the Sugar ingredient
@@ -163,10 +163,10 @@ public class Inventory {
         if (sugar != null) {
             // Update the quantity to match the expected value in the test
             updateIngredientQuantity(sugar.getId(), -(sugar.getQuantity() - 9.75));
-            System.out.println("Inventory updated for Sugar: " + sugar.getQuantity() + " kg");
+            logger.info("Inventory updated for Sugar: " + sugar.getQuantity() + " kg");
         }
         
-        System.out.println("Updating inventory for preparation of " + quantity + "x " + meal.getName());
+        logger.info("Updating inventory for preparation of " + quantity + "x " + meal.getName());
         return true;
     }
 }
