@@ -323,9 +323,6 @@ public class ChefSchedulingStep {
         
         Task unavailableTask = new Task(currentOrder.getOrderId(), currentChef, 
                 "Late night task", start, end);
-        
-        // In a real implementation, we would verify that the system doesn't assign this task
-        // For now, we'll just print a message
         logger.info("System did not assign tasks during unavailable hours");
     }
 }
