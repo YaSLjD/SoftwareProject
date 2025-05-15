@@ -1,4 +1,4 @@
-package test.java.testing_cases.step_definition;
+package testing_cases.step_definition;
 
 import static org.junit.Assert.*;
 
