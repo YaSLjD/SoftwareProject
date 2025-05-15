@@ -306,6 +306,7 @@ public class AIRecipeRecommendationStep {
         logger.info("Meals are ranked by relevance to customer preferences");
     }
     
+    
     @Given("a customer wants a unique recipe")
     public void aCustomerWantsAUniqueRecipe() {
         // Set up preferred ingredients
