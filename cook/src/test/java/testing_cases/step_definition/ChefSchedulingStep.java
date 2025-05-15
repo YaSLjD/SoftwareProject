@@ -325,4 +325,6 @@ public class ChefSchedulingStep {
                 "Late night task", start, end);
         logger.info("System did not assign tasks during unavailable hours");
     }
+
+
 }

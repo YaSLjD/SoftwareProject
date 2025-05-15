@@ -77,37 +77,42 @@ public class RecipeRecommendationSystem {
         
         // If no order history, return random compatible meals
         if (orderHistory.isEmpty()) {
-            return getRandomMeals(compatibleMeals, count);
-        }
-        
-        // Count ingredient occurrences in order history
-        Map<String, Integer> ingredientCounts = new HashMap<>();
-        for (Order order : orderHistory) {
-            for (Meal meal : order.getMeals()) {
-                for (String ingredient : meal.getIngredients()) {
-                    ingredientCounts.put(ingredient, ingredientCounts.getOrDefault(ingredient, 0) + 1);
+            return getRandomMeals(count);
+                    }
+                    
+                    // Count ingredient occurrences in order history
+                    Map<String, Integer> ingredientCounts = new HashMap<>();
+                    for (Order order : orderHistory) {
+                        for (Meal meal : order.getMeals()) {
+                            for (String ingredient : meal.getIngredients()) {
+                                ingredientCounts.put(ingredient, ingredientCounts.getOrDefault(ingredient, 0) + 1);
+                            }
+                        }
+                    }
+                    
+                    // Score meals based on ingredient preferences
+                    Map<Meal, Double> mealScores = new HashMap<>();
+                    for (Meal meal : compatibleMeals) {
+                        double score = 0.0;
+                        for (String ingredient : meal.getIngredients()) {
+                            score += ingredientCounts.getOrDefault(ingredient, 0);
+                        }
+                        mealScores.put(meal, score);
+                    }
+                    
+                    // Sort meals by score (descending)
+                    return compatibleMeals.stream()
+                            .sorted((m1, m2) -> Double.compare(mealScores.getOrDefault(m2, 0.0), mealScores.getOrDefault(m1, 0.0)))
+                            .limit(count)
+                            .collect(Collectors.toList());
                 }
-            }
-        }
-        
-        // Score meals based on ingredient preferences
-        Map<Meal, Double> mealScores = new HashMap<>();
-        for (Meal meal : compatibleMeals) {
-            double score = 0.0;
-            for (String ingredient : meal.getIngredients()) {
-                score += ingredientCounts.getOrDefault(ingredient, 0);
-            }
-            mealScores.put(meal, score);
-        }
-        
-        // Sort meals by score (descending)
-        return compatibleMeals.stream()
-                .sorted((m1, m2) -> Double.compare(mealScores.getOrDefault(m2, 0.0), mealScores.getOrDefault(m1, 0.0)))
-                .limit(count)
-                .collect(Collectors.toList());
-    }
-    
-    // Get meal recommendations based on a specific ingredient
+                
+                public List<Meal> getRandomMeals(int count) {
+                    // TODO Auto-generated method stub
+                    throw new UnsupportedOperationException("Unimplemented method 'getRandomMeals'");
+                }
+            
+                // Get meal recommendations based on a specific ingredient
     public List<Meal> getRecommendationsByIngredient(String ingredient, int count) {
         List<String> mealIds = ingredientToMealMap.getOrDefault(ingredient, new ArrayList<>());
         

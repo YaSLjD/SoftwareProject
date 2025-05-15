@@ -455,4 +455,41 @@ public class SupplierIntegrationStep {
         
         logger.info("Admin removed an ingredient from the supplier's offerings");
     }
+
+    @Then("the supplier ID should be {string}")
+   public void the_supplier_id_should_be(String expectedId) {
+    assertTrue(expectedId.equals(currentSupplier.getId()));
+}
+@Then("the supplier name should be {string}")
+public void the_supplier_name_should_be(String expectedName) {
+    assertTrue(expectedName.equals(currentSupplier.getName()));
+}
+@Then("the supplier email should be {string}")
+public void the_supplier_email_should_be(String expectedEmail) {
+    assertTrue(expectedEmail.equals(currentSupplier.getEmail()));
+}
+@When("I set the supplier email to {string}")
+public void i_set_the_supplier_email_to(String email) {
+    currentSupplier.setEmail(email);
+}
+
+@Then("the supplier phone should be {string}")
+public void the_supplier_phone_should_be(String expectedPhone) {
+    assertTrue(expectedPhone.equals(currentSupplier.getPhone()));
+}
+@When("I set the supplier phone to {string}")
+public void i_set_the_supplier_phone_to(String phone) {
+    currentSupplier.setPhone(phone);
+}
+@When("the admin removes the ingredient {string} from the supplier")
+public void the_admin_removes_the_ingredient(String ingredient) {
+    currentSupplier.removeIngredientId(ingredient);
+}
+
+@Then("the ingredient {string} should no longer be associated with the supplier")
+public void the_ingredient_should_be_removed(String ingredient) {
+    assertFalse(currentSupplier.getIngredientIds().contains(ingredient));
+}
+
+
 }
