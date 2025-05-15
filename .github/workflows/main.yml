@@ -33,6 +33,6 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B jacoco:prepare-agent verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar jacoco:report -Dsonar.coverage.exclusions=Main.java -Dsonar.projectKey=YaSLjD_SoftwareProject
+        run: mvn -B clean jacoco:prepare-agent verify sonar:sonar -Dsonar.projectKey=YaSLjD_SoftwareProject -Dsonar.coverage.exclusions=**/Main.java
         working-directory: ./cook
         
