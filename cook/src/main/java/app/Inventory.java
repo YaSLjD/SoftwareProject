@@ -41,6 +41,19 @@ public class Inventory {
         return ingredients.get(id);
     }
     
+    /**
+     * Remove an ingredient from inventory
+     * @param id The ID of the ingredient to remove
+     * @return true if the ingredient was removed, false if it didn't exist
+     */
+    public boolean removeIngredient(String id) {
+        if (ingredients.containsKey(id)) {
+            ingredients.remove(id);
+            return true;
+        }
+        return false;
+    }
+    
     public List<Ingredient> getAllIngredients() {
         return new ArrayList<>(ingredients.values());
     }
@@ -74,6 +87,19 @@ public class Inventory {
     
     public Supplier getSupplier(String id) {
         return suppliers.get(id);
+    }
+    
+    /**
+     * Remove a supplier from inventory
+     * @param id The ID of the supplier to remove
+     * @return true if the supplier was removed, false if it didn't exist
+     */
+    public boolean removeSupplier(String id) {
+        if (suppliers.containsKey(id)) {
+            suppliers.remove(id);
+            return true;
+        }
+        return false;
     }
     
     public List<Supplier> getAllSuppliers() {
