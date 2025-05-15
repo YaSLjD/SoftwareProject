@@ -41,22 +41,22 @@ public class AdminMethods {
             logger.info("3. Remove Supplier");
             logger.info("4. Place Order with Supplier");
             logger.info("5. Back to Main Menu");
-            System.out.print("Enter your choice: ");
+            logger.info("Enter your choice: ");
             
             String choice = scanner.nextLine();
             
             switch (choice) {
                 case "1":
-                    System.out.print("Enter supplier name: ");
+                    logger.info("Enter supplier name: ");
                     String name = scanner.nextLine();
                     
-                    System.out.print("Enter supplier email: ");
+                    logger.info("Enter supplier email: ");
                     String email = scanner.nextLine();
                     
-                    System.out.print("Enter supplier phone: ");
+                    logger.info("Enter supplier phone: ");
                     String phone = scanner.nextLine();
                     
-                    System.out.print("Enter supplier address: ");
+                    logger.info("Enter supplier address: ");
                     String address = scanner.nextLine();
                     
                     // Generate a unique ID for the supplier
@@ -67,21 +67,21 @@ public class AdminMethods {
                     break;
                     
                 case "2":
-                    System.out.print("Enter supplier number to update: ");
+                    logger.info("Enter supplier number to update: ");
                     int supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
                         Supplier supplier = suppliers.get(supplierIndex);
                         
-                        System.out.print("Enter new email: ");
+                        logger.info("Enter new email: ");
                         String newEmail = scanner.nextLine();
                         supplier.setEmail(newEmail);
                         
-                        System.out.print("Enter new phone: ");
+                        logger.info("Enter new phone: ");
                         String newPhone = scanner.nextLine();
                         supplier.setPhone(newPhone);
                         
-                        System.out.print("Enter new address: ");
+                        logger.info("Enter new address: ");
                         String newAddress = scanner.nextLine();
                         supplier.setAddress(newAddress);
                         
@@ -92,7 +92,7 @@ public class AdminMethods {
                     break;
                     
                 case "3":
-                    System.out.print("Enter supplier number to remove: ");
+                    logger.info("Enter supplier number to remove: ");
                     supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
@@ -108,7 +108,7 @@ public class AdminMethods {
                     break;
                     
                 case "4":
-                    System.out.print("Enter supplier number to place order: ");
+                    logger.info("Enter supplier number to place order: ");
                     supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
@@ -124,13 +124,13 @@ public class AdminMethods {
                                     " - Current: " + ingredient.getQuantity() + " " + ingredient.getUnit());
                         }
                         
-                        System.out.print("\nEnter ingredient number to order: ");
+                        logger.info("\nEnter ingredient number to order: ");
                         int ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
                         
                         if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
                             Ingredient ingredient = ingredients.get(ingredientIndex);
                             
-                            System.out.print("Enter quantity to order: ");
+                            logger.info("Enter quantity to order: ");
                             double quantity = Double.parseDouble(scanner.nextLine());
                             
                             // Simulate placing an order
@@ -193,7 +193,7 @@ public class AdminMethods {
                 logger.info((i + 1) + ". " + chefs.get(i));
             }
             
-            System.out.print("\nEnter chef number (0 to view all): ");
+            logger.info("\nEnter chef number (0 to view all): ");
             String choice = scanner.nextLine();
             
             if (choice.equals("0")) {
@@ -227,7 +227,7 @@ public class AdminMethods {
                         logger.info("\n1. View Today's Schedule");
                         logger.info("2. View Week Schedule");
                         logger.info("3. View All Tasks");
-                        System.out.print("Enter your choice: ");
+                        logger.info("Enter your choice: ");
                         
                         String scheduleChoice = scanner.nextLine();
                         
@@ -314,7 +314,7 @@ public class AdminMethods {
         logger.info("3. Chef Performance Report");
         logger.info("4. Customer Preferences Report");
         logger.info("5. Back to Main Menu");
-        System.out.print("Enter your choice: ");
+        logger.info("Enter your choice: ");
         
         String choice = scanner.nextLine();
         

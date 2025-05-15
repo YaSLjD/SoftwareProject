@@ -12,5 +12,5 @@ Feature: User Dietary Preferences and Allergies
 
   Scenario: Managing Multiple Preferences
     Given the user is logged into the app
-    When the user selects "Gluten-free" and "Low-carb"
+    When the user selects "Gluten-free" and "Vegan"
     Then the system should recommend meals that match the selected preferences

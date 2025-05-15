@@ -107,7 +107,7 @@ public class Main {
         logger.info("1. Login");
         logger.info("2. View Available Demo Accounts");
         logger.info("0. Exit");
-        System.out.print("Enter your choice: ");
+        logger.info("Enter your choice: ");
     }
     
     /**
@@ -126,10 +126,10 @@ public class Main {
      * Prompt for custom login.
      */
     private static void customLogin() {
-        System.out.print("Enter username: ");
+        logger.info("Enter username: ");
         String username = scanner.nextLine();
         
-        System.out.print("Enter password: ");
+        logger.info("Enter password: ");
         String password = scanner.nextLine();
         
         login(username, password);
@@ -150,7 +150,7 @@ public class Main {
         logger.info("8. View Notifications");
         logger.info("9. Logout");
         logger.info("0. Exit");
-        System.out.print("Enter your choice: ");
+        logger.info("Enter your choice: ");
     }
     
     /**
@@ -165,7 +165,7 @@ public class Main {
         logger.info("5. View Notifications");
         logger.info("6. Logout");
         logger.info("0. Exit");
-        System.out.print("Enter your choice: ");
+        logger.info("Enter your choice: ");
     }
     
     /**
@@ -181,7 +181,7 @@ public class Main {
         logger.info("6. View Notifications");
         logger.info("7. Logout");
         logger.info("0. Exit");
-        System.out.print("Enter your choice: ");
+        logger.info("Enter your choice: ");
     }
     
     /**
@@ -383,31 +383,31 @@ public class Main {
             logger.info("3. Add Allergy");
             logger.info("4. Remove Allergy");
             logger.info("5. Back to Main Menu");
-            System.out.print("Enter your choice: ");
+            logger.info("Enter your choice: ");
             
             String choice = scanner.nextLine();
             
             switch (choice) {
                 case "1":
-                    System.out.print("Enter dietary preference to add: ");
+                    logger.info("Enter dietary preference to add: ");
                     String preference = scanner.nextLine();
                     preferenceSystem.addDietaryPreference(currentUser, preference);
                     logger.info("Dietary preference added: " + preference);
                     break;
                 case "2":
-                    System.out.print("Enter dietary preference to remove: ");
+                    logger.info("Enter dietary preference to remove: ");
                     preference = scanner.nextLine();
                     user.removeDietaryPreference(preference);
                     logger.info("Dietary preference removed: " + preference);
                     break;
                 case "3":
-                    System.out.print("Enter allergy to add: ");
+                    logger.info("Enter allergy to add: ");
                     String allergy = scanner.nextLine();
                     preferenceSystem.addAllergy(currentUser, allergy);
                     logger.info("Allergy added: " + allergy);
                     break;
                 case "4":
-                    System.out.print("Enter allergy to remove: ");
+                    logger.info("Enter allergy to remove: ");
                     allergy = scanner.nextLine();
                     user.removeAllergy(allergy);
                     logger.info("Allergy removed: " + allergy);
@@ -444,7 +444,7 @@ public class Main {
         // Add meals to the order
         boolean addingMeals = true;
         while (addingMeals) {
-            System.out.print("\nEnter meal number to add (0 to finish): ");
+            logger.info("\nEnter meal number to add (0 to finish): ");
             String choice = scanner.nextLine();
             
             if (choice.equals("0")) {
@@ -549,7 +549,7 @@ public class Main {
                 
                 // Option to pay invoice
                 if (invoice.getStatus().equals("issued") || invoice.getStatus().equals("overdue")) {
-                    System.out.print("\nPay this invoice? (y/n): ");
+                    logger.info("\nPay this invoice? (y/n): ");
                     String choice = scanner.nextLine();
                     
                     if (choice.equalsIgnoreCase("y")) {
@@ -586,7 +586,7 @@ public class Main {
         }
         
         // Option to generate a custom recipe
-        System.out.print("\nWould you like a custom recipe? (y/n): ");
+        logger.info("\nWould you like a custom recipe? (y/n): ");
         String choice = scanner.nextLine();
         
         if (choice.equalsIgnoreCase("y")) {
@@ -599,7 +599,7 @@ public class Main {
                 ingredientList.add(ingredient.trim());
             }
             
-            System.out.print("Enter dietary category: ");
+            logger.info("Enter dietary category: ");
             String category = scanner.nextLine();
             
             String recipe = recommendationSystem.generateCustomRecipe(currentUser, ingredientList, category);
@@ -707,7 +707,7 @@ public class Main {
                         " (" + task.getStatus() + ")");
             }
             
-            System.out.print("\nEnter task number to mark as completed (0 to cancel): ");
+            logger.info("\nEnter task number to mark as completed (0 to cancel): ");
             String choice = scanner.nextLine();
             
             if (!choice.equals("0")) {
@@ -830,22 +830,22 @@ public class Main {
             logger.info("4. Remove Ingredient");
             logger.info("5. View Low Stock Ingredients");
             logger.info("6. Back to Main Menu");
-            System.out.print("Enter your choice: ");
+            logger.info("Enter your choice: ");
             
             String choice = scanner.nextLine();
             
             switch (choice) {
                 case "1":
-                    System.out.print("Enter ingredient name: ");
+                    logger.info("Enter ingredient name: ");
                     String name = scanner.nextLine();
                     
-                    System.out.print("Enter quantity: ");
+                    logger.info("Enter quantity: ");
                     double quantity = Double.parseDouble(scanner.nextLine());
                     
-                    System.out.print("Enter unit (e.g., kg, g, l): ");
+                    logger.info("Enter unit (e.g., kg, g, l): ");
                     String unit = scanner.nextLine();
                     
-                    System.out.print("Enter minimum stock level: ");
+                    logger.info("Enter minimum stock level: ");
                     double minStock = Double.parseDouble(scanner.nextLine());
                     
                     // Generate a unique ID for the ingredient
@@ -856,13 +856,13 @@ public class Main {
                     break;
                     
                 case "2":
-                    System.out.print("Enter ingredient number to update: ");
+                    logger.info("Enter ingredient number to update: ");
                     int ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
                         Ingredient ingredient = ingredients.get(ingredientIndex);
                         
-                        System.out.print("Enter new quantity: ");
+                        logger.info("Enter new quantity: ");
                         double newQuantity = Double.parseDouble(scanner.nextLine());
                         
                         inventory.updateIngredientQuantity(ingredient.getId(), newQuantity - ingredient.getQuantity());
@@ -873,13 +873,13 @@ public class Main {
                     break;
                     
                 case "3":
-                    System.out.print("Enter ingredient number to update: ");
+                    logger.info("Enter ingredient number to update: ");
                     ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
                         Ingredient ingredient = ingredients.get(ingredientIndex);
                         
-                        System.out.print("Enter new minimum stock level: ");
+                        logger.info("Enter new minimum stock level: ");
                         double newMinStock = Double.parseDouble(scanner.nextLine());
                         
                         ingredient.setMinimumStockLevel(newMinStock);
@@ -890,7 +890,7 @@ public class Main {
                     break;
                     
                     case "4":
-                    System.out.print("Enter ingredient number to remove: ");
+                    logger.info("Enter ingredient number to remove: ");
                     ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
@@ -957,22 +957,22 @@ public class Main {
             logger.info("3. Remove Supplier");
             logger.info("4. Place Order with Supplier");
             logger.info("5. Back to Main Menu");
-            System.out.print("Enter your choice: ");
+            logger.info("Enter your choice: ");
             
             String choice = scanner.nextLine();
             
             switch (choice) {
                 case "1":
-                    System.out.print("Enter supplier name: ");
+                    logger.info("Enter supplier name: ");
                     String name = scanner.nextLine();
                     
-                    System.out.print("Enter supplier email: ");
+                    logger.info("Enter supplier email: ");
                     String email = scanner.nextLine();
                     
-                    System.out.print("Enter supplier phone: ");
+                    logger.info("Enter supplier phone: ");
                     String phone = scanner.nextLine();
                     
-                    System.out.print("Enter supplier address: ");
+                    logger.info("Enter supplier address: ");
                     String address = scanner.nextLine();
                     
                     // Generate a unique ID for the supplier
@@ -983,21 +983,21 @@ public class Main {
                     break;
                     
                 case "2":
-                    System.out.print("Enter supplier number to update: ");
+                    logger.info("Enter supplier number to update: ");
                     int supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
                         Supplier supplier = suppliers.get(supplierIndex);
                         
-                        System.out.print("Enter new email: ");
+                        logger.info("Enter new email: ");
                         String newEmail = scanner.nextLine();
                         supplier.setEmail(newEmail);
                         
-                        System.out.print("Enter new phone: ");
+                        logger.info("Enter new phone: ");
                         String newPhone = scanner.nextLine();
                         supplier.setPhone(newPhone);
                         
-                        System.out.print("Enter new address: ");
+                        logger.info("Enter new address: ");
                         String newAddress = scanner.nextLine();
                         supplier.setAddress(newAddress);
                         
@@ -1008,7 +1008,7 @@ public class Main {
                     break;
                     
                     case "3":
-                    System.out.print("Enter supplier number to remove: ");
+                    logger.info("Enter supplier number to remove: ");
                     supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
@@ -1026,7 +1026,7 @@ public class Main {
                     break;
                     
                 case "4":
-                    System.out.print("Enter supplier number to place order: ");
+                    logger.info("Enter supplier number to place order: ");
                     supplierIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     
                     if (supplierIndex >= 0 && supplierIndex < suppliers.size()) {
@@ -1042,13 +1042,13 @@ public class Main {
                                     " - Current: " + ingredient.getQuantity() + " " + ingredient.getUnit());
                         }
                         
-                        System.out.print("\nEnter ingredient number to order: ");
+                        logger.info("\nEnter ingredient number to order: ");
                         int ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
                         
                         if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
                             Ingredient ingredient = ingredients.get(ingredientIndex);
                             
-                            System.out.print("Enter quantity to order: ");
+                            logger.info("Enter quantity to order: ");
                             double quantity = Double.parseDouble(scanner.nextLine());
                             
                             // Simulate placing an order
@@ -1111,7 +1111,7 @@ public class Main {
                 logger.info((i + 1) + ". " + chefs.get(i));
             }
             
-            System.out.print("\nEnter chef number (0 to view all): ");
+            logger.info("\nEnter chef number (0 to view all): ");
             String choice = scanner.nextLine();
             
             if (choice.equals("0")) {
@@ -1145,7 +1145,7 @@ public class Main {
                         logger.info("\n1. View Today's Schedule");
                         logger.info("2. View Week Schedule");
                         logger.info("3. View All Tasks");
-                        System.out.print("Enter your choice: ");
+                        logger.info("Enter your choice: ");
                         
                         String scheduleChoice = scanner.nextLine();
                         
@@ -1233,7 +1233,7 @@ public class Main {
         logger.info("4. Customer Preferences Report");
         logger.info("5. Order History Reports");
         logger.info("6. Back to Main Menu");
-        System.out.print("Enter your choice: ");
+        logger.info("Enter your choice: ");
         
         String choice = scanner.nextLine();
         
@@ -1527,7 +1527,7 @@ public class Main {
         boolean selecting = true;
         
         while (selecting) {
-            System.out.print("\nEnter ingredient number to add (0 to finish): ");
+            logger.info("\nEnter ingredient number to add (0 to finish): ");
             String choice = scanner.nextLine();
             
             if (choice.equals("0")) {
@@ -1568,7 +1568,7 @@ public class Main {
         Meal customMeal = createCustomMeal(selectedIngredients);
         
         // Ask if the user wants to order this meal
-        System.out.print("\nWould you like to place an order with this custom meal? (y/n): ");
+        logger.info("\nWould you like to place an order with this custom meal? (y/n): ");
         String orderChoice = scanner.nextLine();
         
         if (orderChoice.equalsIgnoreCase("y")) {
@@ -1710,7 +1710,7 @@ public class Main {
         logger.info("2. View Orders by Customer");
         logger.info("3. View Order Statistics by Date Range");
         logger.info("4. Back to Reports Menu");
-        System.out.print("Enter your choice: ");
+        logger.info("Enter your choice: ");
         
         String choice = scanner.nextLine();
         
@@ -1794,7 +1794,7 @@ public class Main {
             logger.info((i + 1) + ". " + customers.get(i));
         }
         
-        System.out.print("\nEnter customer number: ");
+        logger.info("\nEnter customer number: ");
         String choice = scanner.nextLine();
         
         try {
