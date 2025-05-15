@@ -16,10 +16,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
             
- <properties>
+
   <sonar.organization>yasljd</sonar.organization>
   <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-</properties>
+
 
     </properties>
 
