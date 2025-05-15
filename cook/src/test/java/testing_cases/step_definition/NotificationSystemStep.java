@@ -84,6 +84,26 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentCustomer);
         assertFalse("User should have notifications", userNotifications.isEmpty());
         
+        // Verify notification is in the user's notification list
+        boolean notificationFound = userNotifications.stream()
+                .anyMatch(n -> n.getId().equals(currentNotification.getId()));
+        assertTrue("The sent notification should be in the user's notification list", notificationFound);
+        
+        // Verify notification belongs to the correct user
+        assertEquals("Notification recipient should be the correct customer", 
+                currentCustomer, currentNotification.getRecipientId());
+        
+        // Verify notification has correct type
+        assertEquals("Notification should have the correct type", 
+                "order", currentNotification.getType());
+        
+        // Verify notification has order ID as related entity
+        assertEquals("Notification should reference the correct order", 
+                currentOrder.getOrderId(), currentNotification.getRelatedEntityId());
+        
+        // Verify notification is initially unread
+        assertFalse("Notification should be unread initially", currentNotification.isRead());
+        
         logger.info("System sent notification to customer");
     }
     
@@ -93,6 +113,14 @@ public class NotificationSystemStep {
         assertNotNull("Notification should exist", currentNotification);
         assertTrue("Notification should include order status", 
                 currentNotification.getMessage().contains(currentOrder.getStatus()));
+        
+        // Verify notification title
+        assertEquals("Notification title should be correct", 
+                "Order Status Updated", currentNotification.getTitle());
+        
+        // Verify notification message content structure
+        assertTrue("Notification should include order ID", 
+                currentNotification.getMessage().contains(currentOrder.getOrderId()));
         
         logger.info("Notification includes updated status and estimated completion time");
         logger.info("Notification message: " + currentNotification.getMessage());
@@ -128,6 +156,15 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentChef);
         assertFalse("Chef should have notifications", userNotifications.isEmpty());
         
+        // Verify notification is in the chef's notification list
+        boolean notificationFound = userNotifications.stream()
+                .anyMatch(n -> n.getId().equals(currentNotification.getId()));
+        assertTrue("The sent notification should be in the chef's notification list", notificationFound);
+        
+        // Verify notification belongs to the correct chef
+        assertEquals("Notification recipient should be the correct chef", 
+                currentChef, currentNotification.getRecipientId());
+        
         logger.info("System sent notification to chef");
     }
     
@@ -137,6 +174,18 @@ public class NotificationSystemStep {
         assertNotNull("Notification should exist", currentNotification);
         assertTrue("Notification should include order ID", 
                 currentNotification.getMessage().contains(currentOrder.getOrderId()));
+        
+        // Verify notification title
+        assertEquals("Notification title should be correct", 
+                "New Order Assignment", currentNotification.getTitle());
+        
+        // Verify notification type
+        assertEquals("Notification should have the correct type", 
+                "order", currentNotification.getType());
+        
+        // Verify notification has order ID as related entity
+        assertEquals("Notification should reference the correct order", 
+                currentOrder.getOrderId(), currentNotification.getRelatedEntityId());
         
         logger.info("Notification includes order details and preparation requirements");
         logger.info("Notification message: " + currentNotification.getMessage());
@@ -178,15 +227,46 @@ public class NotificationSystemStep {
         // Get admin notifications
         userNotifications = notificationSystem.getUserNotifications(adminUsername);
         
-        // In a real system, we would verify the notification was sent
-        // For now, we'll just print a message
+        // Verify admin has received notifications
+        assertFalse("Admin should have notifications", userNotifications.isEmpty());
+        
+        // Verify at least one notification is inventory related
+        boolean hasInventoryNotification = userNotifications.stream()
+                .anyMatch(n -> "inventory".equals(n.getType()));
+        assertTrue("Admin should have an inventory notification", hasInventoryNotification);
+        
+        // Get the inventory notification
+        currentNotification = userNotifications.stream()
+                .filter(n -> "inventory".equals(n.getType()))
+                .findFirst()
+                .orElse(null);
+        
+        assertNotNull("Inventory notification should exist", currentNotification);
+        assertEquals("Notification title should be correct", 
+                "Low Inventory Alert", currentNotification.getTitle());
+        
         logger.info("System sent alert to admin");
     }
     
     @And("include the list of low stock ingredients")
     public void includeTheListOfLowStockIngredients() {
-        // In a real system, we would verify the notification content
-        // For now, we'll just print a message
+        // Verify notification content includes ingredient details
+        assertNotNull("Notification should exist", currentNotification);
+        
+        // Message should contain ingredient names
+        assertTrue("Notification should include 'Flour'", 
+                currentNotification.getMessage().contains("Flour"));
+        assertTrue("Notification should include 'Sugar'", 
+                currentNotification.getMessage().contains("Sugar"));
+        
+        // Message should contain quantity information
+        assertTrue("Notification should include quantities", 
+                currentNotification.getMessage().contains("kg"));
+        
+        // Message should include minimum stock levels
+        assertTrue("Notification should include minimum stock levels", 
+                currentNotification.getMessage().contains("minimum"));
+        
         logger.info("Alert includes the list of low stock ingredients");
     }
     
@@ -225,6 +305,19 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentCustomer);
         assertFalse("Customer should have notifications", userNotifications.isEmpty());
         
+        // Verify notification is in the customer's notification list
+        boolean notificationFound = userNotifications.stream()
+                .anyMatch(n -> n.getId().equals(currentNotification.getId()));
+        assertTrue("The sent notification should be in the customer's notification list", notificationFound);
+        
+        // Verify notification type
+        assertEquals("Notification should have the correct type", 
+                "billing", currentNotification.getType());
+        
+        // Verify notification has invoice ID as related entity
+        assertEquals("Notification should reference the correct invoice", 
+                currentInvoice.getInvoiceId(), currentNotification.getRelatedEntityId());
+        
         logger.info("Customer received notification about the new invoice");
     }
     
@@ -234,6 +327,18 @@ public class NotificationSystemStep {
         assertNotNull("Notification should exist", currentNotification);
         assertTrue("Notification should include invoice ID", 
                 currentNotification.getMessage().contains(currentInvoice.getInvoiceId()));
+        
+        // Verify notification title
+        assertEquals("Notification title should be correct", 
+                "New Invoice Generated", currentNotification.getTitle());
+        
+        // Check for amount in message
+        assertTrue("Notification should include total amount", 
+                currentNotification.getMessage().contains("$"));
+        
+        // Check for order ID reference
+        assertTrue("Notification should reference order ID", 
+                currentNotification.getMessage().contains(currentInvoice.getOrderId()));
         
         logger.info("Notification includes the invoice amount and due date");
         logger.info("Notification message: " + currentNotification.getMessage());
@@ -273,6 +378,19 @@ public class NotificationSystemStep {
         userNotifications = notificationSystem.getUserNotifications(currentCustomer);
         assertFalse("Customer should have notifications", userNotifications.isEmpty());
         
+        // Verify notification is in the customer's notification list
+        boolean notificationFound = userNotifications.stream()
+                .anyMatch(n -> n.getId().equals(currentNotification.getId()));
+        assertTrue("The payment reminder notification should be in the customer's notification list", notificationFound);
+        
+        // Verify notification type
+        assertEquals("Notification should have the correct type", 
+                "billing", currentNotification.getType());
+        
+        // Verify notification title
+        assertEquals("Notification title should be correct", 
+                "Payment Due Reminder", currentNotification.getTitle());
+        
         logger.info("System sent payment reminder to customer");
     }
     
@@ -282,6 +400,14 @@ public class NotificationSystemStep {
         assertNotNull("Notification should exist", currentNotification);
         assertTrue("Notification should include invoice ID", 
                 currentNotification.getMessage().contains(currentInvoice.getInvoiceId()));
+        
+        // Check for due date in message
+        assertTrue("Notification should include due date", 
+                currentNotification.getMessage().contains("due on"));
+        
+        // Check for amount in message
+        assertTrue("Notification should include total amount", 
+                currentNotification.getMessage().contains("$"));
         
         logger.info("Notification includes the invoice details and payment options");
         logger.info("Notification message: " + currentNotification.getMessage());
@@ -300,6 +426,11 @@ public class NotificationSystemStep {
         // Get user notifications
         userNotifications = notificationSystem.getUserNotifications(currentCustomer);
         assertTrue("User should have multiple notifications", userNotifications.size() >= 3);
+        
+        // Store the initial count of unread notifications for later comparison
+        int initialUnreadCount = notificationSystem.getUnreadNotifications(currentCustomer).size();
+        assertEquals("All notifications should be unread initially", 
+                userNotifications.size(), initialUnreadCount);
         
         logger.info("User has received " + userNotifications.size() + " notifications");
     }
@@ -340,20 +471,31 @@ public class NotificationSystemStep {
         // Get unread notifications
         List<Notification> unreadNotifications = notificationSystem.getUnreadNotifications(currentCustomer);
         
+        // Total notifications minus unread should equal 1 (the one we marked as read)
+        int expectedUnreadCount = userNotifications.size() - 1;
+        assertEquals("Unread count should be reduced by 1", 
+                expectedUnreadCount, unreadNotifications.size());
+        
+        // Verify no read notifications in unread list
+        boolean containsReadNotifications = unreadNotifications.stream()
+                .anyMatch(Notification::isRead);
+        assertFalse("Unread notifications list should not contain read notifications", 
+                containsReadNotifications);
+        
         logger.info("Unread notification count updated: " + unreadNotifications.size());
     }
     
     @Given("a user wants to customize their notification settings")
     public void aUserWantsToCustomizeTheirNotificationSettings() {
         // In a real system, this would set up notification preferences
-        // For now, we'll just print a message
+        // Mock setup of initial preferences
         logger.info("User wants to customize their notification settings");
     }
     
     @When("they update their notification preferences")
     public void theyUpdateTheirNotificationPreferences() {
         // In a real system, this would update preferences
-        // For now, we'll just print a message
+        // Mock updating preferences
         logger.info("User updated notification preferences:");
         logger.info("- Order updates: Email only");
         logger.info("- Billing notifications: Email and SMS");
@@ -362,15 +504,27 @@ public class NotificationSystemStep {
     
     @Then("the system should only send notifications according to their preferences")
     public void theSystemShouldOnlySendNotificationsAccordingToTheirPreferences() {
-        // In a real system, this would verify notifications respect preferences
-        // For now, we'll just print a message
+        // Mock validation of preferences enforcement
+        // In a real test, we would:
+        // 1. Send various types of notifications
+        // 2. Verify only the allowed ones are sent via the allowed channels
+        
+        // Test sending an order update notification - should go through
+        Notification orderNotification = notificationSystem.sendNotification(
+                currentCustomer, "Order Update", "Your order status has changed", "order");
+        assertNotNull("Order notification should be sent", orderNotification);
+        
+        // Test sending a promotional notification - should not go through in a real system
+        // Here we mock the behavior since the actual notification system doesn't implement preferences
         logger.info("System will only send notifications according to user preferences");
     }
     
     @And("respect their preferred notification channels")
     public void respectTheirPreferredNotificationChannels() {
-        // In a real system, this would verify notification channels
-        // For now, we'll just print a message
+        // Mock validation of channels enforcement
+        // In a real test with a system that supports channels, we would:
+        // 1. Check that notifications were sent via the correct channels
+        
         logger.info("System will respect preferred notification channels");
     }
     
@@ -399,14 +553,17 @@ public class NotificationSystemStep {
         // For now, we'll just send the notifications directly
         
         // 1. Order notification
-        notificationSystem.notifyOrderStatusChange(
+        Notification orderNotification = notificationSystem.notifyOrderStatusChange(
                 currentCustomer, currentOrder.getOrderId(), currentOrder.getStatus());
         
         // 2. Low stock notification
         notificationSystem.notifyLowInventory(inventory.getLowStockIngredients());
         
         // 3. Invoice notification
-        notificationSystem.notifyNewInvoice(currentCustomer, currentInvoice);
+        Notification invoiceNotification = notificationSystem.notifyNewInvoice(currentCustomer, currentInvoice);
+        
+        // Store at least one notification for verification
+        currentNotification = orderNotification;
         
         logger.info("System processed the notification queue");
     }
@@ -419,6 +576,21 @@ public class NotificationSystemStep {
         
         // Get admin notifications
         List<Notification> adminNotifications = notificationSystem.getUserNotifications(adminUsername);
+        assertFalse("Admin should have notifications", adminNotifications.isEmpty());
+        
+        // Verify notification types for customer
+        boolean hasOrderNotification = userNotifications.stream()
+                .anyMatch(n -> "order".equals(n.getType()));
+        boolean hasBillingNotification = userNotifications.stream()
+                .anyMatch(n -> "billing".equals(n.getType()));
+        
+        assertTrue("Customer should have order notifications", hasOrderNotification);
+        assertTrue("Customer should have billing notifications", hasBillingNotification);
+        
+        // Verify notification type for admin
+        boolean hasInventoryNotification = adminNotifications.stream()
+                .anyMatch(n -> "inventory".equals(n.getType()));
+        assertTrue("Admin should have inventory notifications", hasInventoryNotification);
         
         logger.info("System sent all pending notifications");
         logger.info("Customer received " + userNotifications.size() + " notifications");
@@ -427,8 +599,19 @@ public class NotificationSystemStep {
     
     @And("record the delivery status for each notification")
     public void recordTheDeliveryStatusForEachNotification() {
-        // In a real system, this would record delivery status
-        // For now, we'll just print a message
+        // In a real system with delivery tracking, we would verify:
+        // 1. All notifications have a delivery status
+        // 2. The status is accurately recorded
+        
+        // For now, verify all notifications exist and are recorded in the system
+        assertFalse("Customer should have notifications", userNotifications.isEmpty());
+        
+        // Verify each notification has an ID and timestamp
+        for (Notification notification : userNotifications) {
+            assertNotNull("Notification should have an ID", notification.getId());
+            assertNotNull("Notification should have a timestamp", notification.getTimestamp());
+        }
+        
         logger.info("System recorded delivery status for each notification");
     }
 }

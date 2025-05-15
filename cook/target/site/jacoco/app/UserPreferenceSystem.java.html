@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserPreferenceSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Cooking_SY</a> &gt; <a href="index.source.html" class="el_package">app</a> &gt; <span class="el_source">UserPreferenceSystem.java</span></div><h1>UserPreferenceSystem.java</h1><pre class="source lang-java linenums">package app;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class UserPreferenceSystem {
+    private Map&lt;String, User&gt; userDatabase;
+
+<span class="fc" id="L12">    public UserPreferenceSystem(Map&lt;String, User&gt; userDatabase) {</span>
+<span class="fc" id="L13">        this.userDatabase = userDatabase;</span>
+<span class="fc" id="L14">    }</span>
+
+    /**
+     * Add a dietary preference for a user
+     */
+    public boolean addDietaryPreference(String username, String preference) {
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        if (userDatabase.containsKey(username)) {</span>
+<span class="fc" id="L21">            User user = userDatabase.get(username);</span>
+<span class="fc" id="L22">            user.addDietaryPreference(preference);</span>
+<span class="fc" id="L23">            return true;</span>
+        }
+<span class="nc" id="L25">        return false;</span>
+    }
+
+    /**
+     * Add an allergy for a user
+     */
+    public boolean addAllergy(String username, String allergy) {
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (userDatabase.containsKey(username)) {</span>
+<span class="fc" id="L33">            User user = userDatabase.get(username);</span>
+<span class="fc" id="L34">            user.addAllergy(allergy);</span>
+<span class="fc" id="L35">            return true;</span>
+        }
+<span class="nc" id="L37">        return false;</span>
+    }
+
+    /**
+     * Get all dietary preferences for a user
+     */
+    public List&lt;String&gt; getUserDietaryPreferences(String username) {
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if (userDatabase.containsKey(username)) {</span>
+<span class="fc" id="L45">            User user = userDatabase.get(username);</span>
+<span class="fc" id="L46">            return new ArrayList&lt;&gt;(user.getDietaryPreferences());</span>
+        }
+<span class="nc" id="L48">        return new ArrayList&lt;&gt;();</span>
+    }
+
+    /**
+     * Get all allergies for a user
+     */
+    public List&lt;String&gt; getUserAllergies(String username) {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if (userDatabase.containsKey(username)) {</span>
+<span class="fc" id="L56">            User user = userDatabase.get(username);</span>
+<span class="fc" id="L57">            return new ArrayList&lt;&gt;(user.getAllergies());</span>
+        }
+<span class="nc" id="L59">        return new ArrayList&lt;&gt;();</span>
+    }
+
+    /**
+     * Filter meals based on user preferences and allergies
+     */
+    public List&lt;Meal&gt; getRecommendedMeals(String username, List&lt;Meal&gt; availableMeals) {
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (!userDatabase.containsKey(username)) {</span>
+<span class="nc" id="L67">            return new ArrayList&lt;&gt;();</span>
+        }
+
+<span class="fc" id="L70">        User user = userDatabase.get(username);</span>
+<span class="fc" id="L71">        List&lt;String&gt; preferences = new ArrayList&lt;&gt;(user.getDietaryPreferences());</span>
+<span class="fc" id="L72">        List&lt;String&gt; allergies = new ArrayList&lt;&gt;(user.getAllergies());</span>
+
+<span class="fc" id="L74">        return availableMeals.stream()</span>
+<span class="fc" id="L75">                .filter(meal -&gt; {</span>
+                    // Check if meal matches any preference
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">                    boolean matchesPreference = preferences.isEmpty() || </span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                            preferences.stream().anyMatch(meal::matchesDietaryPreference);</span>
+                    
+                    // Check if meal contains any allergen
+<span class="fc" id="L81">                    boolean containsAllergen = allergies.stream()</span>
+<span class="fc" id="L82">                            .anyMatch(meal::containsAllergen);</span>
+                    
+<span class="fc bfc" id="L84" title="All 4 branches covered.">                    return matchesPreference &amp;&amp; !containsAllergen;</span>
+                })
+<span class="fc" id="L86">                .collect(Collectors.toList());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

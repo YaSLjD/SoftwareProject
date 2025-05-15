@@ -366,4 +366,122 @@ public class InventoryManagementStep {
         logger.info("1. Flour (25 kg)");
         logger.info("2. Sugar (15 kg)");
     }
+    
+    @Given("an ingredient needs to be fully tested")
+    public void anIngredientNeedsToBeFullyTested() {
+        // Test the first constructor
+        currentIngredient = new Ingredient("ING-TEST", "Test Ingredient", "kg", 10.0, 5.0);
+        
+        // Check initial values are set correctly
+        assertEquals("ING-TEST", currentIngredient.getId());
+        assertEquals("Test Ingredient", currentIngredient.getName());
+        assertEquals("kg", currentIngredient.getUnit());
+        assertEquals(10.0, currentIngredient.getQuantity(), 0.01);
+        assertEquals(5.0, currentIngredient.getMinimumStockLevel(), 0.01);
+        assertNull(currentIngredient.getSupplierId());
+        
+        // Test the toString method
+        String ingredientString = currentIngredient.toString();
+        assertTrue(ingredientString.contains("ING-TEST"));
+        assertTrue(ingredientString.contains("Test Ingredient"));
+        assertTrue(ingredientString.contains("kg"));
+        
+        logger.info("Created ingredient for testing: " + ingredientString);
+    }
+    
+    @When("all ingredient properties are updated")
+    public void allIngredientPropertiesAreUpdated() {
+        // Test all setters
+        currentIngredient.setId("ING-UPDATED");
+        currentIngredient.setName("Updated Ingredient");
+        currentIngredient.setUnit("g");
+        currentIngredient.setQuantity(20.0);
+        currentIngredient.setMinimumStockLevel(10.0);
+        currentIngredient.setSupplierId("SUP001");
+        
+        // Verify all properties were updated
+        assertEquals("ING-UPDATED", currentIngredient.getId());
+        assertEquals("Updated Ingredient", currentIngredient.getName());
+        assertEquals("g", currentIngredient.getUnit());
+        assertEquals(20.0, currentIngredient.getQuantity(), 0.01);
+        assertEquals(10.0, currentIngredient.getMinimumStockLevel(), 0.01);
+        assertEquals("SUP001", currentIngredient.getSupplierId());
+        
+        logger.info("Updated all ingredient properties");
+    }
+    
+    @Then("the ingredient should reflect the changes")
+    public void theIngredientShouldReflectTheChanges() {
+        // Test the toString method after updates
+        String ingredientString = currentIngredient.toString();
+        assertTrue(ingredientString.contains("ING-UPDATED"));
+        assertTrue(ingredientString.contains("Updated Ingredient"));
+        assertTrue(ingredientString.contains("g"));
+        
+        logger.info("Ingredient reflects all changes: " + ingredientString);
+    }
+    
+    @And("the ingredient quantity can be updated directly")
+    public void theIngredientQuantityCanBeUpdatedDirectly() {
+        // Get initial quantity
+        double initialQuantity = currentIngredient.getQuantity();
+        
+        // Test updateQuantity method
+        currentIngredient.updateQuantity(5.0);
+        assertEquals(initialQuantity + 5.0, currentIngredient.getQuantity(), 0.01);
+        
+        // Test with negative value
+        currentIngredient.updateQuantity(-2.0);
+        assertEquals(initialQuantity + 3.0, currentIngredient.getQuantity(), 0.01);
+        
+        logger.info("Ingredient quantity updated directly");
+    }
+    
+    @Given("an ingredient with supplier information")
+    public void anIngredientWithSupplierInformation() {
+        // Test the second constructor (with supplierId)
+        currentIngredient = new Ingredient("ING-SUP", "Supplier Ingredient", "l", 15.0, 7.5, "SUP002");
+        
+        // Check initial values
+        assertEquals("ING-SUP", currentIngredient.getId());
+        assertEquals("Supplier Ingredient", currentIngredient.getName());
+        assertEquals("l", currentIngredient.getUnit());
+        assertEquals(15.0, currentIngredient.getQuantity(), 0.01);
+        assertEquals(7.5, currentIngredient.getMinimumStockLevel(), 0.01);
+        assertEquals("SUP002", currentIngredient.getSupplierId());
+        
+        logger.info("Created ingredient with supplier information");
+    }
+    
+    @When("the ingredient quantity is set to different levels")
+    public void theIngredientQuantityIsSetToDifferentLevels() {
+        // Test low stock condition
+        currentIngredient.setQuantity(currentIngredient.getMinimumStockLevel() - 1.0);
+        boolean isLow = currentIngredient.isLowStock();
+        assertTrue("Should be low stock when below minimum", isLow);
+        
+        // Test exactly at minimum stock level
+        currentIngredient.setQuantity(currentIngredient.getMinimumStockLevel());
+        isLow = currentIngredient.isLowStock();
+        assertTrue("Should be low stock when at minimum", isLow);
+        
+        // Test above minimum stock level
+        currentIngredient.setQuantity(currentIngredient.getMinimumStockLevel() + 1.0);
+        isLow = currentIngredient.isLowStock();
+        assertFalse("Should not be low stock when above minimum", isLow);
+        
+        logger.info("Tested ingredient quantities at different levels");
+    }
+    
+    @Then("the low stock detection should work correctly")
+    public void theLowStockDetectionShouldWorkCorrectly() {
+        // Verify the current state one more time for clarity
+        currentIngredient.setQuantity(currentIngredient.getMinimumStockLevel() - 0.5);
+        assertTrue("Should be low stock", currentIngredient.isLowStock());
+        
+        currentIngredient.setQuantity(currentIngredient.getMinimumStockLevel() + 0.5);
+        assertFalse("Should not be low stock", currentIngredient.isLowStock());
+        
+        logger.info("Low stock detection works correctly");
+    }
 }

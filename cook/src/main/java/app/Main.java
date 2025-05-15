@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+
+
+
 /**
  * Main class to demonstrate and test the Special Cook Project Management System.
  * This class provides a simple console interface to interact with the system.
@@ -25,8 +28,11 @@ public class Main {
     private static NotificationSystem notificationSystem;
     private static RecipeRecommendationSystem recommendationSystem;
     private static CustomMealService customMealService;
+    private static Scanner scanner = new Scanner(System.in);
     
-    private static Scanner scanner;
+    // These variables would be defined in Main.java
+    // Adding them here to resolve compilation errors
+    
     private static String currentUser;
     
     public static void main(String[] args) {
@@ -1968,5 +1974,7 @@ public class Main {
             }
         }
     }
+
+    
 }
 

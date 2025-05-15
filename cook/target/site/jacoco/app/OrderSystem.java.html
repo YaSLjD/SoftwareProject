@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Cooking_SY</a> &gt; <a href="index.source.html" class="el_package">app</a> &gt; <span class="el_source">OrderSystem.java</span></div><h1>OrderSystem.java</h1><pre class="source lang-java linenums">package app;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+public class OrderSystem {
+    private Map&lt;String, User&gt; userDatabase;
+    private Map&lt;String, Meal&gt; mealDatabase;
+    private Map&lt;String, Order&gt; orderDatabase;
+
+<span class="fc" id="L16">    public OrderSystem(Map&lt;String, User&gt; userDatabase) {</span>
+<span class="fc" id="L17">        this.userDatabase = userDatabase;</span>
+<span class="fc" id="L18">        this.mealDatabase = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L19">        this.orderDatabase = new HashMap&lt;&gt;();</span>
+        
+        // Initialize with some sample meals
+<span class="fc" id="L22">        initializeSampleMeals();</span>
+<span class="fc" id="L23">    }</span>
+    
+    private void initializeSampleMeals() {
+<span class="fc" id="L26">        addMeal(new Meal(&quot;M001&quot;, &quot;Veggie Pasta&quot;, &quot;Delicious pasta with vegetables&quot;, 12.99));</span>
+<span class="fc" id="L27">        addMeal(new Meal(&quot;M002&quot;, &quot;Chicken Salad&quot;, &quot;Fresh salad with grilled chicken&quot;, 10.99));</span>
+<span class="fc" id="L28">        addMeal(new Meal(&quot;M003&quot;, &quot;Peanut Curry&quot;, &quot;Spicy curry with peanuts&quot;, 14.99));</span>
+<span class="fc" id="L29">        addMeal(new Meal(&quot;M004&quot;, &quot;Gluten-Free Pizza&quot;, &quot;Pizza with gluten-free crust&quot;, 15.99));</span>
+<span class="fc" id="L30">        addMeal(new Meal(&quot;M005&quot;, &quot;Low-Carb Burger&quot;, &quot;Burger with lettuce wrap instead of bun&quot;, 11.99));</span>
+<span class="fc" id="L31">    }</span>
+    
+    /**
+     * Add a meal to the database
+     */
+    public void addMeal(Meal meal) {
+<span class="fc" id="L37">        mealDatabase.put(meal.getId(), meal);</span>
+<span class="fc" id="L38">    }</span>
+    
+    /**
+     * Get all available meals
+     */
+    public List&lt;Meal&gt; getAllMeals() {
+<span class="fc" id="L44">        return new ArrayList&lt;&gt;(mealDatabase.values());</span>
+    }
+    
+    /**
+     * Get a meal by ID
+     */
+    public Meal getMealById(String mealId) {
+<span class="nc" id="L51">        return mealDatabase.get(mealId);</span>
+    }
+    
+    /**
+     * Create a new order for a user
+     */
+    public Order createOrder(String username) {
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (!userDatabase.containsKey(username)) {</span>
+<span class="nc" id="L59">            return null;</span>
+        }
+        
+<span class="fc" id="L62">        String orderId = &quot;O&quot; + UUID.randomUUID().toString().substring(0, 8);</span>
+<span class="fc" id="L63">        Order order = new Order(orderId, username);</span>
+<span class="fc" id="L64">        orderDatabase.put(orderId, order);</span>
+        
+        // Add to user's order history
+<span class="fc" id="L67">        userDatabase.get(username).addOrder(order);</span>
+        
+<span class="fc" id="L69">        return order;</span>
+    }
+    
+    /**
+     * Add a meal to an order
+     */
+    public boolean addMealToOrder(String orderId, String mealId) {
+<span class="pc bpc" id="L76" title="2 of 4 branches missed.">        if (!orderDatabase.containsKey(orderId) || !mealDatabase.containsKey(mealId)) {</span>
+<span class="nc" id="L77">            return false;</span>
+        }
+        
+<span class="fc" id="L80">        Order order = orderDatabase.get(orderId);</span>
+<span class="fc" id="L81">        Meal meal = mealDatabase.get(mealId);</span>
+        
+<span class="fc" id="L83">        order.addMeal(meal);</span>
+<span class="fc" id="L84">        return true;</span>
+    }
+    
+    /**
+     * Get all orders for a user
+     */
+    public List&lt;Order&gt; getUserOrders(String username) {
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        if (!userDatabase.containsKey(username)) {</span>
+<span class="nc" id="L92">            return new ArrayList&lt;&gt;();</span>
+        }
+        
+<span class="fc" id="L95">        return userDatabase.get(username).getOrderHistory();</span>
+    }
+    
+    /**
+     * Get order by ID
+     */
+    public Order getOrderById(String orderId) {
+<span class="fc" id="L102">        return orderDatabase.get(orderId);</span>
+    }
+    
+    /**
+     * Update order status
+     */
+    public boolean updateOrderStatus(String orderId, String status) {
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (!orderDatabase.containsKey(orderId)) {</span>
+<span class="nc" id="L110">            return false;</span>
+        }
+        
+<span class="fc" id="L113">        Order order = orderDatabase.get(orderId);</span>
+<span class="fc" id="L114">        order.setStatus(status);</span>
+<span class="fc" id="L115">        return true;</span>
+    }
+    
+    /**
+     * Generate personalized meal recommendations based on order history
+     */
+    public List&lt;Meal&gt; getPersonalizedRecommendations(String username) {
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (!userDatabase.containsKey(username)) {</span>
+<span class="nc" id="L123">            return new ArrayList&lt;&gt;();</span>
+        }
+        
+<span class="fc" id="L126">        User user = userDatabase.get(username);</span>
+<span class="fc" id="L127">        List&lt;Order&gt; orderHistory = user.getOrderHistory();</span>
+        
+        // If no order history, return all meals
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (orderHistory.isEmpty()) {</span>
+<span class="nc" id="L131">            return getAllMeals();</span>
+        }
+        
+        // Count meal occurrences in order history
+<span class="fc" id="L135">        Map&lt;String, Integer&gt; mealCounts = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        for (Order order : orderHistory) {</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">            for (Meal meal : order.getMeals()) {</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                String category = meal.getDietaryCategories().isEmpty() ? </span>
+<span class="pc" id="L139">                        &quot;regular&quot; : meal.getDietaryCategories().iterator().next();</span>
+                
+<span class="fc" id="L141">                mealCounts.put(category, mealCounts.getOrDefault(category, 0) + 1);</span>
+<span class="fc" id="L142">            }</span>
+<span class="fc" id="L143">        }</span>
+        
+        // Find most ordered category
+<span class="fc" id="L146">        String favoriteCategory = mealCounts.entrySet().stream()</span>
+<span class="fc" id="L147">                .max(Map.Entry.comparingByValue())</span>
+<span class="fc" id="L148">                .map(Map.Entry::getKey)</span>
+<span class="fc" id="L149">                .orElse(&quot;regular&quot;);</span>
+        
+        // Filter meals by favorite category and allergies
+<span class="fc" id="L152">        List&lt;String&gt; allergies = new ArrayList&lt;&gt;(user.getAllergies());</span>
+        
+<span class="fc" id="L154">        return getAllMeals().stream()</span>
+<span class="fc" id="L155">                .filter(meal -&gt; {</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">                    boolean matchesCategory = meal.getDietaryCategories().contains(favoriteCategory) ||</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">                            meal.getDietaryCategories().isEmpty();</span>
+                    
+<span class="fc" id="L159">                    boolean containsAllergen = allergies.stream()</span>
+<span class="fc" id="L160">                            .anyMatch(meal::containsAllergen);</span>
+                    
+<span class="pc bpc" id="L162" title="2 of 4 branches missed.">                    return matchesCategory &amp;&amp; !containsAllergen;</span>
+                })
+<span class="fc" id="L164">                .collect(Collectors.toList());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

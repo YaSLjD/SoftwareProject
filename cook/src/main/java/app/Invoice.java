@@ -31,6 +31,19 @@ public class Invoice {
         this.taxAmount = 0.0;
         this.totalAmount = 0.0;
     }
+    public Invoice(String invoiceId, String orderId, double totalAmount) {
+        this.invoiceId = invoiceId;
+        this.orderId = orderId;
+        this.customerId = "defaultCustomer"; 
+        this.issueDate = LocalDateTime.now();
+        this.dueDate = issueDate.plusDays(30);
+        this.taxRate = 0.1;
+        this.status = "draft";
+        this.items = new ArrayList<>();
+        this.subtotal = 0.0;
+        this.taxAmount = 0.0;
+        this.totalAmount = totalAmount;
+    }
     
     // Getters and setters
     public String getInvoiceId() {

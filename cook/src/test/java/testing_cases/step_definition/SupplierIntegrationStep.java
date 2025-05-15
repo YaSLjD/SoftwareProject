@@ -387,4 +387,72 @@ public class SupplierIntegrationStep {
         // For now, we'll just print a message
         logger.info("System will use alternative suppliers only when necessary");
     }
+    
+    @Given("a supplier with ingredients needs to be tested")
+    public void aSupplierWithIngredientsNeedsToBeManaged() {
+        // Create a new supplier with all fields
+        currentSupplier = new Supplier("SUP-TEST", "Test Supplier", "test@supplier.com", "123-456-7890", "123 Test St");
+        inventory.addSupplier(currentSupplier);
+        
+        // Make sure the address is set correctly
+        assertEquals("123 Test St", currentSupplier.getAddress());
+        
+        // Add ingredient IDs to test the ingredient management
+        currentSupplier.addIngredientId("ING001");
+        currentSupplier.addIngredientId("ING002");
+        
+        // Test that adding the same ingredient twice doesn't duplicate it
+        currentSupplier.addIngredientId("ING001");
+        assertEquals(2, currentSupplier.getIngredientIds().size());
+        
+        logger.info("Supplier created with ingredients for testing");
+    }
+    
+    @When("the admin updates supplier contact information")
+    public void theAdminUpdatesSupplierContactInformation() {
+        // Test setters
+        currentSupplier.setId("SUP-UPDATED");
+        currentSupplier.setName("Updated Supplier");
+        currentSupplier.setEmail("updated@supplier.com");
+        currentSupplier.setPhone("987-654-3210");
+        currentSupplier.setAddress("456 New Address Ave");
+        
+        // Test toString method
+        String supplierString = currentSupplier.toString();
+        assertTrue(supplierString.contains("SUP-UPDATED"));
+        assertTrue(supplierString.contains("Updated Supplier"));
+        assertTrue(supplierString.contains("updated@supplier.com"));
+        assertTrue(supplierString.contains("987-654-3210"));
+        
+        logger.info("Admin updated supplier contact information");
+        logger.info("Updated supplier: " + supplierString);
+    }
+    
+    @Then("the system should update the supplier record")
+    public void theSystemShouldUpdateTheSupplierRecord() {
+        // Verify all fields were updated
+        assertEquals("SUP-UPDATED", currentSupplier.getId());
+        assertEquals("Updated Supplier", currentSupplier.getName());
+        assertEquals("updated@supplier.com", currentSupplier.getEmail());
+        assertEquals("987-654-3210", currentSupplier.getPhone());
+        assertEquals("456 New Address Ave", currentSupplier.getAddress());
+        
+        logger.info("System updated supplier record successfully");
+    }
+    
+    @And("remove an ingredient from the supplier's offerings")
+    public void removeAnIngredientFromTheSupplierSOfferings() {
+        // Get the initial count
+        int initialCount = currentSupplier.getIngredientIds().size();
+        
+        // Remove an ingredient
+        currentSupplier.removeIngredientId("ING001");
+        
+        // Verify it was removed
+        assertEquals(initialCount - 1, currentSupplier.getIngredientIds().size());
+        assertFalse(currentSupplier.getIngredientIds().contains("ING001"));
+        assertTrue(currentSupplier.getIngredientIds().contains("ING002"));
+        
+        logger.info("Admin removed an ingredient from the supplier's offerings");
+    }
 }

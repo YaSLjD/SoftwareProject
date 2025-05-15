@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BillingSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Cooking_SY</a> &gt; <a href="index.source.html" class="el_package">app</a> &gt; <span class="el_source">BillingSystem.java</span></div><h1>BillingSystem.java</h1><pre class="source lang-java linenums">package app;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class BillingSystem {
+    private Map&lt;String, User&gt; userDatabase;
+    private Map&lt;String, Invoice&gt; invoiceDatabase;
+    private NotificationSystem notificationSystem;
+    
+<span class="nc" id="L15">    public BillingSystem(Map&lt;String, User&gt; userDatabase) {</span>
+<span class="nc" id="L16">        this.userDatabase = userDatabase;</span>
+<span class="nc" id="L17">        this.invoiceDatabase = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L18">        this.notificationSystem = new NotificationSystem();</span>
+<span class="nc" id="L19">    }</span>
+    
+<span class="fc" id="L21">    public BillingSystem(Map&lt;String, User&gt; userDatabase, NotificationSystem notificationSystem) {</span>
+<span class="fc" id="L22">        this.userDatabase = userDatabase;</span>
+<span class="fc" id="L23">        this.invoiceDatabase = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L24">        this.notificationSystem = notificationSystem;</span>
+<span class="fc" id="L25">    }</span>
+    
+    // Generate an invoice for an order
+    public Invoice generateInvoice(Order order) {
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if (order == null) {</span>
+<span class="nc" id="L30">            return null;</span>
+        }
+        
+<span class="fc" id="L33">        String customerId = order.getUsername();</span>
+<span class="fc" id="L34">        Invoice invoice = new Invoice(order.getOrderId(), customerId);</span>
+        
+        // Add order items to invoice
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        for (Meal meal : order.getMeals()) {</span>
+<span class="fc" id="L38">            invoice.addItem(meal.getName(), meal.getPrice(), 1);</span>
+<span class="fc" id="L39">        }</span>
+        
+        // Set tax rate to 0 to match order total
+<span class="fc" id="L42">        invoice.setTaxRate(0.0);</span>
+        
+        // Store the invoice
+<span class="fc" id="L45">        invoiceDatabase.put(invoice.getInvoiceId(), invoice);</span>
+        
+        // Notify the customer
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (notificationSystem != null) {</span>
+<span class="fc" id="L49">            notificationSystem.notifyNewInvoice(customerId, invoice);</span>
+        }
+        
+<span class="fc" id="L52">        return invoice;</span>
+    }
+    
+    // Get an invoice by ID
+    public Invoice getInvoice(String invoiceId) {
+<span class="fc" id="L57">        return invoiceDatabase.get(invoiceId);</span>
+    }
+    
+    // Get all invoices for a customer
+    public List&lt;Invoice&gt; getCustomerInvoices(String customerId) {
+<span class="fc" id="L62">        return invoiceDatabase.values().stream()</span>
+<span class="fc" id="L63">                .filter(invoice -&gt; invoice.getCustomerId().equals(customerId))</span>
+<span class="fc" id="L64">                .collect(Collectors.toList());</span>
+    }
+    
+    // Get all invoices for an order
+    public List&lt;Invoice&gt; getOrderInvoices(String orderId) {
+<span class="nc" id="L69">        return invoiceDatabase.values().stream()</span>
+<span class="nc" id="L70">                .filter(invoice -&gt; invoice.getOrderId().equals(orderId))</span>
+<span class="nc" id="L71">                .collect(Collectors.toList());</span>
+    }
+    
+    // Update invoice status
+    public boolean updateInvoiceStatus(String invoiceId, String status) {
+<span class="fc" id="L76">        Invoice invoice = getInvoice(invoiceId);</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (invoice == null) {</span>
+<span class="nc" id="L78">            return false;</span>
+        }
+        
+<span class="fc" id="L81">        invoice.setStatus(status);</span>
+        
+        // If status is &quot;paid&quot;, notify the customer
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (status.equals(&quot;paid&quot;)) {</span>
+<span class="nc" id="L85">            String customerId = invoice.getCustomerId();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            if (notificationSystem != null) {</span>
+<span class="nc" id="L87">                notificationSystem.sendNotification(</span>
+                        customerId,
+                        &quot;Payment Received&quot;,
+<span class="nc" id="L90">                        &quot;Thank you for your payment of $&quot; + String.format(&quot;%.2f&quot;, invoice.getTotalAmount()) + </span>
+                        &quot; for invoice #&quot; + invoiceId,
+                        &quot;billing&quot;,
+                        invoiceId
+                );
+            }
+        }
+        
+<span class="fc" id="L98">        return true;</span>
+    }
+    
+    // Process payment for an invoice
+    public boolean processPayment(String invoiceId, double amount, String paymentMethod) {
+<span class="fc" id="L103">        Invoice invoice = getInvoice(invoiceId);</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (invoice == null) {</span>
+<span class="nc" id="L105">            return false;</span>
+        }
+        
+        // In a real system, this would process the payment through a payment gateway
+        // For now, we'll just simulate a successful payment
+        
+        // Check if payment amount matches invoice total
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if (Math.abs(amount - invoice.getTotalAmount()) &gt; 0.01) {</span>
+<span class="nc" id="L113">            return false; // Payment amount doesn't match</span>
+        }
+        
+        // Mark invoice as paid
+<span class="fc" id="L117">        invoice.markAsPaid();</span>
+        
+        // Notify the customer
+<span class="fc" id="L120">        String customerId = invoice.getCustomerId();</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (notificationSystem != null) {</span>
+<span class="fc" id="L122">            notificationSystem.sendNotification(</span>
+                    customerId,
+                    &quot;Payment Processed&quot;,
+<span class="fc" id="L125">                    &quot;Your payment of $&quot; + String.format(&quot;%.2f&quot;, amount) + </span>
+                    &quot; via &quot; + paymentMethod + &quot; for invoice #&quot; + invoiceId + &quot; has been processed.&quot;,
+                    &quot;billing&quot;,
+                    invoiceId
+            );
+        }
+        
+<span class="fc" id="L132">        return true;</span>
+    }
+    
+    // Check for overdue invoices and send reminders
+    public List&lt;Invoice&gt; checkOverdueInvoices() {
+<span class="fc" id="L137">        List&lt;Invoice&gt; overdueInvoices = new ArrayList&lt;&gt;();</span>
+        
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        for (Invoice invoice : invoiceDatabase.values()) {</span>
+            // Check if invoice is due and not paid
+<span class="pc bpc" id="L141" title="1 of 4 branches missed.">            if (invoice.getStatus().equals(&quot;issued&quot;) &amp;&amp; LocalDateTime.now().isAfter(invoice.getDueDate())) {</span>
+                // Mark as overdue
+<span class="nc" id="L143">                invoice.setStatus(&quot;overdue&quot;);</span>
+<span class="nc" id="L144">                overdueInvoices.add(invoice);</span>
+                
+                // Send reminder notification
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                if (notificationSystem != null) {</span>
+<span class="nc" id="L148">                    notificationSystem.notifyInvoicePaymentDue(invoice.getCustomerId(), invoice);</span>
+                }
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            } else if (invoice.getStatus().equals(&quot;overdue&quot;)) {</span>
+<span class="fc" id="L151">                overdueInvoices.add(invoice);</span>
+            }
+<span class="fc" id="L153">        }</span>
+        
+<span class="fc" id="L155">        return overdueInvoices;</span>
+    }
+    
+    // Generate monthly statement for a customer
+    public String generateMonthlyStatement(String customerId, int year, int month) {
+<span class="fc" id="L160">        List&lt;Invoice&gt; customerInvoices = getCustomerInvoices(customerId);</span>
+        
+        // Filter invoices for the specified month
+<span class="fc" id="L163">        List&lt;Invoice&gt; monthlyInvoices = customerInvoices.stream()</span>
+<span class="fc" id="L164">                .filter(invoice -&gt; {</span>
+<span class="fc" id="L165">                    LocalDateTime issueDate = invoice.getIssueDate();</span>
+<span class="pc bpc" id="L166" title="2 of 4 branches missed.">                    return issueDate.getYear() == year &amp;&amp; issueDate.getMonthValue() == month;</span>
+                })
+<span class="fc" id="L168">                .collect(Collectors.toList());</span>
+        
+        // Generate statement
+<span class="fc" id="L171">        StringBuilder statement = new StringBuilder();</span>
+<span class="fc" id="L172">        statement.append(&quot;Monthly Statement for &quot;).append(customerId)</span>
+<span class="fc" id="L173">                .append(&quot;\nPeriod: &quot;).append(month).append(&quot;/&quot;).append(year)</span>
+<span class="fc" id="L174">                .append(&quot;\n\nInvoices:&quot;);</span>
+        
+<span class="fc" id="L176">        double totalAmount = 0.0;</span>
+<span class="fc" id="L177">        double totalPaid = 0.0;</span>
+<span class="fc" id="L178">        double totalDue = 0.0;</span>
+        
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        for (Invoice invoice : monthlyInvoices) {</span>
+<span class="fc" id="L181">            statement.append(&quot;\n- Invoice #&quot;).append(invoice.getInvoiceId())</span>
+<span class="fc" id="L182">                    .append(&quot; (&quot;).append(invoice.getIssueDate()).append(&quot;)&quot;)</span>
+<span class="fc" id="L183">                    .append(&quot;: $&quot;).append(String.format(&quot;%.2f&quot;, invoice.getTotalAmount()))</span>
+<span class="fc" id="L184">                    .append(&quot; - &quot;).append(invoice.getStatus());</span>
+            
+<span class="fc" id="L186">            totalAmount += invoice.getTotalAmount();</span>
+            
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            if (invoice.getStatus().equals(&quot;paid&quot;)) {</span>
+<span class="fc" id="L189">                totalPaid += invoice.getTotalAmount();</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            } else if (!invoice.getStatus().equals(&quot;cancelled&quot;)) {</span>
+<span class="fc" id="L191">                totalDue += invoice.getTotalAmount();</span>
+            }
+<span class="fc" id="L193">        }</span>
+        
+<span class="fc" id="L195">        statement.append(&quot;\n\nSummary:&quot;)</span>
+<span class="fc" id="L196">                .append(&quot;\nTotal Invoiced: $&quot;).append(String.format(&quot;%.2f&quot;, totalAmount))</span>
+<span class="fc" id="L197">                .append(&quot;\nTotal Paid: $&quot;).append(String.format(&quot;%.2f&quot;, totalPaid))</span>
+<span class="fc" id="L198">                .append(&quot;\nTotal Due: $&quot;).append(String.format(&quot;%.2f&quot;, totalDue));</span>
+        
+<span class="fc" id="L200">        return statement.toString();</span>
+    }
+    
+    // Generate revenue report for a period
+    public String generateRevenueReport(LocalDateTime start, LocalDateTime end) {
+        // Filter invoices for the specified period
+<span class="fc" id="L206">        List&lt;Invoice&gt; periodInvoices = invoiceDatabase.values().stream()</span>
+<span class="fc" id="L207">                .filter(invoice -&gt; {</span>
+<span class="nc" id="L208">                    LocalDateTime issueDate = invoice.getIssueDate();</span>
+<span class="nc bnc" id="L209" title="All 4 branches missed.">                    return !issueDate.isBefore(start) &amp;&amp; !issueDate.isAfter(end);</span>
+                })
+<span class="fc" id="L211">                .collect(Collectors.toList());</span>
+        
+        // Generate report
+<span class="fc" id="L214">        StringBuilder report = new StringBuilder();</span>
+<span class="fc" id="L215">        report.append(&quot;Revenue Report&quot;)</span>
+<span class="fc" id="L216">                .append(&quot;\nPeriod: &quot;).append(start).append(&quot; to &quot;).append(end)</span>
+<span class="fc" id="L217">                .append(&quot;\n\nSummary:&quot;);</span>
+        
+<span class="fc" id="L219">        double totalRevenue = periodInvoices.stream()</span>
+<span class="pc" id="L220">                .filter(invoice -&gt; invoice.getStatus().equals(&quot;paid&quot;))</span>
+<span class="fc" id="L221">                .mapToDouble(Invoice::getTotalAmount)</span>
+<span class="fc" id="L222">                .sum();</span>
+        
+<span class="fc" id="L224">        double pendingRevenue = periodInvoices.stream()</span>
+<span class="pc bnc" id="L225" title="All 4 branches missed.">                .filter(invoice -&gt; invoice.getStatus().equals(&quot;issued&quot;) || invoice.getStatus().equals(&quot;overdue&quot;))</span>
+<span class="fc" id="L226">                .mapToDouble(Invoice::getTotalAmount)</span>
+<span class="fc" id="L227">                .sum();</span>
+        
+<span class="fc" id="L229">        int totalInvoices = periodInvoices.size();</span>
+<span class="fc" id="L230">        int paidInvoices = (int) periodInvoices.stream()</span>
+<span class="pc" id="L231">                .filter(invoice -&gt; invoice.getStatus().equals(&quot;paid&quot;))</span>
+<span class="fc" id="L232">                .count();</span>
+        
+<span class="fc" id="L234">        report.append(&quot;\nTotal Invoices: &quot;).append(totalInvoices)</span>
+<span class="fc" id="L235">                .append(&quot;\nPaid Invoices: &quot;).append(paidInvoices)</span>
+<span class="fc" id="L236">                .append(&quot;\nTotal Revenue: $&quot;).append(String.format(&quot;%.2f&quot;, totalRevenue))</span>
+<span class="fc" id="L237">                .append(&quot;\nPending Revenue: $&quot;).append(String.format(&quot;%.2f&quot;, pendingRevenue));</span>
+        
+<span class="fc" id="L239">        return report.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

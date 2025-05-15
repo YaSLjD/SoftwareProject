@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Invoice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Cooking_SY</a> &gt; <a href="index.source.html" class="el_package">app</a> &gt; <span class="el_source">Invoice.java</span></div><h1>Invoice.java</h1><pre class="source lang-java linenums">package app;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class Invoice {
+    private String invoiceId;
+    private String orderId;
+    private String customerId;
+    private LocalDateTime issueDate;
+    private LocalDateTime dueDate;
+    private double subtotal;
+    private double taxRate;
+    private double taxAmount;
+    private double totalAmount;
+    private String status; // &quot;draft&quot;, &quot;issued&quot;, &quot;paid&quot;, &quot;overdue&quot;, &quot;cancelled&quot;
+    private List&lt;InvoiceItem&gt; items;
+    
+<span class="fc" id="L21">    public Invoice(String orderId, String customerId) {</span>
+<span class="fc" id="L22">        this.invoiceId = &quot;INV-&quot; + UUID.randomUUID().toString().substring(0, 8);</span>
+<span class="fc" id="L23">        this.orderId = orderId;</span>
+<span class="fc" id="L24">        this.customerId = customerId;</span>
+<span class="fc" id="L25">        this.issueDate = LocalDateTime.now();</span>
+<span class="fc" id="L26">        this.dueDate = issueDate.plusDays(30); // Default 30 days payment term</span>
+<span class="fc" id="L27">        this.taxRate = 0.1; // Default 10% tax</span>
+<span class="fc" id="L28">        this.status = &quot;draft&quot;;</span>
+<span class="fc" id="L29">        this.items = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L30">        this.subtotal = 0.0;</span>
+<span class="fc" id="L31">        this.taxAmount = 0.0;</span>
+<span class="fc" id="L32">        this.totalAmount = 0.0;</span>
+<span class="fc" id="L33">    }</span>
+<span class="nc" id="L34">    public Invoice(String invoiceId, String orderId, double totalAmount) {</span>
+<span class="nc" id="L35">        this.invoiceId = invoiceId;</span>
+<span class="nc" id="L36">        this.orderId = orderId;</span>
+<span class="nc" id="L37">        this.customerId = &quot;defaultCustomer&quot;; </span>
+<span class="nc" id="L38">        this.issueDate = LocalDateTime.now();</span>
+<span class="nc" id="L39">        this.dueDate = issueDate.plusDays(30);</span>
+<span class="nc" id="L40">        this.taxRate = 0.1;</span>
+<span class="nc" id="L41">        this.status = &quot;draft&quot;;</span>
+<span class="nc" id="L42">        this.items = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L43">        this.subtotal = 0.0;</span>
+<span class="nc" id="L44">        this.taxAmount = 0.0;</span>
+<span class="nc" id="L45">        this.totalAmount = totalAmount;</span>
+<span class="nc" id="L46">    }</span>
+    
+    // Getters and setters
+    public String getInvoiceId() {
+<span class="fc" id="L50">        return invoiceId;</span>
+    }
+    
+    public String getOrderId() {
+<span class="fc" id="L54">        return orderId;</span>
+    }
+    
+    public String getCustomerId() {
+<span class="fc" id="L58">        return customerId;</span>
+    }
+    
+    public LocalDateTime getIssueDate() {
+<span class="fc" id="L62">        return issueDate;</span>
+    }
+    
+    public void setIssueDate(LocalDateTime issueDate) {
+<span class="nc" id="L66">        this.issueDate = issueDate;</span>
+<span class="nc" id="L67">    }</span>
+    
+    public LocalDateTime getDueDate() {
+<span class="fc" id="L70">        return dueDate;</span>
+    }
+    
+    public void setDueDate(LocalDateTime dueDate) {
+<span class="nc" id="L74">        this.dueDate = dueDate;</span>
+<span class="nc" id="L75">    }</span>
+    
+    public double getSubtotal() {
+<span class="nc" id="L78">        return subtotal;</span>
+    }
+    
+    public double getTaxRate() {
+<span class="nc" id="L82">        return taxRate;</span>
+    }
+    
+    public void setTaxRate(double taxRate) {
+<span class="fc" id="L86">        this.taxRate = taxRate;</span>
+<span class="fc" id="L87">        recalculateAmounts();</span>
+<span class="fc" id="L88">    }</span>
+    
+    public double getTaxAmount() {
+<span class="nc" id="L91">        return taxAmount;</span>
+    }
+    
+    public double getTotalAmount() {
+<span class="fc" id="L95">        return totalAmount;</span>
+    }
+    
+    public String getStatus() {
+<span class="fc" id="L99">        return status;</span>
+    }
+    
+    public void setStatus(String status) {
+<span class="fc" id="L103">        this.status = status;</span>
+<span class="fc" id="L104">    }</span>
+    
+    public List&lt;InvoiceItem&gt; getItems() {
+<span class="fc" id="L107">        return items;</span>
+    }
+    
+    // Add an item to the invoice
+    public void addItem(String description, double unitPrice, int quantity) {
+<span class="fc" id="L112">        InvoiceItem item = new InvoiceItem(description, unitPrice, quantity);</span>
+<span class="fc" id="L113">        items.add(item);</span>
+<span class="fc" id="L114">        recalculateAmounts();</span>
+<span class="fc" id="L115">    }</span>
+    
+    // Remove an item from the invoice
+    public boolean removeItem(int index) {
+<span class="nc bnc" id="L119" title="All 4 branches missed.">        if (index &gt;= 0 &amp;&amp; index &lt; items.size()) {</span>
+<span class="nc" id="L120">            items.remove(index);</span>
+<span class="nc" id="L121">            recalculateAmounts();</span>
+<span class="nc" id="L122">            return true;</span>
+        }
+<span class="nc" id="L124">        return false;</span>
+    }
+    
+    // Recalculate subtotal, tax, and total
+    private void recalculateAmounts() {
+<span class="fc" id="L129">        subtotal = items.stream()</span>
+<span class="fc" id="L130">                .mapToDouble(item -&gt; item.getUnitPrice() * item.getQuantity())</span>
+<span class="fc" id="L131">                .sum();</span>
+        
+<span class="fc" id="L133">        taxAmount = subtotal * taxRate;</span>
+<span class="fc" id="L134">        totalAmount = subtotal + taxAmount;</span>
+<span class="fc" id="L135">    }</span>
+    
+    // Issue the invoice
+    public void issue() {
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (status.equals(&quot;draft&quot;)) {</span>
+<span class="fc" id="L140">            status = &quot;issued&quot;;</span>
+<span class="fc" id="L141">            issueDate = LocalDateTime.now();</span>
+<span class="fc" id="L142">            dueDate = issueDate.plusDays(30);</span>
+        }
+<span class="fc" id="L144">    }</span>
+    
+    // Mark invoice as paid
+    public void markAsPaid() {
+<span class="pc bpc" id="L148" title="3 of 4 branches missed.">        if (status.equals(&quot;issued&quot;) || status.equals(&quot;overdue&quot;)) {</span>
+<span class="fc" id="L149">            status = &quot;paid&quot;;</span>
+        }
+<span class="fc" id="L151">    }</span>
+    
+    // Check if invoice is overdue
+    public boolean isOverdue() {
+<span class="nc bnc" id="L155" title="All 4 branches missed.">        if (status.equals(&quot;issued&quot;) &amp;&amp; LocalDateTime.now().isAfter(dueDate)) {</span>
+<span class="nc" id="L156">            status = &quot;overdue&quot;;</span>
+<span class="nc" id="L157">            return true;</span>
+        }
+<span class="nc" id="L159">        return status.equals(&quot;overdue&quot;);</span>
+    }
+    
+    // Mark invoice as overdue
+    public void markAsOverdue() {
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (status.equals(&quot;issued&quot;)) {</span>
+<span class="nc" id="L165">            status = &quot;overdue&quot;;</span>
+        }
+<span class="nc" id="L167">    }</span>
+    
+    // Cancel the invoice
+    public void cancel() {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (!status.equals(&quot;paid&quot;)) {</span>
+<span class="nc" id="L172">            status = &quot;cancelled&quot;;</span>
+        }
+<span class="nc" id="L174">    }</span>
+    
+    @Override
+    public String toString() {
+<span class="fc" id="L178">        StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L179">        sb.append(&quot;Invoice #&quot;).append(invoiceId)</span>
+<span class="fc" id="L180">          .append(&quot;\nOrder: &quot;).append(orderId)</span>
+<span class="fc" id="L181">          .append(&quot;\nCustomer: &quot;).append(customerId)</span>
+<span class="fc" id="L182">          .append(&quot;\nIssue Date: &quot;).append(issueDate)</span>
+<span class="fc" id="L183">          .append(&quot;\nDue Date: &quot;).append(dueDate)</span>
+<span class="fc" id="L184">          .append(&quot;\nStatus: &quot;).append(status)</span>
+<span class="fc" id="L185">          .append(&quot;\n\nItems:&quot;);</span>
+        
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        for (int i = 0; i &lt; items.size(); i++) {</span>
+<span class="fc" id="L188">            InvoiceItem item = items.get(i);</span>
+<span class="fc" id="L189">            sb.append(&quot;\n&quot;).append(i + 1).append(&quot;. &quot;)</span>
+<span class="fc" id="L190">              .append(item.getDescription())</span>
+<span class="fc" id="L191">              .append(&quot; - &quot;).append(item.getQuantity())</span>
+<span class="fc" id="L192">              .append(&quot; x $&quot;).append(String.format(&quot;%.2f&quot;, item.getUnitPrice()))</span>
+<span class="fc" id="L193">              .append(&quot; = $&quot;).append(String.format(&quot;%.2f&quot;, item.getQuantity() * item.getUnitPrice()));</span>
+        }
+        
+<span class="fc" id="L196">        sb.append(&quot;\n\nSubtotal: $&quot;).append(String.format(&quot;%.2f&quot;, subtotal))</span>
+<span class="fc" id="L197">          .append(&quot;\nTax (&quot;).append(taxRate * 100).append(&quot;%): $&quot;).append(String.format(&quot;%.2f&quot;, taxAmount))</span>
+<span class="fc" id="L198">          .append(&quot;\nTotal: $&quot;).append(String.format(&quot;%.2f&quot;, totalAmount));</span>
+        
+<span class="fc" id="L200">        return sb.toString();</span>
+    }
+    
+    // Inner class for invoice items
+    public static class InvoiceItem {
+        private String description;
+        private double unitPrice;
+        private int quantity;
+        
+<span class="fc" id="L209">        public InvoiceItem(String description, double unitPrice, int quantity) {</span>
+<span class="fc" id="L210">            this.description = description;</span>
+<span class="fc" id="L211">            this.unitPrice = unitPrice;</span>
+<span class="fc" id="L212">            this.quantity = quantity;</span>
+<span class="fc" id="L213">        }</span>
+        
+        public String getDescription() {
+<span class="fc" id="L216">            return description;</span>
+        }
+        
+        public void setDescription(String description) {
+<span class="nc" id="L220">            this.description = description;</span>
+<span class="nc" id="L221">        }</span>
+        
+        public double getUnitPrice() {
+<span class="fc" id="L224">            return unitPrice;</span>
+        }
+        
+        public void setUnitPrice(double unitPrice) {
+<span class="nc" id="L228">            this.unitPrice = unitPrice;</span>
+<span class="nc" id="L229">        }</span>
+        
+        public int getQuantity() {
+<span class="fc" id="L232">            return quantity;</span>
+        }
+        
+        public void setQuantity(int quantity) {
+<span class="nc" id="L236">            this.quantity = quantity;</span>
+<span class="nc" id="L237">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

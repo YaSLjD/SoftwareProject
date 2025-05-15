@@ -4,7 +4,6 @@
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/UserPreferenceSystem.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/Supplier.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/ChefSchedule.java
-/home/yamama-sawalmeh/softProj/cook/src/main/java/app/AdminMethods.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/Notification.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/BillingSystem.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/Main.java
@@ -15,6 +14,6 @@
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/Invoice.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/Order.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/NotificationSystem.java
-/home/yamama-sawalmeh/softProj/cook/src/main/java/app/AdminFeatures.java
+/home/yamama-sawalmeh/softProj/cook/src/main/java/app/logger.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/Task.java
 /home/yamama-sawalmeh/softProj/cook/src/main/java/app/LoginSystem.java

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Notification.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Cooking_SY</a> &gt; <a href="index.source.html" class="el_package">app</a> &gt; <span class="el_source">Notification.java</span></div><h1>Notification.java</h1><pre class="source lang-java linenums">package app;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public class Notification {
+    private String id;
+    private String recipientId;
+    private String title;
+    private String message;
+    private String type; // &quot;order&quot;, &quot;inventory&quot;, &quot;billing&quot;, &quot;system&quot;
+    private LocalDateTime timestamp;
+    private boolean isRead;
+    private String relatedEntityId; // ID of related order, invoice, etc.
+    
+<span class="fc" id="L16">    public Notification(String recipientId, String title, String message, String type) {</span>
+<span class="fc" id="L17">        this.id = &quot;NOTIF-&quot; + UUID.randomUUID().toString().substring(0, 8);</span>
+<span class="fc" id="L18">        this.recipientId = recipientId;</span>
+<span class="fc" id="L19">        this.title = title;</span>
+<span class="fc" id="L20">        this.message = message;</span>
+<span class="fc" id="L21">        this.type = type;</span>
+<span class="fc" id="L22">        this.timestamp = LocalDateTime.now();</span>
+<span class="fc" id="L23">        this.isRead = false;</span>
+<span class="fc" id="L24">    }</span>
+    
+    public Notification(String recipientId, String title, String message, String type, String relatedEntityId) {
+<span class="fc" id="L27">        this(recipientId, title, message, type);</span>
+<span class="fc" id="L28">        this.relatedEntityId = relatedEntityId;</span>
+<span class="fc" id="L29">    }</span>
+    
+    // Getters and setters
+    public String getId() {
+<span class="fc" id="L33">        return id;</span>
+    }
+    
+    public String getRecipientId() {
+<span class="fc" id="L37">        return recipientId;</span>
+    }
+    
+    public String getTitle() {
+<span class="fc" id="L41">        return title;</span>
+    }
+    
+    public void setTitle(String title) {
+<span class="nc" id="L45">        this.title = title;</span>
+<span class="nc" id="L46">    }</span>
+    
+    public String getMessage() {
+<span class="fc" id="L49">        return message;</span>
+    }
+    
+    public void setMessage(String message) {
+<span class="nc" id="L53">        this.message = message;</span>
+<span class="nc" id="L54">    }</span>
+    
+    public String getType() {
+<span class="fc" id="L57">        return type;</span>
+    }
+    
+    public LocalDateTime getTimestamp() {
+<span class="fc" id="L61">        return timestamp;</span>
+    }
+    
+    public boolean isRead() {
+<span class="fc" id="L65">        return isRead;</span>
+    }
+    
+    public void markAsRead() {
+<span class="fc" id="L69">        this.isRead = true;</span>
+<span class="fc" id="L70">    }</span>
+    
+    public void markAsUnread() {
+<span class="nc" id="L73">        this.isRead = false;</span>
+<span class="nc" id="L74">    }</span>
+    
+    public String getRelatedEntityId() {
+<span class="fc" id="L77">        return relatedEntityId;</span>
+    }
+    
+    public void setRelatedEntityId(String relatedEntityId) {
+<span class="nc" id="L81">        this.relatedEntityId = relatedEntityId;</span>
+<span class="nc" id="L82">    }</span>
+    
+    @Override
+    public String toString() {
+<span class="nc" id="L86">        return &quot;Notification{&quot; +</span>
+                &quot;id='&quot; + id + '\'' +
+                &quot;, title='&quot; + title + '\'' +
+                &quot;, type='&quot; + type + '\'' +
+                &quot;, timestamp=&quot; + timestamp +
+                &quot;, isRead=&quot; + isRead +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
