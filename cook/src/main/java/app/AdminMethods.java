@@ -8,10 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-/**
- * This class contains the admin methods that need to be added to the Main.java file.
- * Copy these methods into the Main.java file to complete the implementation.
- */
+
 public class AdminMethods {
     
     // References to system components that will be available in Main.java
