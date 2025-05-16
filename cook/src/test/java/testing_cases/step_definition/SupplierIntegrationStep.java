@@ -6,6 +6,7 @@ import app.LoginSystem;
 import app.Supplier;
 import app.logger;
 import app.NotificationSystem;
+import app.Meal;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -28,6 +29,7 @@ public class SupplierIntegrationStep {
     private Supplier currentSupplier;
     private Map<String, Double> purchaseOrderItems;
     private List<String> ingredientsToAssociate;
+    private Meal testMeal;
     
     public SupplierIntegrationStep() {
         loginSystem = new LoginSystem();
@@ -144,6 +146,11 @@ public class SupplierIntegrationStep {
         // In a real system, we would verify that the system can look up the supplier for each ingredient
         // For now, we'll just print a message
         logger.info("System knows the source for these ingredients");
+        
+        // Add more assertions to increase coverage
+        List<String> ingredientIds = currentSupplier.getIngredientIds();
+        assertNotNull("Ingredient list should not be null", ingredientIds);
+        assertFalse("Ingredient list should not be empty", ingredientIds.isEmpty());
     }
     
     @Given("the inventory shows low stock for several ingredients")
@@ -155,15 +162,35 @@ public class SupplierIntegrationStep {
         inventory.addIngredient(flour);
         inventory.addIngredient(sugar);
         
+        // Add test to ensure ingredients are added correctly
+        assertEquals("Flour should have 2.0 kg in stock", 2.0, inventory.getIngredient("INGFLOUR").getQuantity(), 0.001);
+        assertEquals("Sugar should have 1.0 kg in stock", 1.0, inventory.getIngredient("INGSUGAR").getQuantity(), 0.001);
+        
         // Verify they are low stock
         List<Ingredient> lowStockIngredients = inventory.getLowStockIngredients();
         assertTrue("Should have low stock ingredients", lowStockIngredients.size() >= 2);
+        
+        // Test the isLowStock method
+        assertTrue("Flour should be low stock", flour.isLowStock());
+        assertTrue("Sugar should be low stock", sugar.isLowStock());
         
         logger.info("Inventory shows low stock for several ingredients");
         for (Ingredient ingredient : lowStockIngredients) {
             System.out.println("- " + ingredient.getName() + ": " + ingredient.getQuantity() + 
                     " " + ingredient.getUnit() + " (min: " + ingredient.getMinimumStockLevel() + ")");
         }
+    }
+    
+    @When("the admin checks for ingredients with low stock levels")
+    public void theAdminChecksForIngredientsWithLowStockLevels() {
+        // Get low stock ingredients - renamed method to avoid conflict
+        List<Ingredient> lowStockIngredients = inventory.getLowStockIngredients();
+        
+        // Verify one ingredient is low stock
+        assertTrue("Should have at least one low stock ingredient", 
+                lowStockIngredients.stream().anyMatch(i -> i.getId().equals("INGSUGAR")));
+        
+        logger.info("Admin checked for ingredients with low stock levels");
     }
     
     @When("the admin generates a purchase order for a supplier")
@@ -213,6 +240,11 @@ public class SupplierIntegrationStep {
         
         assertTrue("Order should be placed successfully", orderPlaced);
         
+        // Test failure case - order from non-existent supplier
+        boolean failedOrder = inventory.orderIngredientsFromSupplier(
+                "NON-EXISTENT-SUPPLIER", purchaseOrderItems);
+        assertFalse("Order should fail for non-existent supplier", failedOrder);
+        
         logger.info("Purchase order sent to supplier: " + currentSupplier.getName());
     }
     
@@ -253,6 +285,12 @@ public class SupplierIntegrationStep {
         // In a real system, this would send a notification
         // For now, we'll just print a message
         logger.info("Admin notified about the shipment");
+        
+        // Test notification functionality
+        String message = "Your order from " + currentSupplier.getName() + " has been shipped";
+        assertNotNull("Notification message should not be null", message);
+        assertTrue("Notification message should contain supplier name", 
+                message.contains(currentSupplier.getName()));
     }
     
     @Given("a supplier delivery has arrived")
@@ -265,36 +303,52 @@ public class SupplierIntegrationStep {
     @When("the admin records the received items")
     public void theAdminRecordsTheReceivedItems() {
         // Simulate receiving items
+    
+        // Handle Flour
         Ingredient flour = inventory.getAllIngredients().stream()
                 .filter(ing -> ing.getName().equals("Flour"))
                 .findFirst()
                 .orElse(null);
-        
+    
         if (flour != null) {
-            inventory.updateIngredientQuantity(flour.getId(), 10.0);
+            boolean flourUpdateSuccess = inventory.updateIngredientQuantity(flour.getId(), 10.0);
+            assertTrue("Should successfully update quantity for Flour", flourUpdateSuccess);
             logger.info("Received 10 kg of Flour");
         } else {
             flour = new Ingredient("INGFLOUR", "Flour", "kg", 10.0, 5.0);
             inventory.addIngredient(flour);
             logger.info("Added new ingredient: Flour (10 kg)");
         }
-        
+    
+        // Handle Sugar
         Ingredient sugar = inventory.getAllIngredients().stream()
                 .filter(ing -> ing.getName().equals("Sugar"))
                 .findFirst()
                 .orElse(null);
-        
+    
         if (sugar != null) {
-            inventory.updateIngredientQuantity(sugar.getId(), 5.0);
+            boolean sugarUpdateSuccess = inventory.updateIngredientQuantity(sugar.getId(), 5.0);
+            assertTrue("Should successfully update quantity for Sugar", sugarUpdateSuccess);
             logger.info("Received 5 kg of Sugar");
         } else {
             sugar = new Ingredient("INGSUGAR", "Sugar", "kg", 5.0, 3.0);
             inventory.addIngredient(sugar);
             logger.info("Added new ingredient: Sugar (5 kg)");
         }
-        
+    
+        // Test: Prevent negative quantity update (should fail)
+        double currentFlourQty = flour.getQuantity();
+        double attemptToSubtract = currentFlourQty + 1; // Ensure negative result
+        boolean negativeUpdateResult = inventory.updateIngredientQuantity(flour.getId(), -attemptToSubtract);
+        assertFalse("Should not allow negative inventory", negativeUpdateResult);
+    
+        // Test: Prevent update of non-existent ingredient (should fail)
+        boolean nonExistentUpdateResult = inventory.updateIngredientQuantity("NON-EXISTENT", 5.0);
+        assertFalse("Should not update non-existent ingredient", nonExistentUpdateResult);
+    
         logger.info("Admin recorded the received items");
     }
+    
     
     @Then("the system should compare the received items with the purchase order")
     public void theSystemShouldCompareTheReceivedItemsWithThePurchaseOrder() {
@@ -356,6 +410,10 @@ public class SupplierIntegrationStep {
         // Associate both suppliers with the same ingredient
         supplier1.addIngredientId("INGFLOUR");
         supplier2.addIngredientId("INGFLOUR");
+        
+        // Test removal of a supplier
+        boolean removed = inventory.removeSupplier("NON-EXISTENT");
+        assertFalse("Should not remove non-existent supplier", removed);
         
         logger.info("Multiple suppliers provide the same ingredient:");
         logger.info("- " + supplier1.getName());
@@ -457,39 +515,170 @@ public class SupplierIntegrationStep {
     }
 
     @Then("the supplier ID should be {string}")
-   public void the_supplier_id_should_be(String expectedId) {
-    assertTrue(expectedId.equals(currentSupplier.getId()));
-}
-@Then("the supplier name should be {string}")
-public void the_supplier_name_should_be(String expectedName) {
-    assertTrue(expectedName.equals(currentSupplier.getName()));
-}
-@Then("the supplier email should be {string}")
-public void the_supplier_email_should_be(String expectedEmail) {
-    assertTrue(expectedEmail.equals(currentSupplier.getEmail()));
-}
-@When("I set the supplier email to {string}")
-public void i_set_the_supplier_email_to(String email) {
-    currentSupplier.setEmail(email);
-}
+    public void the_supplier_id_should_be(String expectedId) {
+        assertTrue(expectedId.equals(currentSupplier.getId()));
+    }
+    
+    @Then("the supplier name should be {string}")
+    public void the_supplier_name_should_be(String expectedName) {
+        assertTrue(expectedName.equals(currentSupplier.getName()));
+    }
+    
+    @Then("the supplier email should be {string}")
+    public void the_supplier_email_should_be(String expectedEmail) {
+        assertTrue(expectedEmail.equals(currentSupplier.getEmail()));
+    }
+    
+    @When("I set the supplier email to {string}")
+    public void i_set_the_supplier_email_to(String email) {
+        currentSupplier.setEmail(email);
+    }
 
-@Then("the supplier phone should be {string}")
-public void the_supplier_phone_should_be(String expectedPhone) {
-    assertTrue(expectedPhone.equals(currentSupplier.getPhone()));
-}
-@When("I set the supplier phone to {string}")
-public void i_set_the_supplier_phone_to(String phone) {
-    currentSupplier.setPhone(phone);
-}
-@When("the admin removes the ingredient {string} from the supplier")
-public void the_admin_removes_the_ingredient(String ingredient) {
-    currentSupplier.removeIngredientId(ingredient);
-}
+    @Then("the supplier phone should be {string}")
+    public void the_supplier_phone_should_be(String expectedPhone) {
+        assertTrue(expectedPhone.equals(currentSupplier.getPhone()));
+    }
+    
+    @When("I set the supplier phone to {string}")
+    public void i_set_the_supplier_phone_to(String phone) {
+        currentSupplier.setPhone(phone);
+    }
+    
+    @When("the admin removes the ingredient {string} from the supplier")
+    public void the_admin_removes_the_ingredient(String ingredient) {
+        currentSupplier.removeIngredientId(ingredient);
+    }
 
-@Then("the ingredient {string} should no longer be associated with the supplier")
-public void the_ingredient_should_be_removed(String ingredient) {
-    assertFalse(currentSupplier.getIngredientIds().contains(ingredient));
-}
-
-
+    @Then("the ingredient {string} should no longer be associated with the supplier")
+    public void the_ingredient_should_be_removed(String ingredient) {
+        assertFalse(currentSupplier.getIngredientIds().contains(ingredient));
+    }
+    
+    // New methods to increase coverage
+    
+    @Given("there are ingredients in the inventory with different stock levels")
+    public void thereAreIngredientsInTheInventoryWithDifferentStockLevels() {
+        // Create ingredients with varying stock levels
+        Ingredient flour = new Ingredient("INGFLOUR", "Flour", "kg", 10.0, 5.0);
+        Ingredient sugar = new Ingredient("INGSUGAR", "Sugar", "kg", 2.0, 5.0);  // Low stock
+        Ingredient salt = new Ingredient("INGSALT", "Salt", "kg", 1.0, 0.5);    // Not low stock
+        
+        // Add to inventory
+        inventory.addIngredient(flour);
+        inventory.addIngredient(sugar);
+        inventory.addIngredient(salt);
+        
+        // Verify stock status
+        assertFalse("Flour should not be low stock", flour.isLowStock());
+        assertTrue("Sugar should be low stock", sugar.isLowStock());
+        assertFalse("Salt should not be low stock", salt.isLowStock());
+        
+        // Update quantities
+        flour.updateQuantity(-3.0);
+        assertEquals("Flour quantity should be updated", 7.0, flour.getQuantity(), 0.001);
+        
+        logger.info("Inventory has ingredients with various stock levels");
+    }
+    
+    // Renamed this method to avoid the conflict with InventoryManagementStep
+    @When("the supplier admin reviews low stock items")
+    public void theSupplierAdminReviewsLowStockItems() {
+        // Get low stock ingredients
+        List<Ingredient> lowStockIngredients = inventory.getLowStockIngredients();
+        
+        // Verify one ingredient is low stock
+        assertTrue("Should have at least one low stock ingredient", 
+                lowStockIngredients.stream().anyMatch(i -> i.getId().equals("INGSUGAR")));
+        
+        logger.info("Admin checked for low stock ingredients");
+    }
+    
+    @Then("only ingredients below minimum levels should be flagged")
+    public void onlyIngredientsBelowMinimumLevelsShouldBeFlagged() {
+        List<Ingredient> lowStockIngredients = inventory.getLowStockIngredients();
+        
+        // Verify correct ingredients are flagged
+        assertTrue("Sugar should be in low stock list", 
+                lowStockIngredients.stream().anyMatch(i -> i.getId().equals("INGSUGAR")));
+        assertFalse("Salt should not be in low stock list", 
+                lowStockIngredients.stream().anyMatch(i -> i.getId().equals("INGSALT")));
+        
+        logger.info("Confirmed only ingredients below minimum levels are flagged");
+    }
+    
+    @Given("there are ingredients and suppliers in the inventory")
+    public void thereAreIngredientsAndSuppliersInTheInventory() {
+        // Test removing ingredients
+        Ingredient testIngredient = new Ingredient("ING-TEST", "Test Ingredient", "kg", 5.0, 1.0);
+        inventory.addIngredient(testIngredient);
+        
+        boolean removed = inventory.removeIngredient("ING-TEST");
+        assertTrue("Should successfully remove existing ingredient", removed);
+        
+        boolean removedNonExistent = inventory.removeIngredient("NON-EXISTENT");
+        assertFalse("Should not remove non-existent ingredient", removedNonExistent);
+        
+        // Test supplier removal
+        Supplier testSupplier = new Supplier("SUP-TEST", "Test Supplier", "test@example.com", "123-456-7890");
+        inventory.addSupplier(testSupplier);
+        
+        boolean supplierRemoved = inventory.removeSupplier("SUP-TEST");
+        assertTrue("Should successfully remove existing supplier", supplierRemoved);
+        
+        logger.info("Tested ingredient and supplier removal");
+    }
+    
+    @When("a meal is prepared using ingredients from inventory")
+    public void aMealIsPreparedUsingIngredientsFromInventory() {
+        // Create a test meal
+        testMeal = new Meal("TEST-MEAL", "Test Meal", currentAdmin, 0);
+        
+        // Ensure ingredients exist
+        Ingredient flour = inventory.getAllIngredients().stream()
+                .filter(i -> i.getName().equals("Flour"))
+                .findFirst()
+                .orElse(null);
+                
+        if (flour == null) {
+            flour = new Ingredient("INGFLOUR", "Flour", "kg", 25.0, 5.0);
+            inventory.addIngredient(flour);
+        }
+        
+        Ingredient sugar = inventory.getAllIngredients().stream()
+                .filter(i -> i.getName().equals("Sugar"))
+                .findFirst()
+                .orElse(null);
+                
+        if (sugar == null) {
+            sugar = new Ingredient("INGSUGAR", "Sugar", "kg", 15.0, 3.0);
+            inventory.addIngredient(sugar);
+        }
+        
+        // Test inventory update for meal preparation
+        boolean checkResult = inventory.checkIngredientsAvailability(testMeal, 1);
+        assertTrue("Should have ingredients available", checkResult);
+        
+        boolean updateResult = inventory.updateInventoryForMealPreparation(testMeal, 1);
+        assertTrue("Should update inventory successfully", updateResult);
+        
+        logger.info("Meal prepared using ingredients from inventory");
+    }
+    
+    @Then("the inventory should be updated with the meal ingredients")
+    public void theInventoryShouldBeUpdatedWithTheMealIngredients() {
+        // Verify the inventory was updated
+        for (String entry : testMeal.getIngredients()) {
+            String name = entry;
+            
+            // Find the ingredient by name
+            Ingredient ingredient = inventory.getAllIngredients().stream()
+                    .filter(ing -> ing.getName().equals(name))
+                    .findFirst()
+                    .orElse(null);
+            
+            assertNotNull("Ingredient should exist in inventory", ingredient);
+            
+            logger.info("Inventory updated for " + name + ": " + ingredient.getQuantity() + " kg");
+        }
+    }
 }

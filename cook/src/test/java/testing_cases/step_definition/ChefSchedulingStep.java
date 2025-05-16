@@ -62,9 +62,22 @@ public class ChefSchedulingStep {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endTime = now.plusMinutes(preparationTime);
         
-        // Create a task for the order
+        // Create a task for the order - testing first constructor
         String description = "Prepare order #" + currentOrder.getOrderId();
         currentTask = new Task(currentOrder.getOrderId(), currentChef, description, now, endTime);
+        
+        // Test getters
+        assertEquals("Order ID should match", currentOrder.getOrderId(), currentTask.getOrderId());
+        assertEquals("Chef ID should match", currentChef, currentTask.getChefId());
+        assertEquals("Description should match", description, currentTask.getDescription());
+        assertEquals("Start time should match", now, currentTask.getStartTime());
+        assertEquals("End time should match", endTime, currentTask.getEndTime());
+        assertEquals("Status should be pending", "pending", currentTask.getStatus());
+        assertEquals("Default priority should be 3", 3, currentTask.getPriority());
+        assertNotNull("Task ID should be generated", currentTask.getId());
+        
+        // Test duration calculation
+        assertEquals("Duration should match preparation time", preparationTime, currentTask.getDurationMinutes());
         
         logger.info("Order placed with " + preparationTime + " minutes preparation time");
     }
@@ -78,6 +91,16 @@ public class ChefSchedulingStep {
         assertTrue("Chef should be available", 
                 chefSchedule.isChefAvailable(currentChef, currentTask.getStartTime(), currentTask.getEndTime()));
         
+        // Test overlap method with non-overlapping times
+        LocalDateTime laterStart = currentTask.getEndTime().plusMinutes(10);
+        LocalDateTime laterEnd = laterStart.plusMinutes(30);
+        assertFalse("Tasks should not overlap", currentTask.overlaps(laterStart, laterEnd));
+        
+        // Test overlap method with overlapping times
+        LocalDateTime overlapStart = currentTask.getStartTime().plusMinutes(10);
+        LocalDateTime overlapEnd = currentTask.getEndTime().plusMinutes(10);
+        assertTrue("Tasks should overlap", currentTask.overlaps(overlapStart, overlapEnd));
+        
         logger.info("System assigned the order to chef: " + currentChef);
     }
     
@@ -90,6 +113,12 @@ public class ChefSchedulingStep {
         List<Task> tasks = chefSchedule.getChefTasks(currentChef);
         assertTrue("Task should be added to chef's schedule", 
                 tasks.stream().anyMatch(t -> t.getId().equals(currentTask.getId())));
+        
+        // Test task state transitions
+        assertTrue("Task should be active when pending", currentTask.isActive());
+        currentTask.start();
+        assertEquals("Task status should be in-progress", "in-progress", currentTask.getStatus());
+        assertTrue("Task should be active when in-progress", currentTask.isActive());
         
         logger.info("Task added to chef's schedule");
     }
@@ -114,6 +143,14 @@ public class ChefSchedulingStep {
     @Then("the system should display all assigned tasks for the day")
     public void theSystemShouldDisplayAllAssignedTasksForTheDay() {
         assertNotNull("Chef should have tasks", chefTasks);
+        
+        // Test toString method
+        for (Task task : chefTasks) {
+            String taskString = task.toString();
+            assertNotNull("toString should return non-null", taskString);
+            assertTrue("toString should contain ID", taskString.contains(task.getId()));
+            assertTrue("toString should contain description", taskString.contains(task.getDescription()));
+        }
         
         logger.info("System displayed " + chefTasks.size() + " tasks for today");
         
@@ -155,12 +192,20 @@ public class ChefSchedulingStep {
     
     @When("they mark a task as completed")
     public void theyMarkATaskAsCompleted() {
+        // Make sure we start the task before completing it
+        currentTask.start();
+        assertEquals("Task should be in-progress", "in-progress", currentTask.getStatus());
+        
         // Mark the task as completed
         currentTask.complete();
         
         // Update the task status in the chef schedule
         boolean updated = chefSchedule.updateTaskStatus(currentTask.getId(), "completed");
         assertTrue("Task status should be updated", updated);
+        
+        // Verify task status
+        assertEquals("Task status should be completed", "completed", currentTask.getStatus());
+        assertFalse("Task should not be active when completed", currentTask.isActive());
         
         logger.info("Chef marked task as completed: " + currentTask.getDescription());
     }
@@ -186,12 +231,15 @@ public class ChefSchedulingStep {
     public void aChefIsUnavailableForTheirAssignedTask() {
         // Ensure chef has at least one task
         if (chefSchedule.getChefTasks(currentChef).isEmpty()) {
-            // Create a sample task if none exists
+            // Create a sample task if none exists - testing second constructor with priority
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime end = now.plusMinutes(45);
-            Task task = new Task("O001", currentChef, "Sample task", now, end);
+            Task task = new Task("O001", currentChef, "Sample task", now, end, 1);
             chefSchedule.addTask(task);
             currentTask = task;
+            
+            // Test that the priority was set correctly
+            assertEquals("Task priority should be set to 1", 1, task.getPriority());
         } else {
             currentTask = chefSchedule.getChefTasks(currentChef).get(0);
         }
@@ -206,6 +254,10 @@ public class ChefSchedulingStep {
         // For now, we'll just simulate the reassignment to the same chef
         String newChefId = "chef"; // In a real system, this would be a different chef
         
+        // Test setChefId method
+        currentTask.setChefId(newChefId);
+        assertEquals("Chef ID should be updated", newChefId, currentTask.getChefId());
+        
         boolean reassigned = chefSchedule.reassignTask(currentTask.getId(), newChefId);
         assertTrue("Task should be reassigned", reassigned);
         
@@ -218,6 +270,29 @@ public class ChefSchedulingStep {
         Task updatedTask = chefSchedule.getTaskById(currentTask.getId());
         assertNotNull("Task should exist", updatedTask);
         assertEquals("Task should be assigned to the new chef", "chef", updatedTask.getChefId());
+        
+        // Test setters that haven't been tested yet
+        String newDescription = "Updated task description";
+        updatedTask.setDescription(newDescription);
+        assertEquals("Description should be updated", newDescription, updatedTask.getDescription());
+        
+        LocalDateTime newStartTime = updatedTask.getStartTime().plusHours(1);
+        updatedTask.setStartTime(newStartTime);
+        assertEquals("Start time should be updated", newStartTime, updatedTask.getStartTime());
+        
+        LocalDateTime newEndTime = updatedTask.getEndTime().plusHours(1);
+        updatedTask.setEndTime(newEndTime);
+        assertEquals("End time should be updated", newEndTime, updatedTask.getEndTime());
+        
+        // Test priority setter with valid and invalid values
+        updatedTask.setPriority(4);
+        assertEquals("Priority should be updated to 4", 4, updatedTask.getPriority());
+        
+        updatedTask.setPriority(0); // Too low, should be set to 1
+        assertEquals("Priority should be set to 1 when too low", 1, updatedTask.getPriority());
+        
+        updatedTask.setPriority(6); // Too high, should be set to 5
+        assertEquals("Priority should be set to 5 when too high", 5, updatedTask.getPriority());
         
         logger.info("System updated task assignment to chef: " + updatedTask.getChefId());
     }
@@ -323,8 +398,27 @@ public class ChefSchedulingStep {
         
         Task unavailableTask = new Task(currentOrder.getOrderId(), currentChef, 
                 "Late night task", start, end);
+        
+        // Test the cancel method
+        unavailableTask.cancel();
+        assertEquals("Task status should be cancelled", "cancelled", unavailableTask.getStatus());
+        assertFalse("Task should not be active when cancelled", unavailableTask.isActive());
+        
+        // Try to complete a cancelled task (should not change status)
+        unavailableTask.complete();
+        assertEquals("Cancelled task should remain cancelled", "cancelled", unavailableTask.getStatus());
+        
+        // Create a new task and test cancel method on a completed task
+        Task completedTask = new Task(currentOrder.getOrderId(), currentChef, 
+                "Completed task", start, end);
+        completedTask.start();
+        completedTask.complete();
+        assertEquals("Task status should be completed", "completed", completedTask.getStatus());
+        
+        // Try to cancel a completed task (should not change status)
+        completedTask.cancel();
+        assertEquals("Completed task should remain completed", "completed", completedTask.getStatus());
+        
         logger.info("System did not assign tasks during unavailable hours");
     }
-
-
 }
