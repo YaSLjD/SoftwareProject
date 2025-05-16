@@ -27,6 +27,9 @@ public class Notification {
         this(recipientId, title, message, type);
         this.relatedEntityId = relatedEntityId;
     }
+
+    
+    
     
     // Getters and setters
     public String getId() {
@@ -91,4 +94,9 @@ public class Notification {
                 ", isRead=" + isRead +
                 '}';
     }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+    
 }

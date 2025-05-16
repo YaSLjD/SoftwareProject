@@ -162,4 +162,8 @@ public class NotificationSystem {
         
         return sendNotification(userId, title, message, "system", mealPlanId);
     }
+    public void addNotificationDirectly(Notification notification) {
+        addNotificationToUser(notification.getRecipientId(), notification);
+    }
+    
 }
