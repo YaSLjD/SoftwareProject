@@ -4,7 +4,7 @@ import app.Ingredient;
 import app.Inventory;
 import app.LoginSystem;
 import app.Supplier;
-import app.logger;
+import common.logger;
 import app.NotificationSystem;
 import app.Meal;
 import io.cucumber.datatable.DataTable;

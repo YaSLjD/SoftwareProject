@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import common.logger;
+
 public class Inventory {
     private Map<String, Ingredient> ingredients;
     private Map<String, Supplier> suppliers;

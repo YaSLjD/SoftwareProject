@@ -3,7 +3,7 @@ package testing_cases.step_definition;
 import app.LoginSystem;
 import app.Meal;
 import app.UserPreferenceSystem;
-import app.logger;
+import common.logger;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

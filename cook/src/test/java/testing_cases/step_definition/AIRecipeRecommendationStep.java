@@ -7,7 +7,7 @@ import app.OrderSystem;
 import app.RecipeRecommendationSystem;
 import app.User;
 import app.UserPreferenceSystem;
-import app.logger;
+import common.logger;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

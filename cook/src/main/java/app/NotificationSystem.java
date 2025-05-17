@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import common.logger;
+
 public class NotificationSystem {
     private Map<String, List<Notification>> userNotifications; // Map of user ID to their notifications
     

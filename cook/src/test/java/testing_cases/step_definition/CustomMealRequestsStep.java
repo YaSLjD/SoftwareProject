@@ -15,7 +15,7 @@ import app.Meal;
 import app.Order;
 import app.OrderSystem;
 import app.User;
-import app.logger;
+import common.logger;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

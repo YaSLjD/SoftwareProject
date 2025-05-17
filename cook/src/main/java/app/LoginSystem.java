@@ -3,6 +3,8 @@ package app;
 import java.util.HashMap;
 import java.util.Map;
 
+import common.logger;
+
 public class LoginSystem {
 
     private Map<String, User> userDatabase; // Store user data

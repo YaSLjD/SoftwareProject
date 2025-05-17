@@ -3,7 +3,7 @@ package testing_cases.step_definition;
 import app.LoginSystem;
 import app.Order;
 import app.OrderSystem;
-import app.logger;
+import common.logger;
 import app.Notification;
 import app.NotificationSystem;
 import app.Ingredient;

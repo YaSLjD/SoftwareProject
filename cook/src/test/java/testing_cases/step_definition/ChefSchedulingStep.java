@@ -5,7 +5,7 @@ import app.LoginSystem;
 import app.Order;
 import app.OrderSystem;
 import app.Task;
-import app.logger;
+import common.logger;
 import app.NotificationSystem;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

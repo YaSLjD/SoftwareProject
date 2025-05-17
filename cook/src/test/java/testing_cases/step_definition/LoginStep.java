@@ -1,7 +1,7 @@
 package testing_cases.step_definition;
 
 import app.LoginSystem;
-import app.logger;
+import common.logger;
 import io.cucumber.java.en.*;
 import static org.junit.Assert.*;
 
