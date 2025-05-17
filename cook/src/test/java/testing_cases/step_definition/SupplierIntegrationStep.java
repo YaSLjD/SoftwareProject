@@ -681,4 +681,146 @@ public class SupplierIntegrationStep {
             logger.info("Inventory updated for " + name + ": " + ingredient.getQuantity() + " kg");
         }
     }
+
+    // Add these step definitions to the SupplierIntegrationStep.java file
+
+@Given("I create a supplier with ID {string}, name {string}, email {string}, and phone {string}")
+public void i_create_a_supplier_with_basic_info(String id, String name, String email, String phone) {
+    // Test the constructor with just ID, name, email, and phone (no address)
+    currentSupplier = new Supplier(id, name, email, phone);
+    
+    // Verify the fields were set correctly
+    assertEquals(id, currentSupplier.getId());
+    assertEquals(name, currentSupplier.getName());
+    assertEquals(email, currentSupplier.getEmail());
+    assertEquals(phone, currentSupplier.getPhone());
+    
+    // Verify address is null
+    assertNull("Address should be null", currentSupplier.getAddress());
+    
+    // Verify ingredientIds list was initialized
+    assertNotNull("IngredientIds list should be initialized", currentSupplier.getIngredientIds());
+    assertTrue("IngredientIds list should be empty", currentSupplier.getIngredientIds().isEmpty());
+    
+    logger.info("Created supplier with basic info: " + name + " (" + id + ")");
+}
+
+@When("I set the supplier ID to {string}")
+public void i_set_the_supplier_id_to(String id) {
+    String oldId = currentSupplier.getId();
+    currentSupplier.setId(id);
+    assertEquals("Supplier ID should be updated", id, currentSupplier.getId());
+    logger.info("Updated supplier ID from " + oldId + " to " + id);
+}
+
+@When("I set the supplier name to {string}")
+public void i_set_the_supplier_name_to(String name) {
+    String oldName = currentSupplier.getName();
+    currentSupplier.setName(name);
+    assertEquals("Supplier name should be updated", name, currentSupplier.getName());
+    logger.info("Updated supplier name from " + oldName + " to " + name);
+}
+
+@When("I set the supplier address to {string}")
+public void i_set_the_supplier_address_to(String address) {
+    String oldAddress = currentSupplier.getAddress();
+    currentSupplier.setAddress(address);
+    assertEquals("Supplier address should be updated", address, currentSupplier.getAddress());
+    logger.info("Updated supplier address from " + oldAddress + " to " + address);
+}
+
+@Then("the supplier address should be {string}")
+public void the_supplier_address_should_be(String expectedAddress) {
+    assertEquals(expectedAddress, currentSupplier.getAddress());
+}
+
+@Then("the supplier address should be null")
+public void the_supplier_address_should_be_null() {
+    assertNull("Supplier address should be null", currentSupplier.getAddress());
+    logger.info("Verified supplier address is null");
+}
+
+@When("I add ingredient {string} to the supplier")
+public void i_add_ingredient_to_the_supplier(String ingredientId) {
+    int initialSize = currentSupplier.getIngredientIds().size();
+    currentSupplier.addIngredientId(ingredientId);
+    
+    // Verify the ingredient was added
+    assertEquals("Ingredient list size should increase by 1", 
+            initialSize + 1, currentSupplier.getIngredientIds().size());
+    assertTrue("Ingredient should be in the list", 
+            currentSupplier.getIngredientIds().contains(ingredientId));
+    
+    logger.info("Added ingredient " + ingredientId + " to supplier " + currentSupplier.getName());
+}
+
+@When("I add the same ingredient {string} again")
+public void i_add_the_same_ingredient_again(String ingredientId) {
+    int initialSize = currentSupplier.getIngredientIds().size();
+    currentSupplier.addIngredientId(ingredientId);
+    
+    // Verify the ingredient was not added again (no duplicates)
+    assertEquals("Ingredient list size should not change", 
+            initialSize, currentSupplier.getIngredientIds().size());
+    assertTrue("Ingredient should still be in the list", 
+            currentSupplier.getIngredientIds().contains(ingredientId));
+    
+    logger.info("Attempted to add duplicate ingredient " + ingredientId + " to supplier");
+}
+
+@Then("the ingredient list should contain {string}")
+public void the_ingredient_list_should_contain(String ingredientId) {
+    assertTrue("Ingredient list should contain " + ingredientId, 
+            currentSupplier.getIngredientIds().contains(ingredientId));
+}
+
+@Then("the supplier toString should contain all the basic information")
+public void the_supplier_to_string_should_contain_all_basic_information() {
+    String toStringResult = currentSupplier.toString();
+    
+    // Verify the toString contains all the basic fields
+    assertTrue("toString should contain ID", toStringResult.contains(currentSupplier.getId()));
+    assertTrue("toString should contain name", toStringResult.contains(currentSupplier.getName()));
+    assertTrue("toString should contain email", toStringResult.contains(currentSupplier.getEmail()));
+    assertTrue("toString should contain phone", toStringResult.contains(currentSupplier.getPhone()));
+    
+    logger.info("Verified supplier toString contains all basic information");
+}
+
+@Given("I initialize a supplier with ID {string}, name {string}, email {string}, phone {string}, and address {string}")
+public void i_initialize_a_supplier_with_all_fields(String id, String name, String email, String phone, String address) {
+    // Test the constructor with all fields including address
+    currentSupplier = new Supplier(id, name, email, phone, address);
+    
+    // Verify all fields were set correctly
+    assertEquals(id, currentSupplier.getId());
+    assertEquals(name, currentSupplier.getName());
+    assertEquals(email, currentSupplier.getEmail());
+    assertEquals(phone, currentSupplier.getPhone());
+    assertEquals(address, currentSupplier.getAddress());
+    
+    // Verify ingredientIds list was initialized
+    assertNotNull("IngredientIds list should be initialized", currentSupplier.getIngredientIds());
+    assertTrue("IngredientIds list should be empty", currentSupplier.getIngredientIds().isEmpty());
+    
+    logger.info("Created supplier with all fields: " + name + " (" + id + ") at " + address);
+}
+
+@When("I remove a non-existent ingredient {string}")
+public void i_remove_non_existent_ingredient(String ingredientId) {
+    int initialSize = currentSupplier.getIngredientIds().size();
+    currentSupplier.removeIngredientId(ingredientId);
+    
+    // Verify the list didn't change
+    assertEquals("Ingredient list size should not change", 
+            initialSize, currentSupplier.getIngredientIds().size());
+    
+    logger.info("Attempted to remove non-existent ingredient " + ingredientId);
+}
+
+@Then("the supplier should have {int} ingredients")
+public void the_supplier_should_have_number_ingredients(int expectedCount) {
+    assertEquals("Supplier should have " + expectedCount + " ingredients",
+            expectedCount, currentSupplier.getIngredientIds().size());
+}
 }
