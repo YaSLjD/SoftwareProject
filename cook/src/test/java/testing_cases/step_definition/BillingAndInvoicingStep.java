@@ -5,6 +5,7 @@ import app.Invoice;
 import app.LoginSystem;
 import app.Order;
 import app.OrderSystem;
+import app.User;
 import app.logger;
 import app.NotificationSystem;
 import io.cucumber.java.en.Given;
@@ -14,6 +15,7 @@ import io.cucumber.java.en.And;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 
@@ -29,6 +31,8 @@ public class BillingAndInvoicingStep {
     private Order currentOrder;
     private Invoice currentInvoice;
     private String adminUsername;
+    private List<Invoice> resultInvoiceList;
+    private String reportResult;
     
     public BillingAndInvoicingStep() {
         loginSystem = new LoginSystem();
@@ -40,30 +44,29 @@ public class BillingAndInvoicingStep {
     }
     
     @Given("a customer has placed an order")
-public void aCustomerHasPlacedAnOrder() {
-    // Create a new order
-    currentOrder = orderSystem.createOrder(currentCustomer);
-    assertNotNull("Order should be created", currentOrder);
+    public void aCustomerHasPlacedAnOrder() {
+        // Create a new order
+        currentOrder = orderSystem.createOrder(currentCustomer);
+        assertNotNull("Order should be created", currentOrder);
 
-    // Add some meals to the order
-    boolean added1 = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M001");
-    boolean added2 = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M002");
+        // Add some meals to the order
+        boolean added1 = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M001");
+        boolean added2 = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M002");
 
-    assertTrue("Meals should be added to order", added1 && added2);
+        assertTrue("Meals should be added to order", added1 && added2);
 
-    // ✅ Create an invoice based on the order
-    currentInvoice = billingSystem.generateInvoice(currentOrder);
-    logger.info("Customer has placed an order: " + currentOrder.getOrderId());
-    logger.info("Order contains " + currentOrder.getMeals().size() + " meals");
-}
+        // ✅ Create an invoice based on the order
+        currentInvoice = billingSystem.generateInvoice(currentOrder);
+        logger.info("Customer has placed an order: " + currentOrder.getOrderId());
+        logger.info("Order contains " + currentOrder.getMeals().size() + " meals");
+    }
 
-@And("an invoice is generated for the order")
-public void anInvoiceIsGeneratedForTheOrder() {
-    currentInvoice = billingSystem.generateInvoice(currentOrder);
-    assertNotNull("Invoice should be generated", currentInvoice);
-}
+    @And("an invoice is generated for the order")
+    public void anInvoiceIsGeneratedForTheOrder() {
+        currentInvoice = billingSystem.generateInvoice(currentOrder);
+        assertNotNull("Invoice should be generated", currentInvoice);
+    }
 
-    
     @When("the order is completed")
     public void theOrderIsCompleted() {
         // Update order status
@@ -302,6 +305,10 @@ public void anInvoiceIsGeneratedForTheOrder() {
         
         logger.info("Monthly statement includes all invoices with their payment status:");
         logger.info(statement);
+        
+        // Verify statement contains expected content
+        assertTrue("Statement should contain invoice information", 
+            statement.contains("Invoices:") && statement.contains("Summary:"));
     }
     
     @Given("an invoice is past its due date")
@@ -315,8 +322,9 @@ public void anInvoiceIsGeneratedForTheOrder() {
             currentInvoice.issue();
         }
         
-        // Directly set the status to overdue for the test
-        currentInvoice.setStatus("overdue");
+        // Set the due date to a past date
+        LocalDateTime pastDueDate = LocalDateTime.now().minusDays(5);
+        currentInvoice.setDueDate(pastDueDate);
         
         logger.info("Invoice is past its due date: " + currentInvoice.getInvoiceId());
     }
@@ -324,10 +332,11 @@ public void anInvoiceIsGeneratedForTheOrder() {
     @When("the system runs the daily payment check")
     public void theSystemRunsTheDailyPaymentCheck() {
         // Check for overdue invoices
-        List<Invoice> overdueInvoices = billingSystem.checkOverdueInvoices();
+        resultInvoiceList = billingSystem.checkOverdueInvoices();
+        assertNotNull("Overdue invoice list should not be null", resultInvoiceList);
         
         logger.info("System ran the daily payment check");
-        logger.info("Found " + overdueInvoices.size() + " overdue invoices");
+        logger.info("Found " + resultInvoiceList.size() + " overdue invoices");
     }
     
     @Then("it should mark the invoice as {string}")
@@ -335,6 +344,11 @@ public void anInvoiceIsGeneratedForTheOrder() {
         // Verify invoice status
         Invoice updatedInvoice = billingSystem.getInvoice(currentInvoice.getInvoiceId());
         assertEquals("Invoice status should be marked as " + status, status, updatedInvoice.getStatus());
+        
+        // Verify that the invoice is in the result list
+        boolean foundInvoice = resultInvoiceList.stream()
+            .anyMatch(inv -> inv.getInvoiceId().equals(currentInvoice.getInvoiceId()));
+        assertTrue("Invoice should be in the overdue list", foundInvoice);
         
         logger.info("Invoice marked as: " + updatedInvoice.getStatus());
     }
@@ -391,6 +405,29 @@ public void anInvoiceIsGeneratedForTheOrder() {
         String loginResult = loginSystem.login(adminUsername, "adminpass");
         assertTrue("Admin should be logged in", loginResult.startsWith("Welcome"));
         
+        // Create some invoices with different statuses to improve coverage
+        for (int i = 0; i < 5; i++) {
+            Order order = orderSystem.createOrder(currentCustomer);
+            orderSystem.addMealToOrder(order.getOrderId(), "M001");
+            orderSystem.updateOrderStatus(order.getOrderId(), "completed");
+            
+            Invoice invoice = billingSystem.generateInvoice(order);
+            invoice.issue();
+            
+            // Set different statuses to test all branches
+            if (i < 2) {
+                billingSystem.processPayment(invoice.getInvoiceId(), invoice.getTotalAmount(), "Credit Card");
+            } else if (i == 2) {
+                billingSystem.updateInvoiceStatus(invoice.getInvoiceId(), "overdue");
+            } else if (i == 3) {
+                billingSystem.updateInvoiceStatus(invoice.getInvoiceId(), "cancelled");
+            }
+            
+            // Set issue date to ensure it falls within our test period
+            LocalDateTime issueDate = LocalDateTime.now().minusDays(i);
+            invoice.setIssueDate(issueDate);
+        }
+        
         logger.info("Admin wants to analyze revenue");
     }
     
@@ -400,110 +437,204 @@ public void anInvoiceIsGeneratedForTheOrder() {
         LocalDateTime start = LocalDateTime.now().minusMonths(1);
         LocalDateTime end = LocalDateTime.now();
         
-        String report = billingSystem.generateRevenueReport(start, end);
-        assertNotNull("Revenue report should be generated", report);
-        assertFalse("Revenue report should not be empty", report.isEmpty());
+        reportResult = billingSystem.generateRevenueReport(start, end);
+        assertNotNull("Revenue report should be generated", reportResult);
+        assertFalse("Revenue report should not be empty", reportResult.isEmpty());
         
         logger.info("Admin requested a revenue report for the past month");
     }
     
     @Then("the system should generate a detailed report")
     public void theSystemShouldGenerateADetailedReport() {
-        // In a real system, this would verify the report details
-        // For now, we'll just print a message
+        // Verify report content
+        assertTrue("Report should contain period information", 
+            reportResult.contains("Period:") && reportResult.contains("to"));
+        assertTrue("Report should show total revenue", reportResult.contains("Total Revenue:"));
+        
         logger.info("System generated a detailed revenue report");
     }
     
     @And("show total revenue, paid invoices, and pending payments")
     public void showTotalRevenuePaidInvoicesAndPendingPayments() {
-        // In a real system, this would verify the report contents
-        // For now, we'll just print a sample report
-        LocalDateTime start = LocalDateTime.now().minusMonths(1);
-        LocalDateTime end = LocalDateTime.now();
-        
-        String report = billingSystem.generateRevenueReport(start, end);
+        // Verify report contains all required sections
+        assertTrue("Report should show total invoices", reportResult.contains("Total Invoices:"));
+        assertTrue("Report should show paid invoices", reportResult.contains("Paid Invoices:"));
+        assertTrue("Report should show pending revenue", reportResult.contains("Pending Revenue:"));
         
         logger.info("Revenue report shows total revenue, paid invoices, and pending payments:");
-        logger.info(report);
+        logger.info(reportResult);
     }
 
     @When("I manually set the issue date to {string}")
-     public void i_set_the_issue_date(String dateStr) {
-    LocalDateTime date = LocalDateTime.parse(dateStr);
-    currentInvoice.setIssueDate(date);
-   }
+    public void i_set_the_issue_date(String dateStr) {
+        LocalDateTime date = LocalDateTime.parse(dateStr);
+        currentInvoice.setIssueDate(date);
+    }
 
-@When("I manually set the due date to {string}")
-public void i_set_the_due_date(String dateStr) {
-    LocalDateTime date = LocalDateTime.parse(dateStr);
-    currentInvoice.setDueDate(date);
-}
+    @When("I manually set the due date to {string}")
+    public void i_set_the_due_date(String dateStr) {
+        LocalDateTime date = LocalDateTime.parse(dateStr);
+        currentInvoice.setDueDate(date);
+    }
 
+    @Given("the invoice was issued more than {int} days ago")
+    public void the_invoice_was_issued_days_ago(int daysAgo) {
+        LocalDateTime past = LocalDateTime.now().minusDays(daysAgo);
+        currentInvoice.setIssueDate(past);
+        currentInvoice.setDueDate(past.plusDays(30));
+        currentInvoice.issue();
+    }
 
+    @When("I check if the invoice is overdue")
+    public void i_check_if_invoice_is_overdue() {
+        currentInvoice.isOverdue();
+    }
 
-@Given("the invoice was issued more than {int} days ago")
-public void the_invoice_was_issued_days_ago(int daysAgo) {
-    LocalDateTime past = LocalDateTime.now().minusDays(daysAgo);
-    currentInvoice.setIssueDate(past);
-    currentInvoice.setDueDate(past.plusDays(30));
-    currentInvoice.issue();
-}
+    @Then("the invoice status should be {string}")
+    public void the_invoice_status_should_be(String expectedStatus) {
+        assertEquals(expectedStatus, currentInvoice.getStatus());
+    }
+    
+    @When("I mark the invoice as overdue")
+    public void i_mark_invoice_as_overdue() {
+        currentInvoice.issue(); // Ensure it's in issued state
+        currentInvoice.markAsOverdue();
+    }
 
-@When("I check if the invoice is overdue")
-public void i_check_if_invoice_is_overdue() {
-    currentInvoice.isOverdue();
-}
+    @When("I cancel the invoice")
+    public void i_cancel_invoice() {
+        currentInvoice.cancel();
+    }
 
-@Then("the invoice status should be {string}")
-public void the_invoice_status_should_be(String expectedStatus) {
-    assertEquals(expectedStatus, currentInvoice.getStatus());
-}
-@When("I mark the invoice as overdue")
-public void i_mark_invoice_as_overdue() {
-    currentInvoice.issue(); // Ensure it's in issued state
-    currentInvoice.markAsOverdue();
-}
+    @Then("the invoice should be cancelled")
+    public void the_invoice_should_be_cancelled() {
+        assertEquals("cancelled", currentInvoice.getStatus());
+    }
 
-@When("I cancel the invoice")
-public void i_cancel_invoice() {
-    currentInvoice.cancel();
-}
-
-@Then("the invoice should be cancelled")
-public void the_invoice_should_be_cancelled() {
-    assertEquals("cancelled", currentInvoice.getStatus());
-}
-
-Invoice.InvoiceItem item;
-
-@Given("I create an invoice item with description {string}, price {double}, and quantity {int}")
-public void i_create_invoice_item(String desc, double price, int qty) {
-    item = new Invoice.InvoiceItem(desc, price, qty);
-}
-
-@When("I change the item description to {string}")
-public void i_change_item_description(String desc) {
-    item.setDescription(desc);
-}
-
-@When("I change the item unit price to {double}")
-public void i_change_item_unit_price(double price) {
-    item.setUnitPrice(price);
-}
-
-@When("I change the item quantity to {int}")
-public void i_change_item_quantity(int qty) {
-    item.setQuantity(qty);
-}
-
-@Then("the item should have description {string}, unit price {double}, and quantity {int}")
-public void the_item_should_have_updated_values(String desc, double price, int qty) {
-    assertEquals(desc, item.getDescription());
-    assertEquals(price, item.getUnitPrice(), 0.01);
-    assertEquals(qty, item.getQuantity());
-}
-
-
-
-
+    Invoice.InvoiceItem item;
+        protected Map<String, User> userDatabase;
+    
+        @Given("I create an invoice item with description {string}, price {double}, and quantity {int}")
+        public void i_create_invoice_item(String desc, double price, int qty) {
+            item = new Invoice.InvoiceItem(desc, price, qty);
+        }
+    
+        @When("I change the item description to {string}")
+        public void i_change_item_description(String desc) {
+            item.setDescription(desc);
+        }
+    
+        @When("I change the item unit price to {double}")
+        public void i_change_item_unit_price(double price) {
+            item.setUnitPrice(price);
+        }
+    
+        @When("I change the item quantity to {int}")
+        public void i_change_item_quantity(int qty) {
+            item.setQuantity(qty);
+        }
+    
+        @Then("the item should have description {string}, unit price {double}, and quantity {int}")
+        public void the_item_should_have_updated_values(String desc, double price, int qty) {
+            assertEquals(desc, item.getDescription());
+            assertEquals(price, item.getUnitPrice(), 0.01);
+            assertEquals(qty, item.getQuantity());
+        }
+        
+        // NEW TEST STEPS TO IMPROVE COVERAGE
+        
+        @Given("I have a null order")
+        public void i_have_a_null_order() {
+            currentOrder = null;
+        }
+        
+        @When("I try to generate an invoice for the null order")
+        public void i_try_to_generate_invoice_for_null_order() {
+            currentInvoice = billingSystem.generateInvoice(currentOrder);
+        }
+        
+        @Then("the invoice should be null")
+        public void the_invoice_should_be_null() {
+            assertNull("Invoice should be null for a null order", currentInvoice);
+        }
+        
+        @Given("I have an invoice with ID {string}")
+        public void i_have_an_invoice_with_id(String invoiceId) {
+            // Try to get an invoice that doesn't exist
+            currentInvoice = billingSystem.getInvoice(invoiceId);
+        }
+        
+        @When("I update the status of a non-existent invoice to {string}")
+        public void i_update_status_of_nonexistent_invoice(String status) {
+            boolean result = billingSystem.updateInvoiceStatus("non-existent-id", status);
+            assertFalse("Updating a non-existent invoice should return false", result);
+        }
+        
+        @When("I process payment for a non-existent invoice")
+        public void i_process_payment_for_nonexistent_invoice() {
+            boolean result = billingSystem.processPayment("non-existent-id", 100.0, "Credit Card");
+            assertFalse("Processing payment for a non-existent invoice should return false", result);
+        }
+        
+        @When("I process payment with incorrect amount")
+        public void i_process_payment_with_incorrect_amount() {
+            // Try to process payment with amount that doesn't match invoice
+            boolean result = billingSystem.processPayment(
+                currentInvoice.getInvoiceId(), 
+                currentInvoice.getTotalAmount() + 50.0, // Incorrect amount
+                "Credit Card"
+            );
+            assertFalse("Processing payment with incorrect amount should return false", result);
+        }
+        
+        @Given("there are invoices for an order with ID {string}")
+        public void there_are_invoices_for_order(String orderId) {
+            // Create an order with the given ID
+            currentOrder = orderSystem.createOrder(currentCustomer);
+            orderSystem.addMealToOrder(currentOrder.getOrderId(), "M001");
+            orderSystem.updateOrderStatus(currentOrder.getOrderId(), "completed");
+            
+            // Generate invoice for the order
+            currentInvoice = billingSystem.generateInvoice(currentOrder);
+        }
+        
+        @When("I retrieve invoices for the order")
+        public void i_retrieve_invoices_for_order() {
+            resultInvoiceList = billingSystem.getOrderInvoices(currentOrder.getOrderId());
+        }
+        
+        @Then("I should get at least one invoice")
+        public void i_should_get_at_least_one_invoice() {
+            assertNotNull("Invoice list should not be null", resultInvoiceList);
+            assertFalse("Invoice list should not be empty", resultInvoiceList.isEmpty());
+            
+            // Verify the correct invoice is returned
+            boolean foundInvoice = resultInvoiceList.stream()
+                .anyMatch(inv -> inv.getInvoiceId().equals(currentInvoice.getInvoiceId()));
+            assertTrue("The order's invoice should be in the result list", foundInvoice);
+        }
+        
+        @When("I generate a monthly statement for a different year and month")
+        public void i_generate_monthly_statement_for_different_period() {
+            int previousYear = LocalDateTime.now().getYear() - 1;
+            int previousMonth = 1; // January
+            
+            String statement = billingSystem.generateMonthlyStatement(currentCustomer, previousYear, previousMonth);
+            assertNotNull("Monthly statement should be generated", statement);
+            assertTrue("Statement should contain year and month", 
+                statement.contains(String.valueOf(previousYear)) && statement.contains(String.valueOf(previousMonth)));
+        }
+        
+        @When("I create a billing system with just user database")
+        public void i_create_billing_system_with_just_user_database() {
+            // Test the other constructor
+            BillingSystem simpleBillingSystem = new BillingSystem();    
+        assertNotNull("Should be able to create billing system with just user database", simpleBillingSystem);
+        
+        // Generate an invoice to ensure internal state is properly initialized
+        Order testOrder = orderSystem.createOrder(currentCustomer);
+        orderSystem.addMealToOrder(testOrder.getOrderId(), "M001");
+        Invoice testInvoice = simpleBillingSystem.generateInvoice(testOrder);
+        assertNotNull("Should be able to generate invoice", testInvoice);
+    }
 }

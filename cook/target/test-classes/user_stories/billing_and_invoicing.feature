@@ -57,4 +57,3 @@ Feature: Billing and Invoicing
   And I manually set the due date to "2023-01-31T10:00:00"
   Then the invoice status should be "draft"
 
-

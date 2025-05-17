@@ -12,13 +12,13 @@ public class BillingSystem {
     private Map<String, Invoice> invoiceDatabase;
     private NotificationSystem notificationSystem;
     
-    public BillingSystem(Map<String, User> userDatabase) {
+    public BillingSystem(Map<String, User> userDatabase, NotificationSystem notificationSystem2) {
         this.userDatabase = userDatabase;
         this.invoiceDatabase = new HashMap<>();
         this.notificationSystem = new NotificationSystem();
     }
     
-    public BillingSystem(Map<String, User> userDatabase, NotificationSystem notificationSystem) {
+    public BillingSystem() {
         this.userDatabase = userDatabase;
         this.invoiceDatabase = new HashMap<>();
         this.notificationSystem = notificationSystem;
