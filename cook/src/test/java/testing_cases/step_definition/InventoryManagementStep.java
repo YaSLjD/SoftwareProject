@@ -3,6 +3,7 @@ package testing_cases.step_definition;
 import app.Ingredient;
 import app.Inventory;
 import app.LoginSystem;
+import app.Meal;
 import app.Order;
 import app.OrderSystem;
 import app.Supplier;
@@ -511,6 +512,229 @@ public void anIngredientWith(String id, String name, String unit, Double quantit
 @Then("the ingredient should have quantity {double}")
 public void theIngredientShouldHaveQuantity(Double expectedQty) {
     assertEquals(expectedQty, currentIngredient.getQuantity(), 0.001);
+}
+
+@When("the admin removes the ingredient {string}")
+public void theAdminRemovesTheIngredient(String ingredientName) {
+    // Debug: Print all ingredients before removal
+    logger.info("BEFORE REMOVAL - All ingredients:");
+    for (Ingredient ing : inventory.getAllIngredients()) {
+        logger.info("  - " + ing.getId() + ": " + ing.getName());
+    }
+    
+    // Find the ingredient by name
+    Ingredient ingredient = inventory.getAllIngredients().stream()
+            .filter(ing -> ing.getName().equals(ingredientName))
+            .findFirst()
+            .orElse(null);
+    
+    assertNotNull("Ingredient should exist to remove", ingredient);
+    
+    // Store the ingredient ID
+    String ingredientId = ingredient.getId();
+    
+    // Remove the ingredient
+    boolean removed = inventory.removeIngredient(ingredientId);
+    assertTrue("Ingredient should be removed successfully", removed);
+    
+    logger.info("Admin removed ingredient: " + ingredientName + " with ID: " + ingredientId);
+    
+    // Debug: Print all ingredients after removal
+    logger.info("AFTER REMOVAL - All ingredients:");
+    for (Ingredient ing : inventory.getAllIngredients()) {
+        logger.info("  - " + ing.getId() + ": " + ing.getName());
+    }
+}
+
+@Then("the ingredient {string} should no longer be in the inventory")
+public void theIngredientShouldNoLongerBeInTheInventory(String ingredientName) {
+    // Verify the ingredient was removed by checking if any ingredient has the same name
+    boolean exists = false;
+    
+    for (Ingredient ing : inventory.getAllIngredients()) {
+        if (ing.getName().equals(ingredientName)) {
+            exists = true;
+            break;
+        }
+    }
+    
+    assertFalse("Ingredient should not exist in inventory", exists);
+    
+    logger.info("Confirmed ingredient " + ingredientName + " is no longer in inventory");
+}
+
+@When("the admin tries to remove a non-existent ingredient with ID {string}")
+public void theAdminTriesToRemoveANonExistentIngredientWithID(String ingredientId) {
+    // Try to remove a non-existent ingredient
+    boolean removed = inventory.removeIngredient(ingredientId);
+    assertFalse("Non-existent ingredient should not be removed", removed);
+    
+    logger.info("Admin attempted to remove non-existent ingredient with ID: " + ingredientId);
+}
+
+@When("the admin adds a new supplier with details:")
+public void theAdminAddsANewSupplierWithDetails(io.cucumber.datatable.DataTable dataTable) {
+    // Convert DataTable to a Map
+    Map<String, String> supplierData = dataTable.asMap(String.class, String.class);
+    
+    // Extract values
+    String id = supplierData.get("id");
+    String name = supplierData.get("name");
+    String email = supplierData.get("email");
+    String phone = supplierData.get("phone");
+    
+    // Create a new supplier
+    Supplier supplier = new Supplier(id, name, email, phone);
+    
+    // Add to inventory
+    inventory.addSupplier(supplier);
+    
+    logger.info("Added new supplier: " + name + " (ID: " + id + ")");
+    
+    // Debug: Print all suppliers after adding
+    logger.info("AFTER ADDING - All suppliers:");
+    for (Supplier sup : inventory.getAllSuppliers()) {
+        logger.info("  - " + sup.getId() + ": " + sup.getName());
+    }
+}
+
+@Then("the supplier should be added to the inventory")
+public void theSupplierShouldBeAddedToTheInventory() {
+    // Get all suppliers and verify the count
+    List<Supplier> suppliers = inventory.getAllSuppliers();
+    assertFalse("Supplier list should not be empty", suppliers.isEmpty());
+    
+    logger.info("Inventory has " + suppliers.size() + " suppliers");
+}
+
+@When("the admin removes the supplier with ID {string}")
+public void theAdminRemovesTheSupplierWithID(String supplierId) {
+    // Debug: Print all suppliers before removal
+    logger.info("BEFORE REMOVAL - All suppliers:");
+    for (Supplier sup : inventory.getAllSuppliers()) {
+        logger.info("  - " + sup.getId() + ": " + sup.getName());
+    }
+    
+    // Verify supplier exists before removal
+    Supplier supplier = inventory.getSupplier(supplierId);
+    assertNotNull("Supplier should exist before removal", supplier);
+    
+    // Remove the supplier
+    boolean removed = inventory.removeSupplier(supplierId);
+    assertTrue("Supplier should be removed successfully", removed);
+    
+    logger.info("Admin removed supplier with ID: " + supplierId);
+    
+    // Debug: Print all suppliers after removal
+    logger.info("AFTER REMOVAL - All suppliers:");
+    for (Supplier sup : inventory.getAllSuppliers()) {
+        logger.info("  - " + sup.getId() + ": " + sup.getName());
+    }
+    
+    // Verify supplier was removed
+    assertNull("Supplier should be removed from inventory", inventory.getSupplier(supplierId));
+}
+
+@When("the admin tries to remove a non-existent supplier with ID {string}")
+public void theAdminTriesToRemoveANonExistentSupplierWithID(String supplierId) {
+    // Try to remove a non-existent supplier
+    boolean removed = inventory.removeSupplier(supplierId);
+    assertFalse("Non-existent supplier should not be removed", removed);
+    
+    logger.info("Admin attempted to remove non-existent supplier with ID: " + supplierId);
+}
+
+@When("the admin orders the following ingredients from supplier {string}:")
+public void theAdminOrdersTheFollowingIngredientsFromSupplier(String supplierId, io.cucumber.datatable.DataTable dataTable) {
+    // Convert DataTable to a List of Maps
+    List<Map<String, String>> ingredientsList = dataTable.asMaps(String.class, String.class);
+    
+    // Create a map for the order
+    Map<String, Double> orderItems = new HashMap<>();
+    
+    // Fill the map with ingredient IDs and quantities
+    for (Map<String, String> ingredientData : ingredientsList) {
+        String ingredientId = ingredientData.get("id");
+        Double quantity = Double.parseDouble(ingredientData.get("quantity"));
+        orderItems.put(ingredientId, quantity);
+    }
+    
+    // Place the order
+    boolean orderPlaced = inventory.orderIngredientsFromSupplier(supplierId, orderItems);
+    assertTrue("Order should be placed successfully", orderPlaced);
+    
+    logger.info("Admin ordered ingredients from supplier: " + supplierId);
+}
+
+@When("the admin tries to order ingredients from a non-existent supplier with ID {string}")
+public void theAdminTriesToOrderIngredientsFromANonExistentSupplierWithID(String supplierId) {
+    // Create a map for the order
+    Map<String, Double> orderItems = new HashMap<>();
+    orderItems.put("ING001", 10.0);
+    
+    // Try to place the order with a non-existent supplier
+    boolean orderPlaced = inventory.orderIngredientsFromSupplier(supplierId, orderItems);
+    assertFalse("Order should not be placed with non-existent supplier", orderPlaced);
+    
+    logger.info("Admin attempted to order from non-existent supplier with ID: " + supplierId);
+}
+
+@When("the admin checks if there are enough ingredients for a meal")
+public void theAdminChecksIfThereAreEnoughIngredientsForAMeal() {
+    // Create a sample meal
+    Meal meal = new Meal("MEAL001", "Test Meal", "A test meal for checking inventory", 15.99);
+    
+    // Check if there are enough ingredients
+    boolean enoughIngredients = inventory.checkIngredientsAvailability(meal, 5);
+    assertTrue("There should be enough ingredients for the meal", enoughIngredients);
+    
+    logger.info("Admin checked if there are enough ingredients for: " + meal.getName());
+}
+
+@When("the admin updates inventory for meal preparation")
+public void theAdminUpdatesInventoryForMealPreparation() {
+    // Create a sample meal
+    Meal meal = new Meal("MEAL001", "Test Meal", "A test meal for checking inventory", 15.99);
+    
+    // Update inventory for meal preparation
+    boolean updated = inventory.updateInventoryForMealPreparation(meal, 2);
+    assertTrue("Inventory should be updated for meal preparation", updated);
+    
+    logger.info("Admin updated inventory for preparation of: " + meal.getName());
+}
+
+@And("the admin tries to update an ingredient with an invalid quantity")
+public void theAdminTriesToUpdateAnIngredientWithAnInvalidQuantity() {
+    // Get an ingredient (e.g., Flour)
+    Ingredient ingredient = inventory.getAllIngredients().stream()
+            .filter(ing -> ing.getName().equals("Flour"))
+            .findFirst()
+            .orElse(null);
+    
+    assertNotNull("Ingredient should exist", ingredient);
+    
+    // Try to update with an invalid quantity (negative result)
+    double currentQuantity = ingredient.getQuantity();
+    boolean updated = inventory.updateIngredientQuantity(ingredient.getId(), -(currentQuantity + 1));
+    assertFalse("Update with negative result should fail", updated);
+    
+    logger.info("Admin attempted to update Flour with invalid quantity: " + -(currentQuantity + 1));
+}
+
+@Then("the inventory quantity should remain unchanged")
+public void theInventoryQuantityShouldRemainUnchanged() {
+    // Check that the quantity hasn't changed (e.g., for Flour)
+    Ingredient ingredient = inventory.getAllIngredients().stream()
+            .filter(ing -> ing.getName().equals("Flour"))
+            .findFirst()
+            .orElse(null);
+    
+    assertNotNull("Ingredient should exist", ingredient);
+    
+    // Verify the quantity was not changed
+    assertEquals("Quantity should remain unchanged", 2.5, ingredient.getQuantity(), 0.01);
+    
+    logger.info("Confirmed Flour quantity remains at " + ingredient.getQuantity() + " kg");
 }
 
 }
