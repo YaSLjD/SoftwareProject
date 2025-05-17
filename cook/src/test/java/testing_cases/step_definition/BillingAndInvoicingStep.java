@@ -15,6 +15,8 @@ import io.cucumber.java.en.And;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.junit.Assert;
+
 import static org.junit.Assert.*;
 
 public class BillingAndInvoicingStep {
@@ -38,20 +40,29 @@ public class BillingAndInvoicingStep {
     }
     
     @Given("a customer has placed an order")
-    public void aCustomerHasPlacedAnOrder() {
-        // Create a new order
-        currentOrder = orderSystem.createOrder(currentCustomer);
-        assertNotNull("Order should be created", currentOrder);
-        
-        // Add some meals to the order
-        boolean added1 = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M001");
-        boolean added2 = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M002");
-        
-        assertTrue("Meals should be added to order", added1 && added2);
-        
-        logger.info("Customer has placed an order: " + currentOrder.getOrderId());
-        logger.info("Order contains " + currentOrder.getMeals().size() + " meals");
-    }
+public void aCustomerHasPlacedAnOrder() {
+    // Create a new order
+    currentOrder = orderSystem.createOrder(currentCustomer);
+    assertNotNull("Order should be created", currentOrder);
+
+    // Add some meals to the order
+    boolean added1 = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M001");
+    boolean added2 = orderSystem.addMealToOrder(currentOrder.getOrderId(), "M002");
+
+    assertTrue("Meals should be added to order", added1 && added2);
+
+    // ✅ Create an invoice based on the order
+    currentInvoice = billingSystem.generateInvoice(currentOrder);
+    logger.info("Customer has placed an order: " + currentOrder.getOrderId());
+    logger.info("Order contains " + currentOrder.getMeals().size() + " meals");
+}
+
+@And("an invoice is generated for the order")
+public void anInvoiceIsGeneratedForTheOrder() {
+    currentInvoice = billingSystem.generateInvoice(currentOrder);
+    assertNotNull("Invoice should be generated", currentInvoice);
+}
+
     
     @When("the order is completed")
     public void theOrderIsCompleted() {
@@ -415,4 +426,84 @@ public class BillingAndInvoicingStep {
         logger.info("Revenue report shows total revenue, paid invoices, and pending payments:");
         logger.info(report);
     }
+
+    @When("I manually set the issue date to {string}")
+     public void i_set_the_issue_date(String dateStr) {
+    LocalDateTime date = LocalDateTime.parse(dateStr);
+    currentInvoice.setIssueDate(date);
+   }
+
+@When("I manually set the due date to {string}")
+public void i_set_the_due_date(String dateStr) {
+    LocalDateTime date = LocalDateTime.parse(dateStr);
+    currentInvoice.setDueDate(date);
+}
+
+
+
+@Given("the invoice was issued more than {int} days ago")
+public void the_invoice_was_issued_days_ago(int daysAgo) {
+    LocalDateTime past = LocalDateTime.now().minusDays(daysAgo);
+    currentInvoice.setIssueDate(past);
+    currentInvoice.setDueDate(past.plusDays(30));
+    currentInvoice.issue();
+}
+
+@When("I check if the invoice is overdue")
+public void i_check_if_invoice_is_overdue() {
+    currentInvoice.isOverdue();
+}
+
+@Then("the invoice status should be {string}")
+public void the_invoice_status_should_be(String expectedStatus) {
+    assertEquals(expectedStatus, currentInvoice.getStatus());
+}
+@When("I mark the invoice as overdue")
+public void i_mark_invoice_as_overdue() {
+    currentInvoice.issue(); // Ensure it's in issued state
+    currentInvoice.markAsOverdue();
+}
+
+@When("I cancel the invoice")
+public void i_cancel_invoice() {
+    currentInvoice.cancel();
+}
+
+@Then("the invoice should be cancelled")
+public void the_invoice_should_be_cancelled() {
+    assertEquals("cancelled", currentInvoice.getStatus());
+}
+
+Invoice.InvoiceItem item;
+
+@Given("I create an invoice item with description {string}, price {double}, and quantity {int}")
+public void i_create_invoice_item(String desc, double price, int qty) {
+    item = new Invoice.InvoiceItem(desc, price, qty);
+}
+
+@When("I change the item description to {string}")
+public void i_change_item_description(String desc) {
+    item.setDescription(desc);
+}
+
+@When("I change the item unit price to {double}")
+public void i_change_item_unit_price(double price) {
+    item.setUnitPrice(price);
+}
+
+@When("I change the item quantity to {int}")
+public void i_change_item_quantity(int qty) {
+    item.setQuantity(qty);
+}
+
+@Then("the item should have description {string}, unit price {double}, and quantity {int}")
+public void the_item_should_have_updated_values(String desc, double price, int qty) {
+    assertEquals(desc, item.getDescription());
+    assertEquals(price, item.getUnitPrice(), 0.01);
+    assertEquals(qty, item.getQuantity());
+}
+
+
+
+
 }

@@ -49,3 +49,12 @@ Feature: Billing and Invoicing
     When they request a revenue report for a specific period
     Then the system should generate a detailed report
     And show total revenue, paid invoices, and pending payments
+
+    Scenario: Manually setting issue and due date
+  Given a customer has placed an order
+  When the order is completed
+  And I manually set the issue date to "2023-01-01T10:00:00"
+  And I manually set the due date to "2023-01-31T10:00:00"
+  Then the invoice status should be "draft"
+
+

@@ -484,4 +484,33 @@ public class InventoryManagementStep {
         
         logger.info("Low stock detection works correctly");
     }
+
+    @When("I set the minimum stock level of the ingredient to {double}")
+public void iSetTheMinimumStockLevelOfTheIngredientTo(Double level) {
+    currentIngredient.setMinimumStockLevel(level);
+    assertEquals(level, currentIngredient.getMinimumStockLevel(), 0.001);
+}
+@When("I set the supplier ID of the ingredient to {string}")
+public void iSetTheSupplierIDOfTheIngredientTo(String supplierId) {
+    currentIngredient.setSupplierId(supplierId);
+    Ingredient ingredient = inventory.getIngredient(currentIngredient.getId());
+    assertEquals(supplierId, ingredient.getSupplierId());
+}
+
+@Given("an ingredient with ID {string}, name {string}, unit {string}, quantity {double}, and minimum stock level {double}")
+public void anIngredientWith(String id, String name, String unit, Double quantity, Double minStock) {
+    currentIngredient = new Ingredient(id, name, unit, quantity, minStock);
+    Ingredient ingredient = inventory.getIngredient(id);
+    assertEquals(id, ingredient.getId());
+    assertEquals(name, ingredient.getName());
+    assertEquals(unit, ingredient.getUnit());
+    assertEquals(quantity, ingredient.getQuantity(), 0.001);
+    assertEquals(minStock, ingredient.getMinimumStockLevel(), 0.001);
+}
+
+@Then("the ingredient should have quantity {double}")
+public void theIngredientShouldHaveQuantity(Double expectedQty) {
+    assertEquals(expectedQty, currentIngredient.getQuantity(), 0.001);
+}
+
 }
