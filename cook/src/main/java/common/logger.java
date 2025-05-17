@@ -14,4 +14,10 @@ public class logger {
         System.err.println("[ERROR] " + message);
     }
 
+    public static void info(String string, String name, String format) {
+        String message = String.format(format, string, name);
+        System.out.println("[INFO] " + message);
+    }
+    
+
 }

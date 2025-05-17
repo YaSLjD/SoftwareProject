@@ -518,8 +518,7 @@ public class Main {
                 
                 logger.info("Meals:");
                 for (Meal meal : order.getMeals()) {
-                    System.out.println("- " + meal.getName() + 
-                            " - $" + String.format("%.2f", meal.getPrice()));
+                    logger.info("- {} - ${}", meal.getName(), String.format("%.2f", meal.getPrice()));
                 }
             }
         }

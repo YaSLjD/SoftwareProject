@@ -1,0 +1,495 @@
+[33mcommit d77069e9934ee7efa3749ededc9ce1207ff8e38b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 22:50:57 2025 +0300
+
+    finalpishTogethor
+
+[33mcommit 3d540a03c243fff647f39f78befabd4f313a9b38[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 22:09:39 2025 +0300
+
+    maintainability2 togethor
+
+[33mcommit 80fe3294fc169e8410db5f8f924e3528300055f1[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 21:43:56 2025 +0300
+
+    Maintaniablitiy
+
+[33mcommit 816fd3c943110e9057478732e89f1bb3c2120f8f[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 21:28:48 2025 +0300
+
+    refactorTogethor
+
+[33mcommit 3c4208d9ff389d2091a83360470a855ca07f5073[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 19:13:55 2025 +0300
+
+    logger
+
+[33mcommit 7432dad43d3f8ee874fc1284e3915246d993836b[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 19:05:16 2025 +0300
+
+    finalTogethor
+
+[33mcommit 0c338761e7afca2cc72d03a7b00f83f5ad10f6d5[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 18:36:40 2025 +0300
+
+    togethor 2
+
+[33mcommit ba82b44c6085c3d13a512e1744d78aeab5693667[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 18:30:57 2025 +0300
+
+    togerthor
+
+[33mcommit 66f4980259a98f0abaffcc85f9f10b0a689681da[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 18:17:06 2025 +0300
+
+    test
+
+[33mcommit d3d5c0904dd8d81e10bb7c01c4df502dda19949f[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 16:49:27 2025 +0300
+
+    logger
+
+[33mcommit 378430b4279414e5a023d11dad13a5dfd1c4738e[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 15:32:53 2025 +0300
+
+    Supplier
+
+[33mcommit a4e5f1e344d4ae172d78174bf133a29135995d09[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 15:19:36 2025 +0300
+
+    Reliability
+
+[33mcommit 92800cb1a6359428e89dfdfcfa2d764e45bc5fda[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 15:08:34 2025 +0300
+
+    improveTogethor
+
+[33mcommit 9aad7c0e73ab48ada12b1691207539f01ae695ea[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Sat May 17 10:59:57 2025 +0300
+
+    improvecovtogther
+
+[33mcommit d3748a0ad18adb0f9b4ffae0aec9ef1cb319d17a[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Fri May 16 17:02:40 2025 +0300
+
+    upCovtogther
+
+[33mcommit 7fbbaf0fd6400ce7e933e6c3ff26425604230ebf[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Fri May 16 14:07:06 2025 +0300
+
+    junitTest
+
+[33mcommit 1446da0434abd58174cab0717652a0d433841e97[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Fri May 16 13:16:56 2025 +0300
+
+    improveCov
+
+[33mcommit 0e5aa86e2bbdf1b28cb105ac695e613d06d78226[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Fri May 16 01:04:16 2025 +0300
+
+    t
+
+[33mcommit abbb742c3836c653f840a5236ee7fc987f279250[m
+Merge: 28f24dd 9ff1be0
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Fri May 16 01:03:10 2025 +0300
+
+    Merge branch 'main' of https://github.com/YAS-LJD/SoftwareProject
+
+[33mcommit 28f24dd20c82e4dcaac9f109fc2bb80854116630[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Fri May 16 01:00:05 2025 +0300
+
+    editTogether
+
+[33mcommit e3c0b4cf043becd3e1b09fb0fce411cf42563a9e[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Fri May 16 00:59:34 2025 +0300
+
+    editCovtogether
+
+[33mcommit 9ff1be0af64c4334dc3e36439c26fdb98862757f[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 22:56:37 2025 +0300
+
+    Update main.yml
+
+[33mcommit f753b14c51fb1763a61073df9257b9f2261f315b[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 22:51:24 2025 +0300
+
+    edit
+
+[33mcommit 86fe9f3a5593868fc321da26c0c321006306e82a[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 20:32:30 2025 +0300
+
+    improveTheCoverage
+
+[33mcommit 6f356fa1a3a915afcf50a5173094a9aa73122ad5[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 19:34:17 2025 +0300
+
+    test
+
+[33mcommit 0da3ef470e098f62c274aa79d982c90a48e28ef3[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 19:29:51 2025 +0300
+
+    Rfactor1
+
+[33mcommit 8ca22f7cadfe58f6eb47a5ebec151746b4f8f645[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 19:01:19 2025 +0300
+
+    Update main.yml
+
+[33mcommit 1a185b783e1f3fd106847178f0604e5acd710cf2[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 18:52:24 2025 +0300
+
+    Update main.yml
+
+[33mcommit c8b950cae6726a9466854c7da2ccd8c7b0d1d62c[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 18:42:04 2025 +0300
+
+    Update main.yml
+
+[33mcommit 4555c267ee6382ae7ce83962f62c486623f9292f[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 18:33:21 2025 +0300
+
+    Update Main.java
+
+[33mcommit 59daf419b58a6ddd1a1c30bd05cf25498d5db91b[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 18:30:19 2025 +0300
+
+    Update Main.java
+
+[33mcommit 6f747cdfc08871dcf85e5f743d57118fce423526[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 17:52:00 2025 +0300
+
+    Update main.yml
+
+[33mcommit a436635c3bd53581f314c66f439063b0ae0e61eb[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 17:43:55 2025 +0300
+
+    Update pom.xml
+
+[33mcommit 13b06f9220e7e4f93fac1cc311429a5a6f6a3ce9[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 17:29:17 2025 +0300
+
+    Update main.yml
+
+[33mcommit d94cf8a4f4d62da4e200d267a8248e711cfc9cdb[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 17:25:45 2025 +0300
+
+    Update main.yml
+
+[33mcommit ccd2c2533144f5083a869c054fb1c1500be417a4[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 17:19:56 2025 +0300
+
+    Update pom.xml
+
+[33mcommit 67791128294cd6c85e6e0762dd5ebb9167406aa2[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 17:15:52 2025 +0300
+
+    Update3main.yml
+
+[33mcommit a3e65fbc3ea62dc21b1340806a42c25c33f5e60e[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 16:58:16 2025 +0300
+
+    Update2main.yml
+
+[33mcommit 05badfee3e0461e1a0b45be2d9289d3e87d249af[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 16:55:12 2025 +0300
+
+    Update main.yml
+
+[33mcommit 32d8e264f10a49b0ed6dee9aaa1f6547c04daf38[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 16:35:15 2025 +0300
+
+    build.yml
+
+[33mcommit 3a577a67f7c1c3d941379ff1b832037d679b2bc2[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 16:28:12 2025 +0300
+
+    Update2 pom.xml
+
+[33mcommit f2c69afb7efb822c4ad422e22ea06761d7aac113[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Thu May 15 16:26:53 2025 +0300
+
+    Update pom.xml
+
+[33mcommit 0645273df4ebb2a92fbbc9f98e2062a12b2051f9[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/lama[m[33m, [m[1;32mmaster[m[33m)[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 15:12:22 2025 +0300
+
+    finalEditManin
+
+[33mcommit 14010d7ad462cbf7d0f91d6ac336a16e8ef1820b[m
+Merge: d020ace 951eae5
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 15:10:03 2025 +0300
+
+    Merge branch 'lama' of https://github.com/YAS-LJD/SoftwareProject
+
+[33mcommit d020ace71101ced0d95b45209efe20bb509ff267[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 15:09:24 2025 +0300
+
+    newPush
+
+[33mcommit 951eae5912a2de14534d696a5b790a49e903a1a7[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Thu May 15 15:05:52 2025 +0300
+
+    add_removeingredient
+
+[33mcommit 7c1023289f153f43b2dbd0a4a44d3a84d50584be[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Thu May 15 15:02:48 2025 +0300
+
+    add_removsupllier_method
+
+[33mcommit f445d8b6541eda0cdf3a5443197be86bb2c3a060[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Thu May 15 15:00:29 2025 +0300
+
+    edit_in_inventory_file
+
+[33mcommit dfcfcbd81bf2849d3854c21707f7c4a1afbc7c18[m
+Merge: be89cbe dc2993e
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 14:48:37 2025 +0300
+
+    Merge branch 'lama' of https://github.com/YAS-LJD/SoftwareProject
+
+[33mcommit dc2993ee019002e1205873f895697f867ed8c355[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Thu May 15 14:47:02 2025 +0300
+
+    new_files
+
+[33mcommit be89cbe672258752702fa05a19a06887659b8fc7[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 14:36:51 2025 +0300
+
+    test
+
+[33mcommit b3ca20d895c80f8f78c09b3f8e529c60756af2d1[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Thu May 15 14:27:58 2025 +0300
+
+    .
+
+[33mcommit b328678a38c8035bb383445b62c33a6fefed0838[m
+Merge: 11fc3ca a9df0f9
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 14:22:44 2025 +0300
+
+    Merge branch 'lama' of https://github.com/YAS-LJD/SoftwareProject
+
+[33mcommit 11fc3ca8ff5d4dc55addfe64302898b0a5267e45[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 14:12:50 2025 +0300
+
+    CustomMeal
+
+[33mcommit eb6dd16f44d4ec92ae47621620265d5851463a22[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 15 14:00:03 2025 +0300
+
+    AddNewFeature and StepDefinition
+
+[33mcommit a9df0f9c0a979f5dea04ac93588a60ca63af7a9a[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Thu May 15 13:51:33 2025 +0300
+
+    Step_definition_of new feature
+
+[33mcommit 5d75b3e89502e50a2ae15333999c3e6b6455a2b4[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Thu May 15 13:49:31 2025 +0300
+
+    add_new_feature
+
+[33mcommit 00bb994881f6152cd8be7c0ef42baaa40a198b98[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Thu May 8 23:36:59 2025 +0300
+
+    editReadme file
+
+[33mcommit dde60753e39e991a700c4a26886db053d4b318f6[m
+Merge: 0071114 1ab6e36
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 23:26:56 2025 +0300
+
+    Merge branch 'lama' of https://github.com/YAS-LJD/SoftwareProject
+
+[33mcommit 00711140e225b4e22fed2b49ae765dea5b70d9ca[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 23:24:11 2025 +0300
+
+    finalMain
+
+[33mcommit 1ab6e36544e7b74ef39202d8d5262c12f1d8c649[m
+Merge: 0ec7491 06549ab
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 23:22:04 2025 +0300
+
+    Merge remote-tracking branch 'origin/master' into lama
+
+[33mcommit f4f2d9525ed3dd5573dac8884d2fbd7b805a0653[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 23:01:28 2025 +0300
+
+    reprthtml
+
+[33mcommit 06549abb3c8828221e7cde077e785b4eff10c18c[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 23:01:28 2025 +0300
+
+    reprthtml
+
+[33mcommit 0ec7491586b9d3316a6b99b752c0ca3ffb427c08[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 22:57:58 2025 +0300
+
+    main
+
+[33mcommit d72635d13a1adf30b26206c16d7cf65251f82604[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 21:53:34 2025 +0300
+
+    finalstep_def
+
+[33mcommit 25857ed26f7bf98f60abb58bc1197ce88f330887[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 21:50:31 2025 +0300
+
+    2
+
+[33mcommit 1513af937e6e7ddcb40cc6e40e7cd0c2bb3f3055[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 21:49:24 2025 +0300
+
+    lama_step_defenition
+
+[33mcommit 84f4730075da61190eaf7ae3f4627a4013cd431e[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 21:21:46 2025 +0300
+
+    step_def
+
+[33mcommit df25746dbf56d47b80a909b3b6cbb922da8fafdc[m
+Merge: 3a175ba 4edb122
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 21:21:05 2025 +0300
+
+    Merge branch 'lama' of https://github.com/YAS-LJD/SoftwareProject
+
+[33mcommit 4edb122e4f4a4fcb84bb412844132ad7ebf68597[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 21:03:01 2025 +0300
+
+    login_step_definition
+
+[33mcommit 3a175bae3482cb1fffa42005dea4da0a640832d9[m
+Merge: c1bfa8f 995a770
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 20:37:48 2025 +0300
+
+    Merge branch 'lama' of https://github.com/YAS-LJD/SoftwareProject
+
+[33mcommit 129c3f79953b604168bb10818e8a64c0a9b04c29[m
+Merge: 995a770 c1bfa8f
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 20:37:46 2025 +0300
+
+    Merge branch 'master' of https://github.com/YAS-LJD/SoftwareProject into lama
+
+[33mcommit 995a770743e9d682b3400a103e5b3fdb53a722a0[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 20:32:59 2025 +0300
+
+    6_featur
+
+[33mcommit 8182b32dfd31312643da244255c425d370ca35ba[m
+Merge: 8db4282 1915ceb
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 20:31:46 2025 +0300
+
+    Merge branches 'lama' and 'lama' of https://github.com/YAS-LJD/SoftwareProject into lama
+
+[33mcommit 8db4282daaa97377ccd84f8c89407af58d9f22f6[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 20:24:34 2025 +0300
+
+    6_features
+
+[33mcommit c1bfa8f547fbb048da73d5849ea72cdd4541e619[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 20:23:08 2025 +0300
+
+    anotherFeature
+
+[33mcommit bd1d089941690827c40da471b64afea1a2deda47[m
+Author: LamaDamere <lama4.damere4@gmail.com>
+Date:   Tue May 6 20:22:31 2025 +0300
+
+    first_6_features
+
+[33mcommit 8f0f0ac206bea2a9caab0398cfb6b451e2a9e676[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 19:51:59 2025 +0300
+
+    secondCommit
+
+[33mcommit 1915ceb73642dd5d5e29c1a4ac3b7e5667194d3c[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Tue May 6 19:31:27 2025 +0300
+
+    first
+
+[33mcommit 75c90759744568d4409fc897a95adf7062e64566[m
+Author: yamama <yamama.sawalma123@gmail.com>
+Date:   Tue May 6 19:09:49 2025 +0300
+
+    firstCommit
+
+[33mcommit aee02d372e1b33201b486d79c5a903e212cc7fe3[m
+Author: YAS-LJD <s12216979@stu.najah.edu>
+Date:   Tue May 6 18:46:37 2025 +0300
+
+    Initial commit
