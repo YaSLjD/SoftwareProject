@@ -707,61 +707,80 @@ public class Main {
         
         if (tasks.isEmpty()) {
             logger.info("No active tasks found.");
-        } else {
-            logger.info("Active Tasks:");
-            for (int i = 0; i < tasks.size(); i++) {
-                Task task = tasks.get(i);
-                System.out.println((i + 1) + ". " + task.getDescription() + 
-                        " (" + task.getStatus() + ")");
-            }
-            
-            logger.info("\nEnter task number to mark as completed (0 to cancel): ");
-            String choice = scanner.nextLine();
-            
-            if (!choice.equals("0")) {
-                try {
-                    int taskIndex = Integer.parseInt(choice) - 1;
-                    if (taskIndex >= 0 && taskIndex < tasks.size()) {
-                        Task task = tasks.get(taskIndex);
-                        
-                        try {
-                            // Start the task first if it's pending
-                            if (task.getStatus().equals("pending")) {
-                                task.start();
-                                chefSchedule.updateTaskStatus(task.getId(), "in-progress");
-                            }
-                            
-                            // Update task status
-                            task.complete();
-                            chefSchedule.updateTaskStatus(task.getId(), "completed");
-                            
-                            // Update order status - only if the order exists
-                            Order order = orderSystem.getOrderById(task.getOrderId());
-                            if (order != null) {
-                                orderSystem.updateOrderStatus(task.getOrderId(), "completed");
-                                
-                                // Notify customer - safely get the username
-                                notificationSystem.notifyOrderStatusChange(order.getUsername(), task.getOrderId(), "completed");
-                            }
-                            
-                            logger.info("Task marked as completed!");
-                        } catch (Exception e) {
-                            logger.info("Error completing task: " + e.getMessage());
-                            logger.info("Please contact system administrator if this problem persists.");
-                        }
-                    } else {
-                        logger.info("Invalid task number.");
-                    }
-                } catch (NumberFormatException e) {
-                    logger.info("Invalid input. Please enter a number.");
-                }
-            }
+            waitForEnter();
+            return;
         }
         
+        displayActiveTasks(tasks);
+        processUserTaskSelection(tasks);
+        waitForEnter();
+    }
+    
+    private static void displayActiveTasks(List<Task> tasks) {
+        logger.info("Active Tasks:");
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            System.out.println((i + 1) + ". " + task.getDescription() + 
+                    " (" + task.getStatus() + ")");
+        }
+        
+        logger.info("\nEnter task number to mark as completed (0 to cancel): ");
+    }
+    
+    private static void processUserTaskSelection(List<Task> tasks) {
+        String choice = scanner.nextLine();
+        
+        if (choice.equals("0")) {
+            return;
+        }
+        
+        try {
+            int taskIndex = Integer.parseInt(choice) - 1;
+            if (taskIndex < 0 || taskIndex >= tasks.size()) {
+                logger.info("Invalid task number.");
+                return;
+            }
+            
+            completeSelectedTask(tasks.get(taskIndex));
+        } catch (NumberFormatException e) {
+            logger.info("Invalid input. Please enter a number.");
+        }
+    }
+    
+    private static void completeSelectedTask(Task task) {
+        try {
+            // Start the task first if it's pending
+            if (task.getStatus().equals("pending")) {
+                task.start();
+                chefSchedule.updateTaskStatus(task.getId(), "in-progress");
+            }
+            
+            // Update task status
+            task.complete();
+            chefSchedule.updateTaskStatus(task.getId(), "completed");
+            
+            // Update order status if exists
+            updateOrderIfExists(task);
+            
+            logger.info("Task marked as completed!");
+        } catch (Exception e) {
+            logger.info("Error completing task: " + e.getMessage());
+            logger.info("Please contact system administrator if this problem persists.");
+        }
+    }
+    
+    private static void updateOrderIfExists(Task task) {
+        Order order = orderSystem.getOrderById(task.getOrderId());
+        if (order != null) {
+            orderSystem.updateOrderStatus(task.getOrderId(), "completed");
+            notificationSystem.notifyOrderStatusChange(order.getUsername(), task.getOrderId(), "completed");
+        }
+    }
+    
+    private static void waitForEnter() {
         logger.info("\nPress Enter to continue...");
         scanner.nextLine();
     }
-    
     /**
      * Check inventory.
      */
@@ -820,127 +839,158 @@ public class Main {
     private static void manageInventory() {
         logger.info("\n===== Manage Inventory =====");
         
-        boolean managing = true;
-        while (managing) {
-            List<Ingredient> ingredients = inventory.getAllIngredients();
+        while (true) {
+            displayInventory();
+            displayInventoryMenu();
             
-            logger.info("Current Inventory:");
-            for (int i = 0; i < ingredients.size(); i++) {
-                Ingredient ingredient = ingredients.get(i);
-                System.out.println((i + 1) + ". " + ingredient.getName() + ": " + 
+            String choice = scanner.nextLine();
+            if (choice.equals("6")) {
+                break;
+            }
+            
+            processInventoryMenuChoice(choice);
+        }
+    }
+    
+    private static void displayInventory() {
+        List<Ingredient> ingredients = inventory.getAllIngredients();
+        
+        logger.info("Current Inventory:");
+        for (int i = 0; i < ingredients.size(); i++) {
+            Ingredient ingredient = ingredients.get(i);
+            System.out.println((i + 1) + ". " + ingredient.getName() + ": " + 
+                    ingredient.getQuantity() + " " + ingredient.getUnit() + 
+                    " (min: " + ingredient.getMinimumStockLevel() + ")");
+        }
+    }
+    
+    private static void displayInventoryMenu() {
+        logger.info("\n1. Add New Ingredient");
+        logger.info("2. Update Ingredient Quantity");
+        logger.info("3. Update Minimum Stock Level");
+        logger.info("4. Remove Ingredient");
+        logger.info("5. View Low Stock Ingredients");
+        logger.info("6. Back to Main Menu");
+        logger.info("Enter your choice: ");
+    }
+    
+    private static void processInventoryMenuChoice(String choice) {
+        switch (choice) {
+            case "1":
+                addNewIngredient();
+                break;
+            case "2":
+                updateIngredientQuantity();
+                break;
+            case "3":
+                updateMinimumStockLevel();
+                break;
+            case "4":
+                removeIngredient();
+                break;
+            case "5":
+                viewLowStockIngredients();
+                break;
+            default:
+                logger.info("Invalid choice. Please try again.");
+        }
+    }
+    
+    private static void addNewIngredient() {
+        logger.info("Enter ingredient name: ");
+        String name = scanner.nextLine();
+        
+        logger.info("Enter quantity: ");
+        double quantity = Double.parseDouble(scanner.nextLine());
+        
+        logger.info("Enter unit (e.g., kg, g, l): ");
+        String unit = scanner.nextLine();
+        
+        logger.info("Enter minimum stock level: ");
+        double minStock = Double.parseDouble(scanner.nextLine());
+        
+        // Generate a unique ID for the ingredient
+        String id = "ING" + System.currentTimeMillis();
+        Ingredient newIngredient = new Ingredient(id, name, unit, quantity, minStock);
+        inventory.addIngredient(newIngredient);
+        logger.info("Ingredient added successfully!");
+    }
+    
+    private static void updateIngredientQuantity() {
+        Ingredient ingredient = selectIngredient("update");
+        if (ingredient == null) {
+            return;
+        }
+        
+        logger.info("Enter new quantity: ");
+        double newQuantity = Double.parseDouble(scanner.nextLine());
+        
+        inventory.updateIngredientQuantity(ingredient.getId(), newQuantity - ingredient.getQuantity());
+        logger.info("Quantity updated successfully!");
+    }
+    
+    private static void updateMinimumStockLevel() {
+        Ingredient ingredient = selectIngredient("update");
+        if (ingredient == null) {
+            return;
+        }
+        
+        logger.info("Enter new minimum stock level: ");
+        double newMinStock = Double.parseDouble(scanner.nextLine());
+        
+        ingredient.setMinimumStockLevel(newMinStock);
+        logger.info("Minimum stock level updated successfully!");
+    }
+    
+    private static void removeIngredient() {
+        Ingredient ingredient = selectIngredient("remove");
+        if (ingredient == null) {
+            return;
+        }
+        
+        if (inventory.removeIngredient(ingredient.getId())) {
+            logger.info("Ingredient removed successfully!");
+        } else {
+            logger.info("Failed to remove ingredient.");
+        }
+    }
+    
+    private static Ingredient selectIngredient(String action) {
+        List<Ingredient> ingredients = inventory.getAllIngredients();
+        
+        logger.info("Enter ingredient number to " + action + ": ");
+        int ingredientIndex;
+        try {
+            ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
+        } catch (NumberFormatException e) {
+            logger.info("Invalid input. Please enter a number.");
+            return null;
+        }
+        
+        if (ingredientIndex < 0 || ingredientIndex >= ingredients.size()) {
+            logger.info("Invalid ingredient number.");
+            return null;
+        }
+        
+        return ingredients.get(ingredientIndex);
+    }
+    
+    private static void viewLowStockIngredients() {
+        List<Ingredient> lowStock = inventory.getLowStockIngredients();
+        
+        logger.info("\nLow Stock Ingredients:");
+        if (lowStock.isEmpty()) {
+            logger.info("No low stock ingredients.");
+        } else {
+            for (Ingredient ingredient : lowStock) {
+                System.out.println("- " + ingredient.getName() + ": " + 
                         ingredient.getQuantity() + " " + ingredient.getUnit() + 
                         " (min: " + ingredient.getMinimumStockLevel() + ")");
             }
-            
-            logger.info("\n1. Add New Ingredient");
-            logger.info("2. Update Ingredient Quantity");
-            logger.info("3. Update Minimum Stock Level");
-            logger.info("4. Remove Ingredient");
-            logger.info("5. View Low Stock Ingredients");
-            logger.info("6. Back to Main Menu");
-            logger.info("Enter your choice: ");
-            
-            String choice = scanner.nextLine();
-            
-            switch (choice) {
-                case "1":
-                    logger.info("Enter ingredient name: ");
-                    String name = scanner.nextLine();
-                    
-                    logger.info("Enter quantity: ");
-                    double quantity = Double.parseDouble(scanner.nextLine());
-                    
-                    logger.info("Enter unit (e.g., kg, g, l): ");
-                    String unit = scanner.nextLine();
-                    
-                    logger.info("Enter minimum stock level: ");
-                    double minStock = Double.parseDouble(scanner.nextLine());
-                    
-                    // Generate a unique ID for the ingredient
-                    String id = "ING" + System.currentTimeMillis();
-                    Ingredient newIngredient = new Ingredient(id, name, unit, quantity, minStock);
-                    inventory.addIngredient(newIngredient);
-                    logger.info("Ingredient added successfully!");
-                    break;
-                    
-                case "2":
-                    logger.info("Enter ingredient number to update: ");
-                    int ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                    
-                    if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
-                        Ingredient ingredient = ingredients.get(ingredientIndex);
-                        
-                        logger.info("Enter new quantity: ");
-                        double newQuantity = Double.parseDouble(scanner.nextLine());
-                        
-                        inventory.updateIngredientQuantity(ingredient.getId(), newQuantity - ingredient.getQuantity());
-                        logger.info("Quantity updated successfully!");
-                    } else {
-                        logger.info("Invalid ingredient number.");
-                    }
-                    break;
-                    
-                case "3":
-                    logger.info("Enter ingredient number to update: ");
-                    ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                    
-                    if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
-                        Ingredient ingredient = ingredients.get(ingredientIndex);
-                        
-                        logger.info("Enter new minimum stock level: ");
-                        double newMinStock = Double.parseDouble(scanner.nextLine());
-                        
-                        ingredient.setMinimumStockLevel(newMinStock);
-                        logger.info("Minimum stock level updated successfully!");
-                    } else {
-                        logger.info("Invalid ingredient number.");
-                    }
-                    break;
-                    
-                    case "4":
-                    logger.info("Enter ingredient number to remove: ");
-                    ingredientIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                    
-                    if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
-                        Ingredient ingredient = ingredients.get(ingredientIndex);
-                        
-                        // Remove the ingredient
-                        if (inventory.removeIngredient(ingredient.getId())) {
-                            logger.info("Ingredient removed successfully!");
-                        } else {
-                            logger.info("Failed to remove ingredient.");
-                        }
-                    } else {
-                        logger.info("Invalid ingredient number.");
-                    }
-                    break;
-                    
-                case "5":
-                    List<Ingredient> lowStock = inventory.getLowStockIngredients();
-                    
-                    logger.info("\nLow Stock Ingredients:");
-                    if (lowStock.isEmpty()) {
-                        logger.info("No low stock ingredients.");
-                    } else {
-                        for (Ingredient ingredient : lowStock) {
-                            System.out.println("- " + ingredient.getName() + ": " + 
-                                    ingredient.getQuantity() + " " + ingredient.getUnit() + 
-                                    " (min: " + ingredient.getMinimumStockLevel() + ")");
-                        }
-                    }
-                    
-                    logger.info("\nPress Enter to continue...");
-                    scanner.nextLine();
-                    break;
-                    
-                case "6":
-                    managing = false;
-                    break;
-                    
-                default:
-                    logger.info("Invalid choice. Please try again.");
-            }
         }
+        
+        logger.info("\nPress Enter to continue...");
+        scanner.nextLine();
     }
     
     /**

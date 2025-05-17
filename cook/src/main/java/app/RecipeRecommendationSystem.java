@@ -1,10 +1,11 @@
 package app;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+//import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,17 +13,20 @@ public class RecipeRecommendationSystem {
     private Map<String, User> userDatabase;
     private Map<String, Meal> mealDatabase;
     private Map<String, List<String>> ingredientToMealMap; // Map of ingredient to meals that use it
-    private Random random;
-    
-    public RecipeRecommendationSystem(Map<String, User> userDatabase, Map<String, Meal> mealDatabase) {
+    //private Random random;
+    private SecureRandom secureRandom;
+        
+        public RecipeRecommendationSystem(Map<String, User> userDatabase, Map<String, Meal> mealDatabase) {
         this.userDatabase = userDatabase;
         this.mealDatabase = mealDatabase;
         this.ingredientToMealMap = new HashMap<>();
-        this.random = new Random();
         
-        // Build the ingredient to meal map
-        buildIngredientToMealMap();
-    }
+        // Use SecureRandom instead of Random
+        this.secureRandom = new SecureRandom();
+    
+    
+      buildIngredientToMealMap();
+}
     
     private void buildIngredientToMealMap() {
         for (Meal meal : mealDatabase.values()) {
@@ -151,7 +155,7 @@ public class RecipeRecommendationSystem {
         List<Meal> tempList = new ArrayList<>(meals);
         
         for (int i = 0; i < count; i++) {
-            int index = random.nextInt(tempList.size());
+            int index = secureRandom.nextInt(tempList.size());
             result.add(tempList.remove(index));
         }
         
@@ -179,7 +183,7 @@ public class RecipeRecommendationSystem {
                 
                 // Add random meals from additional meals until we have at least 7
                 while (recommendations.size() < 7 && !additionalMeals.isEmpty()) {
-                    int index = random.nextInt(additionalMeals.size());
+                    int index = secureRandom.nextInt(additionalMeals.size());
                     recommendations.add(additionalMeals.remove(index));
                 }
                 
