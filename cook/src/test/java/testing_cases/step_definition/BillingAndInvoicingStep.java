@@ -628,7 +628,7 @@ public class BillingAndInvoicingStep {
         @When("I create a billing system with just user database")
         public void i_create_billing_system_with_just_user_database() {
             // Test the other constructor
-            BillingSystem simpleBillingSystem = new BillingSystem();    
+            BillingSystem simpleBillingSystem = new BillingSystem(userDatabase, notificationSystem);  
         assertNotNull("Should be able to create billing system with just user database", simpleBillingSystem);
         
         // Generate an invoice to ensure internal state is properly initialized

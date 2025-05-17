@@ -12,16 +12,19 @@ public class BillingSystem {
     private Map<String, Invoice> invoiceDatabase;
     private NotificationSystem notificationSystem;
     
-    public BillingSystem(Map<String, User> userDatabase, NotificationSystem notificationSystem2) {
-        this.userDatabase = userDatabase;
-        this.invoiceDatabase = new HashMap<>();
-        this.notificationSystem = new NotificationSystem();
-    }
-    
-    public BillingSystem() {
+    public BillingSystem(Map<String, User> userDatabase, NotificationSystem notificationSystem) {
         this.userDatabase = userDatabase;
         this.invoiceDatabase = new HashMap<>();
         this.notificationSystem = notificationSystem;
+    }
+
+    
+
+    
+    public BillingSystem(NotificationSystem notificationSystem) {
+            this.userDatabase = new HashMap<>();
+            this.invoiceDatabase = new HashMap<>();
+            this.notificationSystem = notificationSystem;
     }
     
     // Generate an invoice for an order
