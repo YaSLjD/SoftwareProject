@@ -10,15 +10,15 @@ Every feature started as a user story in Gherkin (`.feature` files) and is cover
 
 | Area | What it does |
 |------|--------------|
-| 🔐 **Login & users** | Role-based login for admins, chefs, kitchen managers and customers |
-| 🥗 **Preferences & allergies** | Store each customer's dietary preferences and allergies, and warn about conflicting ingredients |
-| 🍽️ **Custom meals** | Customers build their own meals, validated against available ingredients |
-| 🤖 **Recipe recommendations** | Suggests recipes that match the customer's preferences and available time |
+| 🔐 **Login & users** | Login, account updates and user roles |
+| 🥗 **Preferences & allergies** | Store and manage each customer's dietary preferences and allergies |
+| 🍽️ **Custom meals** | Customers request custom meals and meal plans |
+| 🤖 **Recipe recommendations** | Personalized, ingredient-based and seasonal recommendations that learn from customer feedback |
 | 📋 **Orders & history** | Order tracking, past orders and personalized meal plans |
-| 👩‍🍳 **Chef scheduling** | Assigns cooking tasks to chefs according to their workload and expertise |
-| 📦 **Inventory & suppliers** | Stock tracking, low-stock alerts and automatic restocking from suppliers |
-| 🧾 **Billing & invoicing** | Generates invoices and financial reports |
-| 🔔 **Notifications** | Reminders for customers and chefs |
+| 👩‍🍳 **Chef scheduling** | Assigns and reassigns cooking tasks based on chef availability and workload |
+| 📦 **Inventory & suppliers** | Stock tracking, low-stock detection, automatic reordering and purchase orders |
+| 🧾 **Billing & invoicing** | Invoices, partial payments, discounts, overdue handling and revenue reports |
+| 🔔 **Notifications** | Task notifications for chefs and payment reminders for customers |
 
 ## Tech stack
 
